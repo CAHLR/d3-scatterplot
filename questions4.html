@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+
+<style>
+body {
+  font: 11px sans-serif;
+}
+
+.dot{
+    stroke: #000;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.tooltip {
+  position: absolute;
+  width: 150px;
+  height: 28px;
+  background: rgba(255,255,255,0.80);
+  pointer-events: none;
+}
+
+.select1{
+    margin-left: 200px;
+    margin-top: 520px;
+    position: absolute;
+}
+.select2{
+    margin-left: 200px;
+    margin-top: 570px;
+    position: absolute;
+}
+input{
+        width: 100px;
+}
+
+form {
+    text-align: left;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 620px;
+}
+.p1 {
+    margin-left: 20px;
+    margin-top: 525px;
+    position: absolute;
+    font-size: 150%;
+}
+.p2 {
+    margin-left: 20px;
+    margin-top: 575px;
+    position: absolute;
+    font-size: 150%;
+}
+
+</style>
+<body>
+<p class="p1" id="demo" >Coloring column</p>
+<p class="p2" id="demo2" >Searching column</p>
+<form name="myform" onSubmit="return handleClick()">
+            <input name="Submit"  type="submit" value="Search" >
+            <input type="text" id="myVal" placeholder="Enter text&hellip;">
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+/* 
+ * value accessor - returns the value to encode for a given data object.
+ * scale - maps value to a visual display encoding, such as a pixel position.
+ * map function - maps from data value to display value
+ * axis - sets up axis
+ */ 
+
+// setup x 
+var xValue = function(d) { return d.x;}, // data -> value
+    xScale = d3.scale.linear().range([0, width]), // value -> display
+    xMap = function(d) { return xScale(xValue(d));}, // data -> display
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { return d["y"];}, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// add the tooltip area to the webpage
+var tooltip = d3.select("body").append("div")
+				.attr("class", "tooltip")
+				.style("opacity", 0);
+
+// setup fill color
+var category = "Select";
+var cValue = function(d) { return d[category];},
+    color = d3.scale.category10();
+
+//create the dropdown menu
+var dropDown = d3.select("body").append("select")
+                 .attr("class", "select1")
+                 .attr("name", "category");
+
+var dropDown1 = d3.select("body").append("select")
+                 .attr("class", "select2")
+                 .attr("name", "category");
+
+var category_search;
+var category_search_data = [];
+var categories = ["Select"];
+var temp = [];
+
+// getting header files in csv file
+d3.csv("joined_data.csv", function(data) {
+  console.log(data[0]);
+  temp = Object.keys(data[0]);
+  temp.splice(temp.indexOf('x'), 1);
+  temp.splice(temp.indexOf('y'), 1);
+  for(var i=0;i<temp.length;i++)
+      category_search_data.push(temp[i]);
+  for(var i=0;i<temp.length;i++)
+      categories.push(temp[i]);
+  category_search = "Slide";
+  dropDown1.selectAll("option")
+        .data(category_search_data)
+        .enter()
+        .append("option")
+        .text(function(d) { return d;})
+        .text(function(d) {return d;});
+  dropDown.selectAll("option")
+        .data(categories)
+        .enter()
+        .append("option")
+        .text(function(d) { return d;})
+        .text(function(d) {return d;});
+
+});
+
+dropDown.on("change", plotting);
+dropDown1.on("change", plotting2);
+highlighting("");
+
+function plotting2(){
+    category_search = d3.event.target.value; 
+}
+
+// function to call for change event
+function plotting(){
+
+		category = d3.event.target.value;	
+		color = d3.scale.category10();
+		cValue = function(d) { return d[category];};
+		highlighting("");				
+}
+
+// search event
+function handleClick(event){
+
+                console.log(document.getElementById("myVal").value);
+                highlighting(document.getElementById("myVal").value);
+				
+                return false;
+            }
+
+// function for plotting scatter plot
+function highlighting(val){
+
+    var svg;
+    // add the graph canvas to the body
+	d3.select("svg").remove();
+   	svg = d3.select("body").append("svg")
+    		.attr("width", width + margin.left + margin.right)
+    		.attr("height", height + margin.top + margin.bottom)
+  			.append("g")
+			.attr("transform",
+                  "translate(" + margin.left + "," + margin.top + ")");
+
+	
+    // load data
+	d3.csv("joined_data.csv", function(error, data) {
+
+		// change string (from CSV) into number format
+		data.forEach(function(d) {
+			d.x = +d.x;
+			d["y"] = +d["y"];
+		//	console.log(d);
+ 	 });
+
+  	// don't want dots overlapping axis, so add in buffer to data domain
+	xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+  	yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+
+  	// x-axis
+  	svg.append("g")
+      	.attr("class", "x axis")
+      	.attr("transform", "translate(0," + height + ")")
+      	.call(xAxis)
+    	.append("text")
+      	.attr("class", "label")
+      	.attr("x", width)
+      	.attr("y", -6)
+      	.style("text-anchor", "end")
+      	.text("");
+
+  	// y-axis
+  	svg.append("g")
+      	.attr("class", "y axis")
+      	.call(yAxis)
+    	.append("text")
+      	.attr("class", "label")
+      	.attr("transform", "rotate(-90)")
+      	.attr("y", 6)
+      	.attr("dy", ".71em")
+      	.style("text-anchor", "end")
+      	.text("");
+  
+   
+    val = val.toLowerCase(); 
+    var searchFunc = function(d){
+                    var x=d[category_search].toLowerCase().indexOf(val) < 0
+                    || val.length === 0;
+		            return x ? 1 : 2;};
+    var trans = function(d){
+                    var x = val.length === 0;
+                    return x ? 1 : (searchFunc(d)-1 ? 1:0.65); 
+                };
+    
+    //draw dots
+	svg.selectAll(".dot")
+      	.data(data)
+    	.enter().append("circle")
+        .attr("class", "dot")
+      	.attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+        .style("stroke", function(d){ return searchFunc(d)-1 ? "yellow":"#000";})
+        .style("stroke-width", function(d){ return searchFunc(d);})
+      	.attr("cx", xMap)
+      	.attr("cy", yMap)
+      	.style("fill", function(d) { return color(cValue(d));})
+        .style("opacity",function(d){ return trans(d);})
+      	.on("mouseover", function(d) {
+
+        tooltip.transition()
+               .duration(200)
+               .style("opacity", 1);
+        tooltip.html(d[category_search] 
+                  + "<br/> (" + xValue(d) 
+				  + ", " + yValue(d) + ")")
+               .style("left", 60 + "px")
+               .style("top", 30 + "px");
+                 
+        })
+        .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+        });
+	
+	var len = color.domain().length;
+	
+	if(len <= 20 && category != "Select"){
+
+     // draw legend
+	var legend = svg.selectAll(".legend")
+		.data(color.domain())
+		.enter().append("g")
+		.attr("class", "legend")
+		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  // draw legend colored rectangles
+	legend.append("rect")
+		.attr("x", width - 18)
+		.attr("width", 18)
+		.attr("height", 18)
+		.style("fill", color);
+
+  // draw legend text
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d;});
+    };
+    }); 
+}
+</script>
+</body>
+</html>
