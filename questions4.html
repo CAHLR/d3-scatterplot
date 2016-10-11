@@ -10,6 +10,34 @@ body {
   font: 11px sans-serif;
 }
 
+.lasso path {
+  stroke: rgb(80,80,80);
+  stroke-width:2px;
+}
+
+.lasso .drawn {
+  fill-opacity:.05 ;
+}
+
+.lasso .loop_close {
+  fill:none;
+  stroke-dasharray: 4,4;
+}
+
+.lasso .origin {
+  fill:#3399FF;
+  fill-opacity:.5;
+}
+
+.not_possible {
+  fill:rgb(200,200,200);
+}
+
+.possible {
+  fill:#EC888C;
+}
+
+
 .dot{
     stroke: #000;
 }
@@ -61,8 +89,36 @@ form {
     font-size: 150%;
 }
 
+.bar rect {
+  fill: steelblue;
+}
+
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+.div1 {
+    position: absolute;    
+    height: 400px;
+    width: 600px;
+    margin-left:1000px;
+}
+
+.div2 {
+    position: absolute;
+    margin-top: 400px;
+    height: 400px;
+    width: 600px;
+    margin-left: 1000px;
+}
+
+
 </style>
 <body>
+    <div id="myDiv" class="div1" ></div>
+    <div id="myDiv2" class="div2" ></div>
+
 <p class="p1" id="demo" >Coloring column</p>
 <p class="p2" id="demo2" >Searching column</p>
 <form name="myform" onSubmit="return handleClick()">
@@ -70,12 +126,21 @@ form {
             <input type="text" id="myVal" placeholder="Enter text&hellip;">
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
-
+<script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+var query = window.location.search.substring(1);
+var vars = query.split("=");
+var dataset;
+if(vars[0] == "dataset") {
+    dataset = vars[1];
+} else {
+    dataset = "joined_data.csv"; // set default datasets
+}
 /* 
  * value accessor - returns the value to encode for a given data object.
  * scale - maps value to a visual display encoding, such as a pixel position.
@@ -100,12 +165,81 @@ var tooltip = d3.select("body").append("div")
 				.attr("class", "tooltip")
 				.style("opacity", 0);
 
+// to print all the values attributes                
+var print_array = function(arr, d) {
+        var x = "";
+        for (var i=0; i<arr.length; i++) {
+            x = x + d[arr[i]] + "<br>"
+        }
+        return x;
+    };
+
 // setup fill color
-var category = "Select";
+var category;
 var cValue = function(d) { return d[category];},
     color = d3.scale.category10();
 
-//create the dropdown menu
+var histplot = function(ans1, ans2) {
+    var temp_data1 = [
+            {
+                x: ans1,
+                type: 'histogram',
+	            marker: {
+                color: 'rgba(100,250,100,0.7)',
+	            },
+            }
+            ];
+
+            var temp_data2 = [
+                {
+                x: ans2,
+                type: 'histogram',
+	            marker: {
+                color: 'rgba(100,250,100,0.7)',
+	            },
+                }
+            ];
+            var layout1 = {
+             title: 'Histogram',
+             xaxis: {
+               title: 'x Values',
+               titlefont: {
+                 family: 'Courier New, monospace',
+                 size: 18,
+                 color: '#7f7f7f'
+               }
+             }, 
+           };
+           var layout2 = {
+             xaxis: {
+               title: 'y Values',
+               titlefont: {
+                 family: 'Courier New, monospace',
+                 size: 18,
+                 color: '#7f7f7f'
+               }
+             }
+           };
+        
+
+        var graph1 = document.getElementById("myDiv");
+        Plotly.newPlot(graph1, temp_data1, layout1);
+        var graph2 = document.getElementById("myDiv2");
+        Plotly.newPlot(graph2, temp_data2, layout2);
+}
+
+var delDiv = function() {
+        var div = document.getElementById('myDiv');
+        var div2 = document.getElementById('myDiv2');
+        while(div.firstChild){
+            div.removeChild(div.firstChild);
+        }
+        while(div2.firstChild){
+            div2.removeChild(div2.firstChild);
+        }
+}
+
+// create the dropdown menu
 var dropDown = d3.select("body").append("select")
                  .attr("class", "select1")
                  .attr("name", "category");
@@ -118,9 +252,10 @@ var category_search;
 var category_search_data = [];
 var categories = ["Select"];
 var temp = [];
+var x_max, x_min, y_max, y_min;
 
 // getting header files in csv file
-d3.csv("joined_data.csv", function(data) {
+d3.csv(dataset, function(data) {
   console.log(data[0]);
   temp = Object.keys(data[0]);
   temp.splice(temp.indexOf('x'), 1);
@@ -129,7 +264,8 @@ d3.csv("joined_data.csv", function(data) {
       category_search_data.push(temp[i]);
   for(var i=0;i<temp.length;i++)
       categories.push(temp[i]);
-  category_search = "Slide";
+  category = categories[0];
+  category_search = category_search_data[0];
   dropDown1.selectAll("option")
         .data(category_search_data)
         .enter()
@@ -150,7 +286,12 @@ dropDown1.on("change", plotting2);
 highlighting("");
 
 function plotting2(){
-    category_search = d3.event.target.value; 
+        category_search = d3.event.target.value;
+        
+        // removing the contents of myDiv
+        delDiv();
+
+        
 }
 
 // function to call for change event
@@ -159,6 +300,7 @@ function plotting(){
 		category = d3.event.target.value;	
 		color = d3.scale.category10();
 		cValue = function(d) { return d[category];};
+        delDiv();
 		highlighting("");				
 }
 
@@ -166,36 +308,121 @@ function plotting(){
 function handleClick(event){
 
                 console.log(document.getElementById("myVal").value);
+                delDiv();
                 highlighting(document.getElementById("myVal").value);
-				
                 return false;
             }
 
-// function for plotting scatter plot
+// function for plotting
 function highlighting(val){
 
     var svg;
-    // add the graph canvas to the body
-	d3.select("svg").remove();
-   	svg = d3.select("body").append("svg")
+    // Plotly.deleteTraces('myDiv', 0);
+    d3.select().selectAll().remove();
+    d3.select("svg").remove();
+    d3.select("svg").remove();
+    
+    svg = d3.select("body").append("svg")
     		.attr("width", width + margin.left + margin.right)
     		.attr("height", height + margin.top + margin.bottom)
   			.append("g")
 			.attr("transform",
                   "translate(" + margin.left + "," + margin.top + ")");
+   
+    // Lasso starts
 
-	
+    var lasso_start = function() {
+
+    lasso.items()
+        .attr("r",3.5) // reset size
+        .style("fill",null) // clear all of the fills
+        .classed({"not_possible":true,"selected":false}); // style as not possible
+    };
+
+   
+    var lasso_draw = function() {
+    // Style the possible dots
+    lasso.items().filter(function(d) {return d.possible===true})
+        .classed({"not_possible":false,"possible":true});
+
+    // Style the not possible dot
+    lasso.items().filter(function(d) {return d.possible===false})
+        .classed({"not_possible":true,"possible":false})
+        .style("stroke", "#000");
+    };
+
+    var lasso_end = function() {
+
+    // Reset the color of all dots
+    lasso.items()
+         .style("fill", function(d) { return color(d[category]); });
+
+    // Style the selected dots    
+    
+    lasso.items().filter(function(d) {return d.selected===true})
+        .classed({"not_possible":false,"possible":false})
+        .attr("r",6.5)
+
+    var zsx = lasso.items().filter(function(d) {return d.selected===true});
+    x_values = [];
+    y_values = [];
+    for (var i=0; i<zsx[0].length; i++) {
+            x_values.push( (zsx[0][i].getBBox().x * (x_max - x_min))/width + x_min);
+            y_values.push((zsx[0][i].getBBox().y * (y_min - y_max))/height + y_max);
+        }        
+
+    histplot(x_values, y_values);
+    
+
+    // Reset the style of the not selected dots
+    lasso.items().filter(function(d) {return d.selected===false})
+        .classed({"not_possible":false,"possible":false})
+        .attr("r",3)
+        .style("stroke", "#000");
+
+    };
+
+    // Create the area where the lasso event can be triggered
+    var lasso_area = svg.append("rect")
+                        .attr("width",width)
+                        .attr("height",height)
+                        .style("opacity",0);
+
+    // Define the lasso
+    var lasso = d3.lasso()
+        .closePathDistance(75) // max distance for the lasso loop to be closed
+        .closePathSelect(true) // can items be selected by closing the path?
+        .hoverSelect(true) // can items by selected by hovering over them?
+        .area(lasso_area) // area where the lasso can be started
+        .on("start",lasso_start) // lasso start function
+        .on("draw",lasso_draw) // lasso draw function
+        .on("end",lasso_end); // lasso end function
+
+    // Init the lasso on the svg:g that contains the dots
+	svg.call(lasso);
+
     // load data
-	d3.csv("joined_data.csv", function(error, data) {
+	d3.csv(dataset, function(error, data) {
 
-		// change string (from CSV) into number format
-		data.forEach(function(d) {
-			d.x = +d.x;
-			d["y"] = +d["y"];
+	// change string (from CSV) into number format
+
+
+    var temp1 = [], temp2 = [], temp3 = [];
+    data.forEach(function(d) {
+            d.x = +d.x
+            d["y"] = +d["y"]
+            temp1.push(d.x);
+            temp2.push(d["y"]);
+            temp3.push(d[category_search]);
 		//	console.log(d);
- 	 });
+     	 });
+    // document.getElementById("demo").innerHTML = sgt;
 
   	// don't want dots overlapping axis, so add in buffer to data domain
+    x_max = d3.max(data, xValue)+1;
+    x_min = d3.min(data, xValue)-1;
+    y_max = d3.max(data, yValue)+1;
+    y_min = d3.min(data, yValue)-1; 
 	xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
   	yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
@@ -229,12 +456,31 @@ function highlighting(val){
                     var x=d[category_search].toLowerCase().indexOf(val) < 0
                     || val.length === 0;
 		            return x ? 1 : 2;};
+    var searchFunc1 = function(d){
+                    var x=d.toLowerCase().indexOf(val) < 0
+                    || val.length === 0;
+		            return x ? 1 : 2;};
+
+
+    // ans1 and ans2 are the points which are searched
+    var ans1=[], ans2=[];
+    for (var i=0;i<temp3.length;i++) {
+            if ( searchFunc1(temp3[i])-1 ) {
+                    ans1.push(temp1[i]);
+                    ans2.push(temp2[i]);
+            }
+        }
+    if ( val != "" && ans1.length != 0) {
+            
+            histplot(ans1, ans2);
+        };
+
+
     var trans = function(d){
                     var x = val.length === 0;
-                    return x ? 1 : (searchFunc(d)-1 ? 1:0.65); 
+                    return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
                 };
-    
-    //draw dots
+    // draw dots
 	svg.selectAll(".dot")
       	.data(data)
     	.enter().append("circle")
@@ -251,19 +497,20 @@ function highlighting(val){
         tooltip.transition()
                .duration(200)
                .style("opacity", 1);
-        tooltip.html(d[category_search] 
-                  + "<br/> (" + xValue(d) 
-				  + ", " + yValue(d) + ")")
-               .style("left", 60 + "px")
-               .style("top", 30 + "px");
-                 
+        tooltip.html(
+                print_array(category_search_data, d))
+                  .style("left", 60 + "px")
+                  .style("top", 30 + "px");
         })
         .on("mouseout", function(d) {
           tooltip.transition()
                .duration(500)
                .style("opacity", 0);
         });
+
 	
+    lasso.items(d3.selectAll(".dot"));
+    
 	var len = color.domain().length;
 	
 	if(len <= 20 && category != "Select"){
@@ -290,7 +537,7 @@ function highlighting(val){
       .style("text-anchor", "end")
       .text(function(d) { return d;});
     };
-    }); 
+    });
 }
 </script>
 </body>
