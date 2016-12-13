@@ -188,7 +188,7 @@ var tooltip = d3.select("body").append("div")
 var print_array = function(arr, d) {
         var x = "";
         for (var i=0; i<arr.length; i++) {
-	    x = x + "<b>" + d[arr[i]] + "</b><br>"
+            x = x + "<b>" + arr[i] + "</b>: " + d[arr[i]] + "<br>"
         }
         x = x + d.x + "<br>" + d["y"];
         return x;
