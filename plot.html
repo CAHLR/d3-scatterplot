@@ -98,7 +98,7 @@ form {
     margin-left: 1000px;
     margin-top: 10px;
     position: absolute;
-    white-space: nowrap;
+	white-space: nowrap;
     font-size: 150%;
 }
 
@@ -149,12 +149,16 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     height = 500 - margin.top - margin.bottom;
 
 var query = window.location.search.substring(1);
-var vars = query.split("=");
-var dataset;
-if(vars[0] == "dataset") {
-    dataset = vars[1];
-} else {
-    dataset = "joined_data.csv"; // set default datasets
+var temp_query = query.split("&");
+var dicts = {};
+var tvars;
+for(var i=0;i<temp_query.length;i++){
+	tvars = temp_query[i].split("=");
+	dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");}
+if ("dataset" in dicts) {
+	dataset = dicts["dataset"];
+}	else {
+	dataset = "joined_data.csv";
 }
 /* 
  * value accessor - returns the value to encode for a given data object.
@@ -192,6 +196,7 @@ var print_array = function(arr, d) {
 
 // setup fill color
 var category;
+
 var cValue = function(d) { return d[category];},
     color = d3.scale.category10();
 
@@ -262,9 +267,24 @@ var dropDown1 = d3.select("body").append("select")
                  .attr("class", "select2")
                  .attr("name", "category");
 
-var category_search;
 var category_search_data = [];
-var categories = ["Select"];
+var categories = [];
+var category_search;
+if ("search" in dicts) {
+	category_search = dicts["search"];
+	category_search_data.push(category_search);
+}
+categories.push("Select");
+if ("color" in dicts) {
+	category = dicts["color"];
+	categories.push(category);
+}	else {
+	category = "Select";
+}
+
+var temp_cat = [];
+temp_cat.push(category);
+
 var columns = [];
 var temp = [];
 var x_max, x_min, y_max, y_min;
@@ -275,13 +295,24 @@ d3.csv(dataset, function(data) {
   temp = Object.keys(data[0]);
   temp.splice(temp.indexOf('x'), 1);
   temp.splice(temp.indexOf('y'), 1);
+
   for(var i=0;i<temp.length;i++)
+	if (temp[i] != category_search) {
       category_search_data.push(temp[i]);
+	}
+  
   for(var i=0;i<temp.length;i++){
+	if (temp[i] != category) {
       categories.push(temp[i]);
-      columns.push(temp[i]);
+	  temp_cat.push(temp[i]);
+	}
+    columns.push(temp[i]);
   }
-  category = categories[0];
+  if ("color" in dicts) {
+	  category = categories[1];
+  } else {
+	  category = categories[0];
+  }
   category_search = category_search_data[0];
   dropDown1.selectAll("option")
         .data(category_search_data)
@@ -290,7 +321,7 @@ d3.csv(dataset, function(data) {
         .text(function(d) { return d;})
         .text(function(d) {return d;});
   dropDown.selectAll("option")
-        .data(categories)
+        .data(temp_cat)
         .enter()
         .append("option")
         .text(function(d) { return d;})
