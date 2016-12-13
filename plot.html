@@ -188,7 +188,7 @@ var tooltip = d3.select("body").append("div")
 var print_array = function(arr, d) {
         var x = "";
         for (var i=0; i<arr.length; i++) {
-            x = x + d[arr[i]] + "<br>"
+	    x = x + "<b>" + d[arr[i]] + "</b><br>"
         }
         x = x + d.x + "<br>" + d["y"];
         return x;
@@ -198,7 +198,7 @@ var print_array = function(arr, d) {
 var category;
 
 var cValue = function(d) { return d[category];},
-    color = d3.scale.category10();
+    color = d3.scale.category20();
 
 var searchdic = function(arri, find) {
     for(var i=0;i<arri.length;i++) {
@@ -341,7 +341,7 @@ function plotting2(){
 function plotting(){
 
 		category = d3.event.target.value;	
-		color = d3.scale.category10();
+		color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
 		highlighting("");				
 }
