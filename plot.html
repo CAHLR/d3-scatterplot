@@ -331,7 +331,11 @@ d3.csv(dataset, function(data) {
 
 dropDown.on("change", plotting);
 dropDown1.on("change", plotting2);
+if ("q" in dicts) {
+highlighting(dicts["q"]);
+} else { 
 highlighting("");
+}
 
 function plotting2(){
         category_search = d3.event.target.value;
