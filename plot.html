@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-<link rel="stylesheet" href="filter.css" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.6.0/dc.css"/>
 
 <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
 <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
@@ -39,6 +37,7 @@ body {
   fill:#EC888C;
 }
 
+
 .dot{
     stroke: #000;
 }
@@ -46,10 +45,8 @@ body {
 .axis line {
   fill: none;
   stroke: #000;
-  stroke-width: 0.75;
-  shape-rendering: geometricPrecision;
+  shape-rendering: crispEdges;
 }
-
 
 .tooltip {
   position: absolute;
@@ -61,18 +58,18 @@ body {
 
 .select1{
     margin-left: 200px;
-    margin-top: 25px;
+    margin-top: 520px;
     position: absolute;
 }
 .select2{
     margin-left: 200px;
-    margin-top: 75px;
+    margin-top: 570px;
     position: absolute;
 }
 .select3{
     position: absolute;
     margin-left: 50px;
-    margin-top: 150px;
+    margin-top: 200px;
     }
 input{
         width: 100px;
@@ -82,17 +79,17 @@ form {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 140px;
+    margin-top: 620px;
 }
 .p1 {
     margin-left: 20px;
-    margin-top: 35px;
+    margin-top: 525px;
     position: absolute;
     font-size: 150%;
 }
 .p2 {
     margin-left: 20px;
-    margin-top: 85px;
+    margin-top: 575px;
     position: absolute;
     font-size: 150%;
 }
@@ -101,9 +98,10 @@ form {
     margin-left: 1000px;
     margin-top: 10px;
     position: absolute;
-    white-space: nowrap;
+	white-space: nowrap;
     font-size: 150%;
 }
+
 
 
 .bar rect {
@@ -117,14 +115,14 @@ form {
 
 .div1 {
     position: absolute;    
-    height: 100px;
+    height: 400px;
     width: 600px;
     margin-left:1000px;
 }
 
 .div2 {
     position: absolute;
-    margin-top: 100px;
+    margin-top: 400px;
     height: 400px;
     width: 600px;
     margin-left: 1000px;
@@ -132,50 +130,35 @@ form {
 
 
 </style>
-
-
 <body>
-
-	<div id="charts">
-
-	<div id="map" class="display"></div>
-
-	<div id="year-chart" class="chart display">
-			<div class="title">Date</div>
-	</div>
-<aside id="totals"><span id="active">-</span> of <span id="total">-</span> data points selected.</aside>
+    
 
 <p class="p1" id="demo" >Coloring column</p>
 <p class="p2" id="demo2" >Searching column</p>
 <p class="p3" id="demo3"></p>
-
 <form name="myform" onSubmit="return handleClick()">
             <input name="Submit"  type="submit" value="Search" >
             <input type="text" id="myVal" placeholder="Enter text&hellip;">
 
-
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
-<script src="lib/crossfilter.js"></script>
-<script src="barchart.js"></script>
-
+<script src="crossfilter.min.js"></script>
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var query = window.location.search.substring(1);
-
 var temp_query = query.split("&");
- var dicts = {};
- var tvars;
- for(var i=0;i<temp_query.length;i++){
- 	tvars = temp_query[i].split("=");
- 	dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");}
- if ("dataset" in dicts) {
- 	dataset = dicts["dataset"];
- }	else {
- 	dataset = "joined_data.csv";
+var dicts = {};
+var tvars;
+for(var i=0;i<temp_query.length;i++){
+	tvars = temp_query[i].split("=");
+	dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");}
+if ("dataset" in dicts) {
+	dataset = dicts["dataset"];
+}	else {
+	dataset = "joined_data.csv";
 }
 /* 
  * value accessor - returns the value to encode for a given data object.
@@ -205,7 +188,7 @@ var tooltip = d3.select("body").append("div")
 var print_array = function(arr, d) {
         var x = "";
         for (var i=0; i<arr.length; i++) {
-        x = x + "<b>" + arr[i] + "</b>: " + d[arr[i]] + "<br>"
+            x = x + "<b>" + arr[i] + "</b>: " + d[arr[i]] + "<br>"
         }
         x = x + d.x + "<br>" + d["y"];
         return x;
@@ -285,23 +268,22 @@ var dropDown1 = d3.select("body").append("select")
                  .attr("name", "category");
 
 var category_search_data = [];
-
 var categories = [];
- var category_search;
- if ("search" in dicts) {
- 	category_search = dicts["search"];
- 	category_search_data.push(category_search);
- }
- categories.push("Select");
- if ("color" in dicts) {
- 	category = dicts["color"];
- 	categories.push(category);
- }	else {
- 	category = "Select";
- }
- 
- var temp_cat = [];
- temp_cat.push(category);
+var category_search;
+if ("search" in dicts) {
+	category_search = dicts["search"];
+	category_search_data.push(category_search);
+}
+categories.push("Select");
+if ("color" in dicts) {
+	category = dicts["color"];
+	categories.push(category);
+}	else {
+	category = "Select";
+}
+
+var temp_cat = [];
+temp_cat.push(category);
 
 var columns = [];
 var temp = [];
@@ -315,23 +297,22 @@ d3.csv(dataset, function(data) {
   temp.splice(temp.indexOf('y'), 1);
 
   for(var i=0;i<temp.length;i++)
-  	if (temp[i] != category_search) {
+	if (temp[i] != category_search) {
       category_search_data.push(temp[i]);
-  	}
-
+	}
+  
   for(var i=0;i<temp.length;i++){
-  	if (temp[i] != category) {
+	if (temp[i] != category) {
       categories.push(temp[i]);
-      temp_cat.push(temp[i]);
-      }
- columns.push(temp[i]);
-   }
-   if ("color" in dicts) {
- 	  category = categories[1];
-   } else {
- 	  category = categories[0];
-    }
-  category = categories[0];
+	  temp_cat.push(temp[i]);
+	}
+    columns.push(temp[i]);
+  }
+  if ("color" in dicts) {
+	  category = categories[1];
+  } else {
+	  category = categories[0];
+  }
   category_search = category_search_data[0];
   dropDown1.selectAll("option")
         .data(category_search_data)
@@ -351,12 +332,10 @@ d3.csv(dataset, function(data) {
 dropDown.on("change", plotting);
 dropDown1.on("change", plotting2);
 if ("q" in dicts) {
-	highlighting(dicts["q"]);
-	} else {
-	highlighting("");	
+highlighting(dicts["q"]);
+} else { 
+highlighting("");
 }
-
-
 
 function plotting2(){
         category_search = d3.event.target.value;
@@ -368,16 +347,8 @@ function plotting(){
 		category = d3.event.target.value;	
 		color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
-		highlighting("");	
-		d3.csv("joined_data.csv", function (error, data){
-    	var first = "'";
-    	first += category;
-    	first += "'";
-
-    if (!categories.includes("time"))
-  	d3.selectAll(".chart").remove();
-   			
-})}
+		highlighting("");				
+}
 
 // search event
 function handleClick(event){
@@ -398,9 +369,8 @@ function highlighting(val){
     d3.select("svg").remove();
     d3.select("table").remove();
     d3.select("svg").remove();
-    d3.selectAll("svg").remove();
-   
-    svg = d3.select("#map").append("svg")
+    
+    svg = d3.select("body").append("svg")
     		.attr("width", width + margin.left + margin.right)
     		.attr("height", height + margin.top + margin.bottom)
   			.append("g")
@@ -413,43 +383,36 @@ function highlighting(val){
     d3.select("table").remove();
         document.getElementById("demo3").innerHTML = "";
     lasso.items()
-        .attr("id", function(d){return "id" + d.id;})
         .attr("r",3.5) // reset size
         .style("fill",null) // clear all of the fills
-        .classed({"not_possible":true,"selected":false}) // style as not possible
+        .classed({"not_possible":true,"selected":false}); // style as not possible
     };
 
    
     var lasso_draw = function() {
     // Style the possible dots
     lasso.items().filter(function(d) {return d.possible===true})
-        .classed({"not_possible":false,"possible":true})
-        .attr("id", function(d){return "id" + d.id;})
+        .classed({"not_possible":false,"possible":true});
+
     // Style the not possible dot
     lasso.items().filter(function(d) {return d.possible===false})
-        .attr("id", function(d){return "id" + d.id;})
         .classed({"not_possible":true,"possible":false})
-        .style("stroke", "#000")
+        .style("stroke", "#000");
     };
 
     var lasso_end = function() {
 
     // Reset the color of all dots
     lasso.items()
-          .attr("id", function(d){return "id" + d.id;})
-         .style("fill", function(d) { return color(d[category]); })
-
+         .style("fill", function(d) { return color(d[category]); });
 
     // Style the selected dots    
     
     lasso.items().filter(function(d) {return d.selected===true})
         .classed({"not_possible":false,"possible":false})
-        .attr("id", function(d){return "id" + d.id;})
         .attr("r",6.5)
 
-
-    var zsx = lasso.items().filter(function(d) {return d.selected===true})
-            .attr("id", function(d){return "id" + d.id;});
+    var zsx = lasso.items().filter(function(d) {return d.selected===true});
 
     x_values = [];
     y_values = [];
@@ -484,7 +447,6 @@ function highlighting(val){
 
     // Reset the style of the not selected dots
     lasso.items().filter(function(d) {return d.selected===false})
-        .attr("id", function(d){return "id" + d.id;})
         .classed({"not_possible":false,"possible":false})
         .attr("r",3)
         .style("stroke", "#000");
@@ -510,28 +472,18 @@ function highlighting(val){
     // Init the lasso on the svg:g that contains the dots
 	svg.call(lasso);
 
-var data;
-
     // load data
-	d3.csv(dataset, function(error, csv) {
-rawData = csv;
-var dtgFormat = d3.time.format("%Y-%m-%dT%H:%M:%S");
+	d3.csv(dataset, function(error, data) {
 
-  //data1 = [] what if i call all of mine data instead of data1? 
 	// change string (from CSV) into number format
-data =[];
+
     for(var i=1;i<categories.length;i++) {
                 dict1[categories[i]] = [];
             }
     
-    rawData.forEach(function(d) {
-    		 d.id = +d.id
+    data.forEach(function(d) {
             d.x = +d.x
             d["y"] = +d["y"]
-            d.year = +d.year;
-      		d.intensity = +d.intensity;
-     		d.dtg = dtgFormat.parse(d.neworigintime.substr(0,19));
-      		data.push(d);
             for(var i=1;i<categories.length;i++){
                 dict1[categories[i]].push(d[categories[i]]);
         }
@@ -541,7 +493,7 @@ data =[];
 		//	console.log(d);
      	 });
     
-   data.sort(function(a, b){return a.id - b.id;})
+   
 
   	// don't want dots overlapping axis, so add in buffer to data domain
     x_max = d3.max(data, xValue)+1;
@@ -609,33 +561,17 @@ data =[];
                     var x = val.length === 0;
                     return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
                 };
-
-var colours = ["#6363FF", "#6373FF", "#63A3FF", "#63E3FF", "#63FFFB", "#63FFCB",
-               "#63FF9B", "#63FF6B", "#7BFF63", "#BBFF63", "#DBFF63", "#FBFF63", 
-               "#FFD363", "#FFB363", "#FF8363", "#FF7363", "#FF6364"];
-
-var heatmapColour = d3.scale.linear()
-  .domain(d3.range(0, 1, 1.0 / (colours.length - 1)))
-  .range(colours);
-
-// dynamic bit...
-var c = d3.scale.linear().domain([d3.min(data, function(d) {return cValue(d)}), 
-								  d3.max(data, function(d) {return cValue(d)})])
-								.range([0,1]);
     // draw dots
-    svg.append("g")
-    	.selectAll(".dot")
+    svg.selectAll(".dot")
       	.data(data)
     	.enter().append("circle")
         .attr("class", "dot")
       	.attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
-      	.attr("id", function(d){return "id" + d.id;})
         .style("stroke", function(d){ return searchFunc(d)-1 ? "yellow":"#000";})
         .style("stroke-width", function(d){ return searchFunc(d);})
       	.attr("cx", xMap)
       	.attr("cy", yMap)
-		.style("fill", function(d) {return !isNaN(+d3.max(data, function(d) {return cValue(d)})) ? heatmapColour(c(cValue(d))): color(cValue(d));})
-        .style("opacity",function(d){ return trans(d);})
+      	.style("fill", function(d) { return color(cValue(d));})
         .style("opacity",function(d){ return trans(d);})
       	.on("mouseover", function(d) {
 
@@ -681,78 +617,8 @@ var c = d3.scale.linear().domain([d3.min(data, function(d) {return cValue(d)}),
       .style("text-anchor", "end")
       .text(function(d) { return d;});
     };
-var facts = crossfilter(data),
-    all = facts.groupAll(),
-    year = facts.dimension(function(d){return d.year;}),
-    years = year.group(function(d){return Math.floor(d/10)*10;}),
-    date = facts.dimension(function (d) {return d.dtg; }),
-    dates = date.group(d3.time.day),
-    volumeByHour = facts.dimension(function(d) {return d3.time.hour(d.dtg); }),
-    volumeByHourGroup = volumeByHour.group().reduceCount()
-    dataId = facts.dimension(function(d){return d.id;});
-    dataIds = dataId.group()
-    intensity = facts.dimension(function(d) {return d.intensity;})
-
-  var minDate     =new Date(d3.min(data, function(d) { return d3.time.day(d.dtg); }));
-  var maxDate     =new Date(d3.max(data, function(d) { return d3.time.day(d.dtg); }));
-
-  var newminDate  = d3.time.day.offset(minDate, -3);
-  var newmaxDate  = d3.time.day.offset(maxDate, +3);
-
-  var charts = [
-barChart()
-        .dimension(date)
-        .group(dates)
-        .round(d3.time.day.round)
-      .x(d3.time.scale()
-        .domain([newminDate, newmaxDate])
-        .rangeRound([0, 10 * 90]))
-        ];
-
-  var chart = d3.selectAll(".chart")
-      .data(charts)
-      .each(function(chart){chart.on("brush", renderAll).on("brushend", renderAll)});
-
-  d3.selectAll("#total")
-      .text(facts.size());
-
-
-  function render(method){
-    d3.select(this).call(method);
-  }
-
-
-  lastFilterArray = [];
-  data.forEach(function(d, i){
-    lastFilterArray[i] = 1;
-  });
-
-  function renderAll(){
-    chart.each(render);
-
-    var filterArray = dataIds.all();
-    filterArray.forEach(function(d, i){
-      if (d.value != lastFilterArray[i]){
-        lastFilterArray[i] = d.value;
-        d3.select("#id" + d.key).transition().duration(500)
-            .attr("r", d.value == 1 ? function(d){ return searchFunc(d)-1 ? 7:3 ; } : 0)
-      }
-    })
-
-    d3.select("#active").text(all.value());
-  }
-
-  window.reset = function(i){
-    charts[i].filter(null);
-    renderAll();
-  }
-
-  renderAll();
-
-});
-
+    });
 }
-
 </script>
 </body>
 </html>
