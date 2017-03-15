@@ -98,6 +98,12 @@ input{
     position: absolute;
     font-size: 150%;
 }
+.p5 {
+    margin-left: 310px;
+    margin-top: 520px;
+    position: absolute;
+    font-size: 150%;
+}
 .p2 {
     margin-left: 20px;
     margin-top: 575px;
@@ -142,10 +148,13 @@ input{
     width: 600px;
     margin-left: 1000px;
 }
+#legend-svg {
+            vertical-align: top;
+}
 
 </style>
 <body>
-
+	<p class="p5">Check for spectrum<input type="checkbox" id="cbox1" value="first_checkbox"></p>
 <p class="p1" id="demo" >Coloring column</p>
 <p class="p2" id="demo2" >Searching column</p>
 <p class="p4" id="demo4" >Transparent column</p>
@@ -385,6 +394,9 @@ function plotting(){
 		category = d3.event.target.value;	
 		color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
+		// color = d3.scale.linear()
+		//	.domain([d3.min(data, cValue), d3.max(data, cValue)])
+		//		.range(['#43a2ca', '#e0f3db']);	
 		highlighting("", "", "");				
 }
 
@@ -406,6 +418,22 @@ function handleClick1(event){
                 highlighting(val, val1, val2);
                 return false;
             }
+
+function linspace(start, end, n) {
+        var out = [];
+        var delta = (end - start) / (n - 1);
+
+        var i = 0;
+        while(i < (n - 1)) {
+            out.push(start + (i * delta));
+            i++;
+        }
+
+        out.push(end);
+        return out;
+    }
+
+scale = ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'];
 
 // function for plotting
 function highlighting(val, val1, val2){
@@ -523,21 +551,30 @@ function highlighting(val, val1, val2){
 	d3.csv(dataset, function(error, data) {
 
 	// change string (from CSV) into number format
-
+	var numerics = {};
     for(var i=1;i<categories.length;i++) {
                 dict1[categories[i]] = [];
+				numerics[categories[i]] = 1;
             }
     data.forEach(function(d) {
             d.x = +d.x
             d["y"] = +d["y"]
             for(var i=1;i<categories.length;i++){
                 dict1[categories[i]].push(d[categories[i]]);
+				numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseInt(d[categories[i]]));
         }
             temp1.push(d.x);
             temp2.push(d["y"]);
             temp3.push(d[category_search]);
-		//	console.log(d);
+			console.log(d["z"] == parseInt(d["z"]));
      	 });
+	console.log(numerics);
+	// set color according to spectrum
+	if (numerics[category] && document.getElementById('cbox1').checked) {
+		color = d3.scale.linear()
+			.domain(linspace(d3.min(data, cValue), d3.max(data, cValue),scale.length))
+			.range(scale);	
+	 }
 
   	// don't want dots overlapping axis, so add in buffer to data domain
     x_max = d3.max(data, xValue)+1;
@@ -661,32 +698,88 @@ function highlighting(val, val1, val2){
         });
 
     lasso.items(d3.selectAll(".dot"));
-    
 	var len = color.domain().length;
 	
-	if(len <= 30 && category != "Select"){
+	if (numerics[category] && document.getElementById('cbox1').checked) {
+	
+		m1 = parseInt(d3.min(data, cValue))-1;
+		m2 = parseInt(d3.max(data, cValue))+1;
+		console.log(m1, m2);
+		// create a scale and axis for the legend
+		var legend = svg.selectAll(".legend")
+			.data(color.domain())
+			.enter().append("g")
+			.attr("class", "legend");
 
-     // draw legend
+		var gradient = legend.append('defs')
+            .append('linearGradient')
+            .attr('id', 'gradient')
+            .attr('x1', '0%') // bottom
+            .attr('y1', '100%')
+            .attr('x2', '0%') // to top
+            .attr('y2', '0%')
+            .attr('spreadMethod', 'pad');
+
+		var pct = linspace(0, 100, scale.length).map(function(d) {
+            return Math.round(d) + '%';
+        });
+
+        var colourPct = d3.zip(pct, scale);
+        colourPct.forEach(function(d) {
+            gradient.append('stop')
+                .attr('offset', d[0])
+                .attr('stop-color', d[1])
+                .attr('stop-opacity', 1);
+        });
+
+		legend.append('rect')
+				.attr('x1', 0)
+				.attr('y1', 0)
+				.attr('width', 18)
+				.attr('height', 200)
+				.attr("transform", "translate(" + 862 + ", 0)")
+				.style('fill', 'url(#gradient)');
+
+        var legendScale = d3.scale.linear()
+            .domain([m1, m2])
+            .range([0, 200]);
+
+        var legendAxis = d3.svg.axis()
+            .scale(legendScale)
+            .orient("right")
+            // .tickValues(d3.min(data, cValue), d3.max(data, cValue))
+            .ticks(10);
+
+		legend.append("g")
+			.attr("class", "legend axis")
+            .attr("transform", "translate(" + 880 + ", 0)")
+			.call(legendAxis);
+	}
+	else {
+		if(len <= 30 && category != "Select"){
+
+    // draw legend
 	var legend = svg.selectAll(".legend")
 		.data(color.domain())
 		.enter().append("g")
 		.attr("class", "legend")
 		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-  // draw legend colored rectangles
+	// draw legend colored rectangles
 	legend.append("rect")
 		.attr("x", width + 6)
 		.attr("width", 18)
 		.attr("height", 18)
 		.style("fill", color);
 
-  // draw legend text
-  legend.append("text")
-      .attr("x", width + 0)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d;});
+	// draw legend text
+	legend.append("text")
+		.attr("x", width + 0)
+		.attr("y", 9)
+		.attr("dy", ".35em")
+		.style("text-anchor", "end")
+		.text(function(d) { return d;});
+		}
     };
     });
 }
