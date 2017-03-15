@@ -66,20 +66,31 @@ body {
     margin-top: 570px;
     position: absolute;
 }
+.select4{
+    margin-left: 200px;
+    margin-top: 670px;
+    position: absolute;
+}
 .select3{
     position: absolute;
     margin-left: 50px;
-    margin-top: 200px;
+    margin-top: 300px;
     }
 input{
         width: 100px;
 }
 
-form {
+.form2 {
     text-align: left;
     position: absolute;
     margin-left: 20px;
     margin-top: 620px;
+}
+.form1 {
+    text-align: left;
+    position: absolute;
+    margin-left: 200px;
+    margin-top: 720px;
 }
 .p1 {
     margin-left: 20px;
@@ -93,6 +104,12 @@ form {
     position: absolute;
     font-size: 150%;
 }
+.p4 {
+    margin-left: 20px;
+    margin-top: 675px;
+    position: absolute;
+    font-size: 150%;
+}
 
 .p3 {
     margin-left: 1000px;
@@ -101,8 +118,6 @@ form {
 	white-space: nowrap;
     font-size: 150%;
 }
-
-
 
 .bar rect {
   fill: steelblue;
@@ -128,18 +143,24 @@ form {
     margin-left: 1000px;
 }
 
-
 </style>
 <body>
-    
 
 <p class="p1" id="demo" >Coloring column</p>
 <p class="p2" id="demo2" >Searching column</p>
+<p class="p4" id="demo4" >Transparent column</p>
 <p class="p3" id="demo3"></p>
-<form name="myform" onSubmit="return handleClick()">
+<form name="myform" class="form2" onSubmit="return handleClick()">
             <input name="Submit"  type="submit" value="Search" >
-            <input type="text" id="myVal" placeholder="Enter text&hellip;">
-
+			<input type="text" id="myVal" placeholder="Enter text&hellip;"></form>
+<form name="myform1" class="form1" onSubmit="return handleClick1()">
+            
+	<label><h3>Enter value     Transparent values b/w 0-1</h3></label><br>
+            <input type="text" id="myVal1" placeholder="Enter text&hellip;">
+			<input type="text" id="myVal2" placeholder="Enter value&hellip;">
+			<input type="text" id="myVal3" placeholder="Enter value&hellip;">
+			<input name="Submit"  type="submit" value="Do Transparent">
+</form>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
 <script src="crossfilter.min.js"></script>
@@ -196,6 +217,8 @@ var print_array = function(arr, d) {
 
 // setup fill color
 var category;
+// column for the transparent value
+var transparent_column="";
 
 var cValue = function(d) { return d[category];},
     color = d3.scale.category20();
@@ -267,6 +290,10 @@ var dropDown1 = d3.select("body").append("select")
                  .attr("class", "select2")
                  .attr("name", "category");
 
+var dropDown2 = d3.select("body").append("select")
+                 .attr("class", "select4")
+                 .attr("name", "category");
+
 var category_search_data = [];
 var categories = [];
 var category_search;
@@ -326,15 +353,26 @@ d3.csv(dataset, function(data) {
         .append("option")
         .text(function(d) { return d;})
         .text(function(d) {return d;});
-
+  dropDown2.selectAll("option")
+        .data(category_search_data)
+        .enter()
+        .append("option")
+        .text(function(d) { return d;})
+        .text(function(d) {return d;});
 });
 
 dropDown.on("change", plotting);
 dropDown1.on("change", plotting2);
+dropDown2.on("change", plotting3);
+
 if ("q" in dicts) {
-highlighting(dicts["q"]);
+highlighting(dicts["q"], "", "");
 } else { 
-highlighting("");
+highlighting("", "", "");
+}
+
+function plotting3(){
+		transparent_column = d3.event.target.value;
 }
 
 function plotting2(){
@@ -347,19 +385,30 @@ function plotting(){
 		category = d3.event.target.value;	
 		color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
-		highlighting("");				
+		highlighting("", "", "");				
 }
 
 // search event
 function handleClick(event){
 
                 console.log(document.getElementById("myVal").value);
-                highlighting(document.getElementById("myVal").value);
+                highlighting(document.getElementById("myVal").value, "", "");
+                return false;
+            }
+
+// transparent event
+function handleClick1(event){
+				
+                console.log(document.getElementById("myVal1").value);
+				val = document.getElementById("myVal1").value; 
+				val1 = document.getElementById("myVal2").value; 
+				val2 = document.getElementById("myVal3").value;
+                highlighting(val, val1, val2);
                 return false;
             }
 
 // function for plotting
-function highlighting(val){
+function highlighting(val, val1, val2){
 
     var svg;
     var temp1 = [], temp2 = [], temp3 = [];
@@ -378,7 +427,6 @@ function highlighting(val){
                   "translate(" + margin.left + "," + margin.top + ")");
    
     // Lasso starts
-
     var lasso_start = function() {
     d3.select("table").remove();
         document.getElementById("demo3").innerHTML = "";
@@ -388,7 +436,6 @@ function highlighting(val){
         .classed({"not_possible":true,"selected":false}); // style as not possible
     };
 
-   
     var lasso_draw = function() {
     // Style the possible dots
     lasso.items().filter(function(d) {return d.possible===true})
@@ -480,7 +527,6 @@ function highlighting(val){
     for(var i=1;i<categories.length;i++) {
                 dict1[categories[i]] = [];
             }
-    
     data.forEach(function(d) {
             d.x = +d.x
             d["y"] = +d["y"]
@@ -492,8 +538,6 @@ function highlighting(val){
             temp3.push(d[category_search]);
 		//	console.log(d);
      	 });
-    
-   
 
   	// don't want dots overlapping axis, so add in buffer to data domain
     x_max = d3.max(data, xValue)+1;
@@ -526,9 +570,36 @@ function highlighting(val){
       	.attr("dy", ".71em")
       	.style("text-anchor", "end")
       	.text("");
-  
-   
-    val = val.toLowerCase(); 
+	
+	console.log(transparent_column);
+
+	if (transparent_column !== "" && val !== "" && val2 !== "") {
+	transparent_column = transparent_column.toString();
+	val = val.toString();
+	}
+	else {
+	val = val.toLowerCase();
+	}
+	
+	// transparency according to transparent column value
+	var transp = function(d){
+                    var x = val.length === 0;
+                    return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
+                };
+	
+	var transpar = function(d) { 
+				if (val !== ""){
+					if (d[transparent_column] == val){
+						return parseFloat(val1);
+					}
+						else{
+							return parseFloat(val2);
+						}
+					}
+				else { 
+					return transp(d);}
+				};
+	 
     var searchFunc = function(d){
                     var x=d[category_search].toLowerCase().indexOf(val) < 0
                     || val.length === 0;
@@ -556,11 +627,11 @@ function highlighting(val){
              var peopleTable1 = tabulate(searched_data, columns);
         };
 
-
-    var trans = function(d){
-                    var x = val.length === 0;
-                    return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
-                };
+	var trs = function(){
+			var x = val.length === 0;
+			return x;
+	}
+	
     // draw dots
     svg.selectAll(".dot")
       	.data(data)
@@ -572,7 +643,7 @@ function highlighting(val){
       	.attr("cx", xMap)
       	.attr("cy", yMap)
       	.style("fill", function(d) { return color(cValue(d));})
-        .style("opacity",function(d){ return trans(d);})
+        .style("opacity",function(d) { return transpar(d);})
       	.on("mouseover", function(d) {
 
         tooltip.transition()
