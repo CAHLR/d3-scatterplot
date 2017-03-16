@@ -55,7 +55,13 @@ body {
   background: rgba(255,255,255,0.80);
   pointer-events: none;
 }
-
+.tooltip1 {
+  position: absolute;
+  width: 100px;
+  height:20px;
+  background: rgba(255,255,255,0.9);
+  pointer-events: none;
+}
 .select1{
     margin-left: 200px;
     margin-top: 520px;
@@ -76,6 +82,11 @@ body {
     margin-left: 50px;
     margin-top: 300px;
     }
+.select5{
+    margin-left: 680px;
+    margin-top: 525px;
+    position: absolute;
+}
 input{
         width: 100px;
 }
@@ -101,6 +112,12 @@ input{
 .p5 {
     margin-left: 310px;
     margin-top: 520px;
+    position: absolute;
+    font-size: 150%;
+}
+.p6 {
+    margin-left: 550px;
+    margin-top: 525px;
     position: absolute;
     font-size: 150%;
 }
@@ -154,7 +171,9 @@ input{
 
 </style>
 <body>
-	<p class="p5">Check for spectrum<input type="checkbox" id="cbox1" value="first_checkbox"></p>
+
+<p class="p6">Click on feature</p>
+<p class="p5">Check for spectrum<input type="checkbox" id="cbox1" value="first_checkbox"></p>
 <p class="p1" id="demo" >Coloring column</p>
 <p class="p2" id="demo2" >Searching column</p>
 <p class="p4" id="demo4" >Transparent column</p>
@@ -164,7 +183,7 @@ input{
 			<input type="text" id="myVal" placeholder="Enter text&hellip;"></form>
 <form name="myform1" class="form1" onSubmit="return handleClick1()">
             
-	<label><h3>Enter value     Transparent values b/w 0-1</h3></label><br>
+	<label><h4>Enter attribute value    Transparent values b/w 0-1</h4></label><br>
             <input type="text" id="myVal1" placeholder="Enter text&hellip;">
 			<input type="text" id="myVal2" placeholder="Enter value&hellip;">
 			<input type="text" id="myVal3" placeholder="Enter value&hellip;">
@@ -228,6 +247,7 @@ var print_array = function(arr, d) {
 var category;
 // column for the transparent value
 var transparent_column="";
+var feature_column = "";
 
 var cValue = function(d) { return d[category];},
     color = d3.scale.category20();
@@ -303,6 +323,9 @@ var dropDown2 = d3.select("body").append("select")
                  .attr("class", "select4")
                  .attr("name", "category");
 
+var dropDown3 = d3.select("body").append("select")
+                 .attr("class", "select5")
+                 .attr("name", "category");
 var category_search_data = [];
 var categories = [];
 var category_search;
@@ -368,16 +391,27 @@ d3.csv(dataset, function(data) {
         .append("option")
         .text(function(d) { return d;})
         .text(function(d) {return d;});
+  dropDown3.selectAll("option")
+        .data(category_search_data)
+        .enter()
+        .append("option")
+        .text(function(d) { return d;})
+        .text(function(d) {return d;});
+  feature_column = category_search_data[0];
 });
 
 dropDown.on("change", plotting);
 dropDown1.on("change", plotting2);
 dropDown2.on("change", plotting3);
+dropDown3.on("change", plotting4);
 
 if ("q" in dicts) {
 highlighting(dicts["q"], "", "");
 } else { 
 highlighting("", "", "");
+}
+function plotting4(){
+		feature_column = d3.event.target.value;
 }
 
 function plotting3(){
@@ -692,10 +726,24 @@ function highlighting(val, val1, val2){
                   .style("top", 30 + "px");
         })
         .on("mouseout", function(d) {
+			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+			.style("fill", function(d) { return color(cValue(d));});
+
           tooltip.transition()
                .duration(500)
                .style("opacity", 0);
-        });
+        })
+		.on("click", function(d) {
+			
+			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:7 ; });
+			tooltip.transition()
+				.attr("class", "tooltip1")
+               .duration(200)
+               .style("opacity", 1);
+			   tooltip.html("<b>"+d[feature_column]+"</b>")
+               .style("left", (d3.event.pageX + 10) + "px")
+               .style("top", (d3.event.pageY - 10) + "px");	
+		});
 
     lasso.items(d3.selectAll(".dot"));
 	var len = color.domain().length;
