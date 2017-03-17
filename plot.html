@@ -55,32 +55,32 @@ body {
 }
 .select1{
     margin-left: 200px;
-    margin-top: 520px;
+    margin-top: 800px;
     position: absolute;
 }
 .select2{
     margin-left: 200px;
-    margin-top: 570px;
+    margin-top: 850px;
     position: absolute;
 }
 .select4{
     margin-left: 200px;
-    margin-top: 670px;
+    margin-top: 950px;
     position: absolute;
 }
 .select3{
     position: absolute;
     margin-left: 50px;
-    margin-top: 300px;
+    margin-top: 600px;
     }
 .select5{
-    margin-left: 680px;
-    margin-top: 520px;
+    margin-left: 700px;
+    margin-top: 800px;
     position: absolute;
 }
 .select6{
     margin-left: 500px;
-    margin-top: 570px;
+    margin-top: 850px;
     position: absolute;
 }
 input{
@@ -90,53 +90,53 @@ input{
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 620px;
+    margin-top: 900px;
 }
 .form3 {
     text-align: left;
     position: absolute;
     margin-left: 680px;
-    margin-top: 565px;
+    margin-top: 850px;
 }
 .form1 {
     text-align: left;
     position: absolute;
-    margin-left: 200px;
-    margin-top: 720px;
+    margin-left: 20px;
+    margin-top: 1000px;
 }
 .p1 {
     margin-left: 20px;
-    margin-top: 520px;
+    margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
 .p5 {
-    margin-left: 310px;
-    margin-top: 520px;
+    margin-left: 350px;
+    margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
 .p6 {
-    margin-left: 550px;
-    margin-top: 520px;
+    margin-left: 570px;
+    margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
 .p2 {
     margin-left: 20px;
-    margin-top: 570px;
+    margin-top: 850px;
     position: absolute;
     font-size: 150%;
 }
 .p7 {
-    margin-left: 310px;
-    margin-top: 570px;
+    margin-left: 350px;
+    margin-top: 850px;
     position: absolute;
     font-size: 150%;
 }
 .p4 {
     margin-left: 20px;
-    margin-top: 675px;
+    margin-top: 950px;
     position: absolute;
     font-size: 150%;
 }
@@ -184,9 +184,7 @@ input{
 <p class="p2" id="demo2" >Searching column</p>
 <p class="p4" id="demo4" >Transparent column</p>
 <p class="p3" id="demo3"></p>
-<form name="myform3" class="form3" onSubmit="return handleClick2()">
-            <input name="Submit"  type="submit" value="Refresh" >
-</form>
+
 <form name="myform" class="form2" onSubmit="return handleClick()">
             <input name="Submit"  type="submit" value="Search" >
 			<input type="text" id="myVal" placeholder="Enter text&hellip;"></form>
@@ -198,12 +196,14 @@ input{
 			<input name="Submit"  type="submit" value="Transparent">
 </form>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="//d3js.org/d3-path.v0.1.min.js"></script>
+<script src="//d3js.org/d3-shape.v0.6.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
 <script src="crossfilter.min.js"></script>
 <script>
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var margin = {top: 40, right: 40, bottom: 40, left: 40},
+    width = 700 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
 
 var query = window.location.search.substring(1);
 var temp_query = query.split("&");
@@ -364,7 +364,7 @@ var temp = [];
 var x_max, x_min, y_max, y_min;
 
 // getting header files in csv file
-d3.csv(dataset, function(data) {
+d3.tsv(dataset, function(data) {
   console.log(data[0]);
   temp = Object.keys(data[0]);
   temp.splice(temp.indexOf('x'), 1);
@@ -401,13 +401,13 @@ d3.csv(dataset, function(data) {
         .text(function(d) { return d;})
         .text(function(d) {return d;});
   dropDown2.selectAll("option")
-        .data(category_search_data)
+        .data(temp_cat)
         .enter()
         .append("option")
         .text(function(d) { return d;})
         .text(function(d) {return d;});
   dropDown3.selectAll("option")
-        .data(category_search_data)
+        .data(temp_cat)
         .enter()
         .append("option")
         .text(function(d) { return d;})
@@ -420,6 +420,7 @@ d3.csv(dataset, function(data) {
         .text(function(d) {return d;});
   shaping_column = "Select";
   feature_column = category_search_data[0];
+  transparent_column = "Select";
 });
 
 dropDown.on("change", plotting);
@@ -448,28 +449,33 @@ function plotting2(){
 // function to call for change event
 function plotting(){
 		
-		dropDown4.property( "value", "Select" );
+		// dropDown4.property( "value", "Select" );
 		category = d3.event.target.value;	
-		shaping_column = "Select";
+		// shaping_column = "Select";
 		color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
-		highlighting("", "", "");				
+		val = document.getElementById("myVal1").value; 
+		val1 = document.getElementById("myVal2").value; 
+		val2 = document.getElementById("myVal3").value;
+		highlighting(val, val1, val2);				
 }
 
 // function to call for change event
 function plotting5(){
 		
-		dropDown.property( "value", "Select" );
+		// dropDown.property( "value", "Select" );
 		shaping_column = d3.event.target.value;	
 		color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
-		highlighting("", "", "");				
+		val = document.getElementById("myVal1").value; 
+		val1 = document.getElementById("myVal2").value; 
+		val2 = document.getElementById("myVal3").value;
+		highlighting(val, val1, val2);				
 }
 
 // search event
 function handleClick(event){
 				
-				shaping_column = "Select";
                 console.log(document.getElementById("myVal").value);
                 highlighting(document.getElementById("myVal").value, "", "");
                 return false;
@@ -478,7 +484,6 @@ function handleClick(event){
 // transparent event
 function handleClick1(event){
 			
-				shaping_column = "Select";
                 console.log(document.getElementById("myVal1").value);
 				val = document.getElementById("myVal1").value; 
 				val1 = document.getElementById("myVal2").value; 
@@ -500,6 +505,17 @@ function handleClick2(event){
                 highlighting("", "", "");
                 return false;
             }
+function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
 
 function linspace(start, end, n) {
         var out = [];
@@ -514,9 +530,12 @@ function linspace(start, end, n) {
         out.push(end);
         return out;
     }
-
-scale = ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'];
-
+var scale_d = {
+    'puOr11': ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'],
+    'spectral8': ['#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd'],
+    'redBlackGreen': ['#ff0000', '#AA0000', '#550000', '#005500', '#00AA00', '#00ff00'],
+	};
+scale = scale_d['spectral8']; 
 // function for plotting
 function highlighting(val, val1, val2){
 
@@ -626,7 +645,7 @@ function highlighting(val, val1, val2){
 	svg.call(lasso);
 
     // load data
-	d3.csv(dataset, function(error, data) {
+	d3.tsv(dataset, function(error, data) {
 
 	// change string (from CSV) into number format
 	var numerics = {};
@@ -652,21 +671,41 @@ function highlighting(val, val1, val2){
             temp3.push(d[category_search]);
 			// console.log(d["z"] == parseInt(d["z"]));
      	 });
-	
+	console.log(numerics);
+	console.log(category);
 	// set color according to spectrum
 	if (numerics[category] && document.getElementById('cbox1').checked) {
+		console.log(category);
+	console.log(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})));	
 		color = d3.scale.linear()
-			.domain(linspace(d3.min(data, cValue), d3.max(data, cValue),scale.length))
+	.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
 			.range(scale);	
 	 }
 
   	// don't want dots overlapping axis, so add in buffer to data domain
+	var zoom = getParameterByName('zoom');
+
     x_max = d3.max(data, xValue)+1;
     x_min = d3.min(data, xValue)-1;
     y_max = d3.max(data, yValue)+1;
     y_min = d3.min(data, yValue)-1; 
-	xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-  	yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+	if (zoom != null) {
+                    zoom = zoom.substr(1, zoom.length-2);
+                    commaIndex = zoom.indexOf(',');
+                    x_min = parseFloat(zoom.substr(0, commaIndex));
+                    zoom = zoom.substr(commaIndex+1);
+                    commaIndex = zoom.indexOf(',');
+                    x_max = parseFloat(zoom.substr(0, commaIndex));
+                    zoom = zoom.substr(commaIndex+1);
+                    commaIndex = zoom.indexOf(',');
+                    y_min = parseFloat(zoom.substr(0, commaIndex));
+                    y_max = parseFloat(zoom.substr(commaIndex+1));
+                }
+                xScale.domain([x_min, x_max]);
+                yScale.domain([y_min, y_max]);
+	
+	// xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+  	// yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
   	// x-axis
   	svg.append("g")
@@ -692,7 +731,7 @@ function highlighting(val, val1, val2){
       	.style("text-anchor", "end")
       	.text("");
 	
-	if (transparent_column !== "" && val !== "" && val2 !== "") {
+	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
 	transparent_column = transparent_column.toString();
 	val = val.toString();
 	}
@@ -745,15 +784,19 @@ function highlighting(val, val1, val2){
     if ( val != "" && searched_data.length != 0) { 
              var peopleTable1 = tabulate(searched_data, columns);
         };
-
+	var sizes = [50, 100, 150];
 	var symbols = ["circle", "cross", "diamond", "square", "triangle-down", "triangle-up"];
+	// var symbols = [ d3.svg.symbol().type("circle"), d3.svg.symbol().type("cross"), d3.svg.symbol().type("diamond"), d3.svg.symbol().type("square"),d3.svg.symbol().type( "triangle-down"), d3.svg.symbol().type("triangle-up")];
+
+	console.log(symbols);
 	if (shaping_column !== "Select" ) {
-		category = shaping_column;
+		// category = shaping_column;
 		svg.selectAll(".dot")
       	.data(data)
     	.enter().append("path")
         .attr("class", "point")
-		.attr("d", d3.svg.symbol().type(function(d) { return symbols[symbol[d[shaping_column]]%6]}))
+		.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%3];}))
+
 		.attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ")"; })
       	.style("fill", function(d) { return color(cValue(d));})
         .style("opacity",function(d) { return transpar(d);})
@@ -835,8 +878,8 @@ function highlighting(val, val1, val2){
 	
 	if (numerics[category] && document.getElementById('cbox1').checked) {
 	
-		m1 = parseInt(d3.min(data, cValue))-1;
-		m2 = parseInt(d3.max(data, cValue))+1;
+		m1 = parseInt(d3.min(data.map(function(d) {return parseInt(d[category])})));
+		m2 = parseInt(d3.max(data.map(function(d) {return parseInt(d[category])})));
 		console.log(m1, m2);
 		// create a scale and axis for the legend
 		var legend = svg.selectAll(".legend")
@@ -869,26 +912,57 @@ function highlighting(val, val1, val2){
 				.attr('x1', 0)
 				.attr('y1', 0)
 				.attr('width', 18)
-				.attr('height', 200)
-				.attr("transform", "translate(" + 862 + ", 0)")
+				.attr('height', 150)
+				.attr("transform", "translate(" + 582 + ", 0)")
 				.style('fill', 'url(#gradient)');
 
         var legendScale = d3.scale.linear()
             .domain([m1, m2])
-            .range([0, 200]);
+            .range([150, 0]);
 
         var legendAxis = d3.svg.axis()
             .scale(legendScale)
             .orient("right")
-            // .tickValues(d3.min(data, cValue), d3.max(data, cValue))
+            // .tickValues([m1, m2])
             .ticks(10);
 
 		legend.append("g")
 			.attr("class", "legend axis")
-            .attr("transform", "translate(" + 880 + ", 0)")
+            .attr("transform", "translate(" + 600 + ", 0)")
 			.call(legendAxis);
 	}
 	else {
+		var keys = Object.keys(symbol)
+		leng = keys.length;
+		if (leng<20 && shaping_column != "Select"){
+			// draw legend
+		
+	var legend = svg.selectAll(".legend")
+			.data(keys)
+			.enter().append("g")
+			// .attr("class", "legend");
+			// .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+		console.log(keys);
+		console.log(symbol);
+		console.log(symbols);
+		// draw legend colored rectangles
+		legend.append("path")
+			.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];})
+	)
+			.attr("x", width + 0)
+			.attr("width", 18)
+			.attr("height", 18)
+			.attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+
+		// draw legend text
+		legend.append("text")
+			// .attr("x", 100 + 0)
+			// .attr("y", 4)
+			.attr("dy", ".35em")
+			.style("text-anchor", "begin")
+			.text(function(d) { return d;})
+			.attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+		}
 
 		if(len <= 30 && category != "Select"){
 
