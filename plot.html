@@ -259,6 +259,11 @@ var tooltip = d3.select("body").append("div")
 				.attr("class", "tooltip")
 				.style("opacity", 0);
 
+var tooltip1 = d3.select("body").append("div")
+				.attr("class", "tooltip1")
+				.style("opacity", 0);
+
+
 // to print all the values attributes                
 var print_array = function(arr, d) {
         var x = "";
@@ -896,6 +901,7 @@ function highlighting(val, val1, val2){
 	else {	
 	console.log(document.getElementById('cbox2').checked)	
     // draw dots
+	
     svg.selectAll(".dot")
       	.data(data)
     	.enter().append("circle")
@@ -907,7 +913,8 @@ function highlighting(val, val1, val2){
       	.attr("cy", yMap)
       	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
         .style("opacity",function(d) { return transpar(d);})
-      	.on("mouseover", function(d) {
+      	
+		.on("mouseover", function(d) {
 
         tooltip.transition()
                .duration(200)
@@ -917,24 +924,14 @@ function highlighting(val, val1, val2){
                   .style("left", 60 + "px")
                   .style("top", 30 + "px");
         })
-        .on("mouseout", function(d) {
-		//	d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
-	//		.style("fill", function(d) { return color(cValue(d));});
-
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
-        })
+       
 		.on("click", function(d) {
 			
-			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:7 ; });
-			coordinates = d3.mouse(this);
-		//	console.log(coordinates);
-			tooltip.transition()
-				.attr("class", "tooltip1")
-               .duration(200)
+			tooltip1.transition()
+			   .attr("class", "tooltip1")
                .style("opacity", 1);
-			   tooltip.html("<b>"+d[feature_column]+"</b>")
+			
+			tooltip1.html("<b>"+d[feature_column]+"</b>")
                .style("left", (d3.event.pageX + 10) + "px")
                .style("top", (d3.event.pageY - 10) + "px");	
 		});
@@ -942,6 +939,7 @@ function highlighting(val, val1, val2){
 	coordinatesx = [];
 	coordinatesy = [];
 	svg.on("click",function() {
+		tooltip1.style("opacity", 0);
 		var coordinates1 = d3.mouse(this);
 		coordinatesx.push(coordinates1[0]);
 		coordinatesy.push(coordinates1[1]);
