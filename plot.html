@@ -500,6 +500,7 @@ function plotting5(){
 		highlighting(val, val1, val2);				
 }
 
+var zoomed = 0;
 // search event
 function handleClick(event){
 				
@@ -520,8 +521,11 @@ function handleClick1(event){
             }
 function handleClick4(){
 				
-                highlighting("", "", "");
-				document.getElementById("zoomxy").value = ""
+				val = document.getElementById("myVal1").value; 
+				val1 = document.getElementById("myVal2").value; 
+				val2 = document.getElementById("myVal3").value;
+                highlighting(val, val1, val2);
+			//	document.getElementById("zoomxy").value = ""
             }
 function handleClick2(event){
 				
@@ -561,6 +565,8 @@ function linspace(start, end, n) {
         out.push(end);
         return out;
     }
+coordinatesx = [];
+coordinatesy = [];
 var scale_d = {
     'puOr11': ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'],
     'spectral8': ['#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd'],
@@ -731,22 +737,26 @@ function highlighting(val, val1, val2){
 
   	// don't want dots overlapping axis, so add in buffer to data domain
 	var zoom = getParameterByName('zoom');
-
+	if (document.getElementById("cbox3").checked==false && zoomed == 0) 
+	{
     x_max = d3.max(data, xValue)+1;
     x_min = d3.min(data, xValue)-1;
     y_max = d3.max(data, yValue)+1;
     y_min = d3.min(data, yValue)-1; 
+	}
 	// if (zoom != null) {
-	if (document.getElementById("cbox3").checked){
+	if (document.getElementById("cbox3").checked==true && zoomed==0){
 					
-					x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))
-					x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))
-					y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))
-					y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))
-					console.log("yeah")
+					x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
+					x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
+					y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
+					y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
+
 					console.log(x_max, x_min, y_max, y_min);
 					document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
-					document.getElementById("cbox3").checked = false;
+					
+					zoomed = 1;
+					// document.getElementById("cbox3").checked = false;
 					/*
                     zoom = zoom.substr(1, zoom.length-2);
                     commaIndex = zoom.indexOf(',');
@@ -954,8 +964,7 @@ function highlighting(val, val1, val2){
 			   }
 		});
 	}
-	coordinatesx = [];
-	coordinatesy = [];
+
 	svg.on("click",function() {
 		// svg.select("#myText").remove();
 
