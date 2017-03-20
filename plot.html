@@ -886,22 +886,17 @@ function highlighting(val, val1, val2){
                .style("opacity", 0);
         })
 		.on("click", function(d) {
-			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:7 ; });
-			coordinates = d3.mouse(this);
-			console.log(coordinates);
-			tooltip.transition()
-				.attr("class", "tooltip1")
-               .duration(200)
-               .style("opacity", 1);
-			   tooltip.html("<b>"+d[feature_column]+"</b>")
-               .style("left", (d3.event.pageX + 10) + "px")
-               .style("top", (d3.event.pageY - 10) + "px");	
+			
+			svg.append("text")
+			.text(d[feature_column])
+			.attr("x", (d3.event.pageX-50))
+            .attr("y", (d3.event.pageY-35));
 		});	
 	}
 	else {	
 	console.log(document.getElementById('cbox2').checked)	
     // draw dots
-	
+		marked = {}
     svg.selectAll(".dot")
       	.data(data)
     	.enter().append("circle")
@@ -924,21 +919,46 @@ function highlighting(val, val1, val2){
                   .style("left", 60 + "px")
                   .style("top", 30 + "px");
         })
+			.on("mouseout", function(d) {
+			tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+        })
        
 		.on("click", function(d) {
 			
+		console.log("Hello");
+		if (!([d3.event.pageX, d3.event.pageY] in marked)){
+		marked[[d3.event.pageX, d3.event.pageY]] = true;
+		marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
+		marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
+		marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
+		marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
+		marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
+		marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
+		marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
+		marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
+		svg.append("text")
+			.text(d[feature_column])
+			.attr("x", (d3.event.pageX-50))
+            .attr("y", (d3.event.pageY-35));
+			/*
 			tooltip1.transition()
 			   .attr("class", "tooltip1")
-               .style("opacity", 1);
-			
+               .style("opacity", 1);	
+			   
 			tooltip1.html("<b>"+d[feature_column]+"</b>")
                .style("left", (d3.event.pageX + 10) + "px")
                .style("top", (d3.event.pageY - 10) + "px");	
+			   */
+			   }
 		});
 	}
 	coordinatesx = [];
 	coordinatesy = [];
 	svg.on("click",function() {
+		// svg.select("#myText").remove();
+
 		tooltip1.style("opacity", 0);
 		var coordinates1 = d3.mouse(this);
 		coordinatesx.push(coordinates1[0]);
