@@ -89,6 +89,10 @@ input{
 .input1{
 	width : 40px;
 }
+.input2{
+	width : 200px;
+	height : 25px;
+}
 .form2 {
     text-align: left;
     position: absolute;
@@ -110,6 +114,12 @@ input{
 .p1 {
     margin-left: 20px;
     margin-top: 800px;
+    position: absolute;
+    font-size: 150%;
+}
+.p8 {
+    margin-left: 20px;
+    margin-top: 750px;
     position: absolute;
     font-size: 150%;
 }
@@ -180,6 +190,8 @@ input{
 </style>
 <body>
 
+<p class="p8">zoom<input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select two points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+
 <p class="p7">Shaping Column</p>
 <p class="p6">Click on feature</p>
 <p class="p5">spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
@@ -212,37 +224,6 @@ var query = window.location.search.substring(1);
 var temp_query = query.split("&");
 var dicts = {};
 var tvars;
-
-
-// zoom to d3 plot
-
-function zoomed() {
-  container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-}
-
-function dragstarted(d) {
-  d3.event.sourceEvent.stopPropagation();
-  d3.select(this).classed("dragging", true);
-}
-
-function dragged(d) {
-  d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-}
-
-function dragended(d) {
-  d3.select(this).classed("dragging", false);
-}
-
-
-var zoom1 = d3.behavior.zoom()
-    .scaleExtent([1, 10])
-    .on("zoom", zoomed);
-
-var drag = d3.behavior.drag()
-    .origin(function(d) { return d; })
-    .on("dragstart", dragstarted)
-    .on("drag", dragged)
-    .on("dragend", dragended);
 
 for(var i=0;i<temp_query.length;i++){
 	tvars = temp_query[i].split("=");
@@ -532,7 +513,11 @@ function handleClick1(event){
                 highlighting(val, val1, val2);
                 return false;
             }
-
+function handleClick4(){
+				
+                highlighting("", "", "");
+				document.getElementById("zoomxy").value = ""
+            }
 function handleClick2(event){
 				
 				shaping_column = "Select";
@@ -588,13 +573,17 @@ function highlighting(val, val1, val2){
     d3.select("svg").remove();
     d3.select("table").remove();
     d3.select("svg").remove();
-    
+	
+	// function zoom() {
+	// 	svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+//		}
     svg = d3.select("body").append("svg")
     		.attr("width", width + margin.left + margin.right)
     		.attr("height", height + margin.top + margin.bottom)
   			.append("g")
 			.attr("transform","translate(" + margin.left + "," + margin.top + ")");
-   
+	
+
     // Lasso starts
     var lasso_start = function() {
     d3.select("table").remove();
@@ -651,7 +640,7 @@ function highlighting(val, val1, val2){
                 }
             }
         }
-
+	
     // render the table
     if(selected_data.length != 0) {
             var peopleTable = tabulate(selected_data, columns, x_values);
@@ -684,7 +673,7 @@ function highlighting(val, val1, val2){
 
     // Init the lasso on the svg:g that contains the dots
 	svg.call(lasso);
-
+		
     // load data
 	d3.tsv(dataset, function(error, data) {
 
@@ -742,7 +731,18 @@ function highlighting(val, val1, val2){
     x_min = d3.min(data, xValue)-1;
     y_max = d3.max(data, yValue)+1;
     y_min = d3.min(data, yValue)-1; 
-	if (zoom != null) {
+	// if (zoom != null) {
+	if (document.getElementById("cbox3").checked){
+					
+					x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))
+					x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))
+					y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))
+					y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))
+					console.log("yeah")
+					console.log(x_max, x_min, y_max, y_min);
+					document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
+					document.getElementById("cbox3").checked = false;
+					/*
                     zoom = zoom.substr(1, zoom.length-2);
                     commaIndex = zoom.indexOf(',');
                     x_min = parseFloat(zoom.substr(0, commaIndex));
@@ -753,6 +753,7 @@ function highlighting(val, val1, val2){
                     commaIndex = zoom.indexOf(',');
                     y_min = parseFloat(zoom.substr(0, commaIndex));
                     y_max = parseFloat(zoom.substr(commaIndex+1));
+					*/
                 }
                 xScale.domain([x_min, x_max]);
                 yScale.domain([y_min, y_max]);
@@ -848,6 +849,9 @@ function highlighting(val, val1, val2){
 	sizes[5] = ["0", "0", "0", "0"]
 
 	var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
+	
+	
+	
 	if (shaping_column !== "Select" ) {
 		// category = shaping_column;
 		svg.selectAll(".dot")
@@ -878,6 +882,8 @@ function highlighting(val, val1, val2){
         })
 		.on("click", function(d) {
 			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:7 ; });
+			coordinates = d3.mouse(this);
+			console.log(coordinates);
 			tooltip.transition()
 				.attr("class", "tooltip1")
                .duration(200)
@@ -922,6 +928,8 @@ function highlighting(val, val1, val2){
 		.on("click", function(d) {
 			
 			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:7 ; });
+			coordinates = d3.mouse(this);
+		//	console.log(coordinates);
 			tooltip.transition()
 				.attr("class", "tooltip1")
                .duration(200)
@@ -931,8 +939,17 @@ function highlighting(val, val1, val2){
                .style("top", (d3.event.pageY - 10) + "px");	
 		});
 	}
-
-    lasso.items(d3.selectAll(".dot"));
+	coordinatesx = [];
+	coordinatesy = [];
+	svg.on("click",function() {
+		var coordinates1 = d3.mouse(this);
+		coordinatesx.push(coordinates1[0]);
+		coordinatesy.push(coordinates1[1]);
+		console.log(coordinatesx, coordinatesy);
+	})
+	
+    
+	lasso.items(d3.selectAll(".dot"));
 	var len = color.domain().length;
 	
 	if (numerics[category] && document.getElementById('cbox1').checked) {
