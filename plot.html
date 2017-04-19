@@ -123,6 +123,12 @@ input{
     position: absolute;
     font-size: 150%;
 }
+.p9 {
+    margin-left: 20px;
+    margin-top: 700px;
+    position: absolute;
+    font-size: 150%;
+}
 .p5 {
     margin-left: 350px;
     margin-top: 800px;
@@ -190,6 +196,7 @@ input{
 </style>
 <body>
 
+<p class="p9">Circle<input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select one points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 <p class="p8">zoom<input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select two points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
 
 <p class="p7">Shaping Column</p>
@@ -745,7 +752,7 @@ function highlighting(val, val1, val2){
     y_min = d3.min(data, yValue)-1; 
 	}
 	// if (zoom != null) {
-	if (document.getElementById("cbox3").checked==true && zoomed==0){
+	if (document.getElementById("cbox3").checked==true && zoomed==0 && coordinatesx.length == 2){
 					
 					x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
 					x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
@@ -777,6 +784,62 @@ function highlighting(val, val1, val2){
   	// yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
   	// x-axis
+	cx = 0;
+	cy = 0;
+	ans = 0;
+	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) 
+	{
+		console.log(document.getElementById("drawxy").value);
+		draw = document.getElementById("drawxy").value;
+		draw = draw.split(',');
+		console.log("hello");
+		cx = coordinatesx[0]
+		cy = coordinatesy[0]
+		
+		coordinatesx[0] = xScale.invert(coordinatesx[0])
+		coordinatesy[0] = yScale.invert(coordinatesy[0])
+		console.log(coordinatesx, coordinatesy);
+		
+		for (var i=1 ; i <= 1000; i++)
+		{		
+			c = 0;
+			t = 0;
+			f = i;
+			data.forEach(function(d) {
+            d.x = +d.x
+            d["y"] = +d["y"]
+			
+			// dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
+			dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
+			// console.log(dist)	
+			if (d[draw[1]] == draw[2]) {
+				if (dist <= f) {
+				c += 1;
+			}
+			t += 1;
+			}
+			});
+		console.log(c, t);
+		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
+				ans = f;
+				break;
+		}
+			
+	}
+}
+	console.log(ans);	
+	if (ans != 0) {	
+	console.log(xScale(ans))
+	svg.append("circle")
+		.attr("r", ans)
+		.attr("cx", cx)
+		.attr("cy", cy)
+		.style("stroke", "black")    // set the line colour
+		.style("stroke-width", 5)
+		.style("fill", "green")
+		.style("opacity", .2);
+	}
+
   	svg.append("g")
       	.attr("class", "x axis")
       	.attr("transform", "translate(0," + height + ")")
