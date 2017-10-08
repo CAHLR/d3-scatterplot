@@ -54,18 +54,18 @@ body {
   pointer-events: none;
 }
 .select1_color{
-    margin-left: 200px;
+    margin-left: 250px;
     margin-top: 800px;
     position: absolute;
 }
 .select2_searching{
-    margin-left: 200px;
-    margin-top: 850px;
+    margin-left: 250px;
+    margin-top: 925px;
     position: absolute;
 }
 .select4_transparent{
-    margin-left: 200px;
-    margin-top: 950px;
+    margin-left: 250px;
+    margin-top: 1050px;
     position: absolute;
 }
 .select3_unknown{
@@ -74,13 +74,13 @@ body {
     margin-top: 600px;
 }
 .select6_click{
-    margin-left: 700px;
-    margin-top: 800px;
+    margin-left: 250px;
+    margin-top: 875px;
     position: absolute;
 }
 .select7_shaping{
-    margin-left: 500px;
-    margin-top: 850px;
+    margin-left: 250px;
+    margin-top: 1000px;
     position: absolute;
 }
 input{
@@ -97,19 +97,19 @@ input{
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 900px;
+    margin-top: 950px;
 }
 .form3_shaping_unsure__unused {
     text-align: left;
     position: absolute;
     margin-left: 680px;
-    margin-top: 850px;
+    margin-top: 925px;
 }
 .form1_transparent {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 1000px;
+    margin-top: 1050px;
 }
 .p1_coloring {
     margin-left: 20px;
@@ -130,32 +130,32 @@ input{
     font-size: 150%;
 }
 .p5_coloring_spectrum_log {
-    margin-left: 350px;
-    margin-top: 800px;
+    margin-left: 20px;
+    margin-top: 825px;
     position: absolute;
     font-size: 150%;
 }
 .p6_click {
-    margin-left: 570px;
-    margin-top: 800px;
+    margin-left: 20px;
+    margin-top: 875px;
     position: absolute;
     font-size: 150%;
 }
 .p2_searching {
     margin-left: 20px;
-    margin-top: 850px;
+    margin-top: 925px;
     position: absolute;
     font-size: 150%;
 }
 .p7_shaping {
-    margin-left: 350px;
-    margin-top: 850px;
+    margin-left: 20px;
+    margin-top: 1000px;
     position: absolute;
     font-size: 150%;
 }
 .p4_transparent {
     margin-left: 20px;
-    margin-top: 950px;
+    margin-top: 1050px;
     position: absolute;
     font-size: 150%;
 }
@@ -196,34 +196,35 @@ input{
 </style>
 <body>
 
-<p class="p9_circle">Circle<input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select one points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
+<p class="p9_circle"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 
-<p class="p8_zoom">zoom<input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select two points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+<p class="p8_zoom"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
 
-<p class="p7_shaping">Shaping Column</p>
+<p class="p7_shaping"><b>Shaping Column</b></p>
 
-<p class="p6_click">Click on feature</p>
+<p class="p6_click"><b>Click on feature</b></p>
 
-<p class="p5_coloring_spectrum_log">spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
+<p class="p5_coloring_spectrum_log">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
 
-<p class="p1_coloring" id="demo" >Coloring column</p>
+<p class="p1_coloring" id="demo" ><b>Coloring column</b></p>
 
-<p class="p2_searching" id="demo2" >Searching column</p>
+<p class="p2_searching" id="demo2" ><b>Searching column</b></p>
 
-<p class="p4_transparent" id="demo4" >Transparent column</p>
+<p class="p4_transparent" id="demo4" ><b>Transparent column</b></p>
 
 <p class="p3_unknown" id="demo3"></p>
 
 <form name="form2_searching" class="form2_searching" onSubmit="return handleClick()">
-            <input name="Submit"  type="submit" value="Search" >
-			<input type="text" id="myVal" placeholder="Enter text&hellip;"></form>
+			<input type="text" id="myVal" placeholder="Search text">
+      <input name="Submit"  type="submit" value="Apply" >
+</form>
 
 <form name="form1_transparent" class="form1_transparent" onSubmit="return handleClick1()">
-			<label><h4>Enter attribute value and transparent values b/w 0-1</h4></label><br>
-            <input type="text" id="myVal1" placeholder="Enter column value&hellip;">
-			<input type="text" id="myVal2" placeholder="Enter value&hellip;">
-			<input type="text" id="myVal3" placeholder="Enter value&hellip;">
-			<input name="Submit"  type="submit" value="Transparent">
+			<label><p><br>Enter attribute value and transparent values b/w 0-1:</p></label>
+            <input type="text" id="myVal1" placeholder="Attri value">
+			<input type="text" id="myVal2" placeholder="Transp value">
+			<input type="text" id="myVal3" placeholder="Transp value">
+			<input name="Submit"  type="submit" value="Apply">
 </form>
  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="//d3js.org/d3-path.v0.1.min.js"></script>
