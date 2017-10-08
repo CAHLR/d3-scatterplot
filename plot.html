@@ -53,32 +53,32 @@ body {
   background: rgba(255,255,255,0.9);
   pointer-events: none;
 }
-.select1{
+.select1_color{
     margin-left: 200px;
     margin-top: 800px;
     position: absolute;
 }
-.select2{
+.select2_searching{
     margin-left: 200px;
     margin-top: 850px;
     position: absolute;
 }
-.select4{
+.select4_transparent{
     margin-left: 200px;
     margin-top: 950px;
     position: absolute;
 }
-.select3{
+.select3_unknown{
     position: absolute;
     margin-left: 50px;
     margin-top: 600px;
-    }
-.select5{
+}
+.select6_click{
     margin-left: 700px;
     margin-top: 800px;
     position: absolute;
 }
-.select6{
+.select7_shaping{
     margin-left: 500px;
     margin-top: 850px;
     position: absolute;
@@ -93,73 +93,73 @@ input{
 	width : 200px;
 	height : 25px;
 }
-.form2 {
+.form2_searching {
     text-align: left;
     position: absolute;
     margin-left: 20px;
     margin-top: 900px;
 }
-.form3 {
+.form3_shaping_unsure__unused {
     text-align: left;
     position: absolute;
     margin-left: 680px;
     margin-top: 850px;
 }
-.form1 {
+.form1_transparent {
     text-align: left;
     position: absolute;
     margin-left: 20px;
     margin-top: 1000px;
 }
-.p1 {
+.p1_coloring {
     margin-left: 20px;
     margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
-.p8 {
+.p8_zoom {
     margin-left: 20px;
     margin-top: 750px;
     position: absolute;
     font-size: 150%;
 }
-.p9 {
+.p9_circle {
     margin-left: 20px;
     margin-top: 700px;
     position: absolute;
     font-size: 150%;
 }
-.p5 {
+.p5_coloring_spectrum_log {
     margin-left: 350px;
     margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
-.p6 {
+.p6_click {
     margin-left: 570px;
     margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
-.p2 {
+.p2_searching {
     margin-left: 20px;
     margin-top: 850px;
     position: absolute;
     font-size: 150%;
 }
-.p7 {
+.p7_shaping {
     margin-left: 350px;
     margin-top: 850px;
     position: absolute;
     font-size: 150%;
 }
-.p4 {
+.p4_transparent {
     margin-left: 20px;
     margin-top: 950px;
     position: absolute;
     font-size: 150%;
 }
-.p3 {
+.p3_unknown {
     margin-left: 1000px;
     margin-top: 10px;
     position: absolute;
@@ -196,21 +196,29 @@ input{
 </style>
 <body>
 
-<p class="p9">Circle<input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select one points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
-<p class="p8">zoom<input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select two points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+<p class="p9_circle">Circle<input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select one points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 
-<p class="p7">Shaping Column</p>
-<p class="p6">Click on feature</p>
-<p class="p5">spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
-<p class="p1" id="demo" >Coloring column</p>
-<p class="p2" id="demo2" >Searching column</p>
-<p class="p4" id="demo4" >Transparent column</p>
-<p class="p3" id="demo3"></p>
+<p class="p8_zoom">zoom<input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select two points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
 
-<form name="myform" class="form2" onSubmit="return handleClick()">
+<p class="p7_shaping">Shaping Column</p>
+
+<p class="p6_click">Click on feature</p>
+
+<p class="p5_coloring_spectrum_log">spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
+
+<p class="p1_coloring" id="demo" >Coloring column</p>
+
+<p class="p2_searching" id="demo2" >Searching column</p>
+
+<p class="p4_transparent" id="demo4" >Transparent column</p>
+
+<p class="p3_unknown" id="demo3"></p>
+
+<form name="form2_searching" class="form2_searching" onSubmit="return handleClick()">
             <input name="Submit"  type="submit" value="Search" >
 			<input type="text" id="myVal" placeholder="Enter text&hellip;"></form>
-<form name="myform1" class="form1" onSubmit="return handleClick1()">
+
+<form name="form1_transparent" class="form1_transparent" onSubmit="return handleClick1()">
 			<label><h4>Enter attribute value and transparent values b/w 0-1</h4></label><br>
             <input type="text" id="myVal1" placeholder="Enter column value&hellip;">
 			<input type="text" id="myVal2" placeholder="Enter value&hellip;">
@@ -308,7 +316,7 @@ var searchdic = function(arri, find) {
 var tabulate = function(data_tab, columns) {
 
     var table = d3.select("body").append("table")
-            .attr("class", "select3"),
+            .attr("class", "select3_unknown"),
             thead = table.append("thead"),
             tbody = table.append("tbody");
 
@@ -356,23 +364,23 @@ var tabulate = function(data_tab, columns) {
 
 // create the dropdown menu
 var dropDown = d3.select("body").append("select")
-                 .attr("class", "select1")
+                 .attr("class", "select1_color")
                  .attr("name", "category");
 
-var dropDown1 = d3.select("body").append("select")
-                 .attr("class", "select2")
+var dropDown1_searching = d3.select("body").append("select")
+                 .attr("class", "select2_searching")
                  .attr("name", "category");
 
-var dropDown2 = d3.select("body").append("select")
-                 .attr("class", "select4")
+var dropDown2_transparent = d3.select("body").append("select")
+                 .attr("class", "select4_transparent")
                  .attr("name", "category");
 
-var dropDown3 = d3.select("body").append("select")
-                 .attr("class", "select5")
+var dropDown3_click = d3.select("body").append("select")
+                 .attr("class", "select6_click")
                  .attr("name", "category");
 
-var dropDown4 = d3.select("body").append("select")
-                 .attr("class", "select6")
+var dropDown4_shaping = d3.select("body").append("select")
+                 .attr("class", "select7_shaping")
                  .attr("name", "category");
 
 var category_search_data = [];
@@ -422,7 +430,7 @@ d3.tsv(dataset, function(data) {
 	  category = categories[0];
   }
   category_search = category_search_data[0];
-  dropDown1.selectAll("option")
+  dropDown1_searching.selectAll("option")
         .data(category_search_data)
         .enter()
         .append("option")
@@ -434,19 +442,19 @@ d3.tsv(dataset, function(data) {
         .append("option")
         .text(function(d) { return d;})
         .text(function(d) {return d;});
-  dropDown2.selectAll("option")
+  dropDown2_transparent.selectAll("option")
         .data(temp_cat)
         .enter()
         .append("option")
         .text(function(d) { return d;})
         .text(function(d) {return d;});
-  dropDown3.selectAll("option")
+  dropDown3_click.selectAll("option")
         .data(temp_cat)
         .enter()
         .append("option")
         .text(function(d) { return d;})
         .text(function(d) {return d;});
-  dropDown4.selectAll("option")
+  dropDown4_shaping.selectAll("option")
         .data(temp_cat)
         .enter()
         .append("option")
@@ -458,10 +466,10 @@ d3.tsv(dataset, function(data) {
 });
 
 dropDown.on("change", plotting);
-dropDown1.on("change", plotting2);
-dropDown2.on("change", plotting3);
-dropDown3.on("change", plotting4);
-dropDown4.on("change", plotting5);
+dropDown1_searching.on("change", plotting2);
+dropDown2_transparent.on("change", plotting3);
+dropDown3_click.on("change", plotting4);
+dropDown4_shaping.on("change", plotting5);
 
 if ("q" in dicts) {
 highlighting(dicts["q"], "", "");
@@ -483,7 +491,7 @@ function plotting2(){
 // function to call for change event
 function plotting(){
 		
-		// dropDown4.property( "value", "Select" );
+		// dropDown4_shaping.property( "value", "Select" );
 		category = d3.event.target.value;	
 		// shaping_column = "Select";
 		color = d3.scale.category20();
@@ -542,7 +550,7 @@ function handleClick2(event){
 				myForm1.myVal1.value = 0;
 				myForm1.myVal2.value = 0;
 				myForm1.myVal3.value = 0;
-				dropDown4.property( "value", "Select" );
+				dropDown4_shaping.property( "value", "Select" );
 				dropDown.property( "value", "Select" );
                 highlighting("", "", "");
                 return false;
