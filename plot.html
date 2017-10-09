@@ -204,7 +204,7 @@ input{
 
 <p class="p6_click"><b>Click on feature</b></p>
 
-<p class="p5_coloring_spectrum_log">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
+<p class="p5_coloring_spectrum_log">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox" onclick="handleClick5()">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox" onclick="handleClick5()"></p>
 
 <p class="p1_coloring" id="demo" ><b>Coloring column</b></p>
 
@@ -542,6 +542,14 @@ function handleClick4(){
 				val2 = document.getElementById("myVal3").value;
                 highlighting(val, val1, val2);
 			//	document.getElementById("zoomxy").value = ""
+            }
+function handleClick5(){
+        
+        val = document.getElementById("myVal1").value; 
+        val1 = document.getElementById("myVal2").value; 
+        val2 = document.getElementById("myVal3").value;
+                highlighting(val, val1, val2);
+      //  document.getElementById("zoomxy").value = ""
             }
 function handleClick2(event){
 				
