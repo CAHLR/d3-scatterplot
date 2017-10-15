@@ -750,14 +750,14 @@ function highlighting(val, val1, val2) {
   	var symbol = {};
     for(var i=1;i<categories.length;i++) {
         dict1[categories[i]] = [];
-				numerics[categories[i]] = 1;
+				numerics[categories[i]] = 0; // jann: previously = 1. Changed s.t. default not numeric
     }
   	counter = 0;
     data.forEach(function(d) {
         d.x = +d.x
         d["y"] = +d["y"]
         for(var i=1;i<categories.length;i++){
-            dict1[categories[i]].push(d[categories[i]]);
+            numerics[categories[i]] = numerics[categories[i]] || (!isNaN(parseFloat(d[categories[i]]))); // jann: as long as one pt is numeric. if this change is good, will change s.t. we just check for !isNaN, and break once we find one
     		    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseFloat(d[categories[i]]));
         }
     		if (!(d[shaping_column] in symbol)) {
