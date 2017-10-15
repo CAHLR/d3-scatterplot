@@ -54,17 +54,17 @@ body {
   pointer-events: none;
 }
 .select1_color{
-    margin-left: 250px;
+    margin-left: 124px;
     margin-top: 800px;
     position: absolute;
 }
 .select2_searching{
-    margin-left: 250px;
+    margin-left: 140px;
     margin-top: 925px;
     position: absolute;
 }
 .select4_transparent{
-    margin-left: 250px;
+    margin-left: 237px;
     margin-top: 1050px;
     position: absolute;
 }
@@ -74,23 +74,24 @@ body {
     margin-top: 600px;
 }
 .select6_click{
-    margin-left: 250px;
+    margin-left: 190px;
     margin-top: 875px;
     position: absolute;
 }
 .select7_shaping{
-    margin-left: 250px;
+    margin-left: 140px;
     margin-top: 1000px;
     position: absolute;
 }
 input{
-        width: 100px;
+  width: 185px;
+  /*text-align: center;*/
 }
 .input1{
 	width : 40px;
 }
 .input2{
-	width : 200px;
+	width : 230px;
 	height : 25px;
 }
 .form2_searching {
@@ -200,17 +201,17 @@ input{
 
 <p class="p8_zoom"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
 
-<p class="p7_shaping"><b>Shaping Column</b></p>
+<p class="p7_shaping"><b>Shape by: </b></p>
 
-<p class="p6_click"><b>Click on feature</b></p>
+<p class="p6_click"><b>Click on feature:</b></p>
 
 <p class="p5_coloring_spectrum_log">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox" onclick="handleClick5()">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox" onclick="handleClick5()"></p>
 
-<p class="p1_coloring" id="demo" ><b>Coloring column</b></p>
+<p class="p1_coloring" id="demo" ><b>Color by: </b></p>
 
-<p class="p2_searching" id="demo2" ><b>Searching column</b></p>
+<p class="p2_searching" id="demo2" ><b>Search by: </b></p>
 
-<p class="p4_transparent" id="demo4" ><b>Transparent column</b></p>
+<p class="p4_transparent" id="demo4" ><b>Transparent attribute: </b></p>
 
 <p class="p3_unknown" id="demo3"></p>
 
@@ -220,10 +221,10 @@ input{
 </form>
 
 <form name="form1_transparent" class="form1_transparent" onSubmit="return handleClick1()">
-			<label><p><br>Enter attribute value and transparent values b/w 0-1:</p></label>
-            <input type="text" id="myVal1" placeholder="Attri value">
-			<input type="text" id="myVal2" placeholder="Transp value">
-			<input type="text" id="myVal3" placeholder="Transp value">
+			<label><p><br>Enter attribute value, and transparency values b/w 0-1:</p></label>
+            <input type="text" id="myVal1" placeholder="Match attri. val">
+			<input type="text" id="myVal2" placeholder="Transp. (match)">
+			<input type="text" id="myVal3" placeholder="Transp. (no match)">
 			<input name="Submit"  type="submit" value="Apply">
 </form>
 
@@ -778,8 +779,9 @@ function highlighting(val, val1, val2) {
 
     	// don't want dots overlapping axis, so add in buffer to data domain
   	var zoom = getParameterByName('zoom');
-  	if (document.getElementById("cbox3").checked==false && zoomed == 0) 
+  	if (document.getElementById("cbox3").checked==false) 
   	{
+        zoomed = 0;
         x_max = d3.max(data, xValue)+1;
         x_min = d3.min(data, xValue)-1;
         y_max = d3.max(data, yValue)+1;
