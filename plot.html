@@ -196,10 +196,10 @@ input{
 }
 </style>
 <body>
-
+<!-- Text, instructions, and buttons -->
 <p class="p9_circle"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 
-<p class="p8_zoom"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+<p class="p8_zoom"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox" onclick="handleClick7_checkZoom"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
 
 <p class="p7_shaping"><b>Shape by: </b></p>
 
@@ -221,20 +221,22 @@ input{
 </form>
 
 <form name="form1_transparent" class="form1_transparent" onSubmit="return handleClick1()">
-			<label><p><br>Enter attribute value, and transparency values b/w 0-1:</p></label>
+			<label><p><br>Enter attribute value, and transparency values b/w 0(invisible)-1(solid):<br>(Currently doesn't work with simultaneously with search.</p></label>
             <input type="text" id="myVal1" placeholder="Match attri. val">
-			<input type="text" id="myVal2" placeholder="Transp. (match)">
-			<input type="text" id="myVal3" placeholder="Transp. (no match)">
+			<input type="text" id="myVal2" placeholder="Opacity (match)">
+			<input type="text" id="myVal3" placeholder="Opacity (no match)">
 			<input name="Submit"  type="submit" value="Apply">
 </form>
 
-
+<!-- Imported JS -->
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="//d3js.org/d3-path.v0.1.min.js"></script>
 <script src="//d3js.org/d3-shape.v0.6.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
 <script src="crossfilter.min.js"></script>
 
+
+<!-- Our JS -->
 <script>
 var margin = {top: 40, right: 40, bottom: 40, left: 40},
     width = 700 - margin.left - margin.right,
@@ -552,6 +554,7 @@ function handleClick1(event){
                 highlighting(val, val1, val2);
                 return false;
             }
+// draw and zoom events
 function handleClick4(){
 				
 				val = document.getElementById("myVal1").value; 
@@ -560,6 +563,14 @@ function handleClick4(){
                 highlighting(val, val1, val2);
 			//	document.getElementById("zoomxy").value = ""
             }
+
+function handleClick7_checkZoom(){
+  if (!document.getElementById('cbox3').checked) {
+    // may possibly want to clear zoomx and zoomy, but
+    // I don't think it's necessary
+  }
+}
+// log and spectrum events
 function handleClick5(){
         
         val = document.getElementById("myVal1").value; 
@@ -568,6 +579,7 @@ function handleClick5(){
                 highlighting(val, val1, val2);
       //  document.getElementById("zoomxy").value = ""
             }
+// currently unused
 function handleClick2(event){
 				
 				shaping_column = "Select";
@@ -606,7 +618,9 @@ function linspace(start, end, n) {
         out.push(end);
         return out;
     }
-
+// separate coordinate storage for zoom, s.t. front appending. may not be necessary if we can switch others to front appending as well.
+zoomx = [];
+zoomy = [];
 coordinatesx = [];
 coordinatesy = [];
 var scale_d = {
@@ -781,6 +795,7 @@ function highlighting(val, val1, val2) {
   	var zoom = getParameterByName('zoom');
   	if (document.getElementById("cbox3").checked==false) 
   	{
+        document.getElementById("zoomxy").value = "";
         zoomed = 0;
         x_max = d3.max(data, xValue)+1;
         x_min = d3.min(data, xValue)-1;
@@ -788,12 +803,12 @@ function highlighting(val, val1, val2) {
         y_min = d3.min(data, yValue)-1; 
   	}
   	// if (zoom != null) {
-  	if (document.getElementById("cbox3").checked==true && zoomed==0 && coordinatesx.length == 2) {
+  	if (document.getElementById("cbox3").checked==true && zoomx.length >= 2) { // jann : previously required zoomed==0, but I want to allow zooming chains
   					
-				x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
-				x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
-				y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
-				y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
+				x_max = xScale.invert(Math.max(zoomx[0], zoomx[1]))+1;
+				x_min = xScale.invert(Math.min(zoomx[0], zoomx[1]))-1;
+				y_max = yScale.invert(Math.min(zoomy[0], zoomy[1]))+1;
+				y_min = yScale.invert(Math.max(zoomy[0], zoomy[1]))-1;
 
 				console.log(x_max, x_min, y_max, y_min);
 				document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
@@ -824,6 +839,7 @@ function highlighting(val, val1, val2) {
   	cx = 0;
   	cy = 0;
   	ans = 0;
+    // if circle and no zoom // jann pretty sure length >= 1 otherwise can only circle if first action
   	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) 
   	{
   		console.log(document.getElementById("drawxy").value);
@@ -880,7 +896,7 @@ function highlighting(val, val1, val2) {
         	.attr("class", "x axis")
         	.attr("transform", "translate(0," + height + ")")
         	.call(xAxis)
-      	.append("text")
+      	  .append("text")
         	.attr("class", "label")
         	.attr("x", width)
         	.attr("y", -6)
@@ -891,7 +907,7 @@ function highlighting(val, val1, val2) {
     	svg.append("g")
         	.attr("class", "y axis")
         	.call(yAxis)
-      	.append("text")
+      	  .append("text")
         	.attr("class", "label")
         	.attr("transform", "rotate(-90)")
         	.attr("y", 6)
@@ -995,7 +1011,6 @@ function highlighting(val, val1, val2) {
              .style("opacity", 0);
           })
     		.on("click", function(d) {
-  			
       			svg.append("text")
         			.text(d[feature_column])
         			.attr("x", (d3.event.pageX-50))
@@ -1008,7 +1023,7 @@ function highlighting(val, val1, val2) {
   		marked = {}
       svg.selectAll(".dot")
         	.data(data)
-      	.enter().append("circle")
+      	  .enter().append("circle")
           .attr("class", "dot")
         	.attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
           .style("stroke", function(d){ return searchFunc(d)-1 ? "yellow":"#000";})
@@ -1018,50 +1033,49 @@ function highlighting(val, val1, val2) {
         	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
           .style("opacity",function(d) { return transpar(d);})
         	
-  		.on("mouseover", function(d) {
-
-          tooltip.transition()
-                 .duration(200)
-                 .style("opacity", 1);
-          tooltip.html(
-                  print_array(category_search_data, d))
-                    .style("left", 60 + "px")
-                    .style("top", 30 + "px");
+      		.on("mouseover", function(d) {
+              tooltip.transition()
+                     .duration(200)
+                     .style("opacity", 1);
+              tooltip.html(
+                      print_array(category_search_data, d))
+                        .style("left", 60 + "px")
+                        .style("top", 30 + "px");
           })
-  			.on("mouseout", function(d) {
-  			tooltip.transition()
-                 .duration(500)
-                 .style("opacity", 0);
+
+    			.on("mouseout", function(d) {
+        			tooltip.transition()
+                     .duration(500)
+                     .style("opacity", 0);
           })
          
-  		.on("click", function(d) {
-  			
-  		console.log("Hello");
-  		if (!([d3.event.pageX, d3.event.pageY] in marked)){
-  		marked[[d3.event.pageX, d3.event.pageY]] = true;
-  		marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
-  		marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
-  		marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
-  		marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
-  		marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
-  		marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
-  		marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
-  		marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
-  		svg.append("text")
-  			.text(d[feature_column])
-  			.attr("x", (d3.event.pageX-50))
-              .attr("y", (d3.event.pageY-35));
-  			/*
-  			tooltip1.transition()
-  			   .attr("class", "tooltip1")
-                 .style("opacity", 1);	
-  			   
-  			tooltip1.html("<b>"+d[feature_column]+"</b>")
-                 .style("left", (d3.event.pageX + 10) + "px")
-                 .style("top", (d3.event.pageY - 10) + "px");	
-  			   */
-  			   }
-  		});
+  		    .on("click", function(d) {
+          		console.log("Hello");
+          		if (!([d3.event.pageX, d3.event.pageY] in marked)){
+              		marked[[d3.event.pageX, d3.event.pageY]] = true;
+              		marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
+              		marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
+              		marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
+              		marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
+              		marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
+              		marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
+              		marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
+              		marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
+              		svg.append("text")
+              			.text(d[feature_column])
+              			.attr("x", (d3.event.pageX-50))
+                    .attr("y", (d3.event.pageY-35));
+              			/*
+              			tooltip1.transition()
+              			   .attr("class", "tooltip1")
+                             .style("opacity", 1);	
+              			   
+              			tooltip1.html("<b>"+d[feature_column]+"</b>")
+                             .style("left", (d3.event.pageX + 10) + "px")
+                             .style("top", (d3.event.pageY - 10) + "px");	
+              			*/
+  			      }
+  		    });
   	}
 
   	svg.on("click",function() {
@@ -1071,13 +1085,15 @@ function highlighting(val, val1, val2) {
   		var coordinates1 = d3.mouse(this);
   		coordinatesx.push(coordinates1[0]);
   		coordinatesy.push(coordinates1[1]);
+      zoomx.unshift(coordinates1[0]);
+      zoomy.unshift(coordinates1[1]);
   		console.log(coordinatesx, coordinatesy);
   	})
   	
       
   	lasso.items(d3.selectAll(".dot"));
   	var len = color.domain().length;
-  	
+  	// if spectrum is checked
   	if (numerics[category] && document.getElementById('cbox1').checked) {
   		
   		if (document.getElementById('cbox2').checked)
@@ -1152,27 +1168,27 @@ function highlighting(val, val1, val2) {
       			.enter().append("g")
       			// .attr("class", "legend");
       			// .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-      		console.log(keys);
-      		console.log(symbol);
-      		console.log(symbols);
-      		// draw legend colored rectangles
-      		legend.append("path")
-      			// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-      			.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-      	
-      			.attr("x", width + 0)
-      			.attr("width", 18)
-      			.attr("height", 18)
-      			// .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-      			.attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-      		// draw legend text
-      		legend.append("text")
-      			// .attr("x", 100 + 0)
-      			// .attr("y", 4)
-      			.attr("dy", ".35em")
-      			.style("text-anchor", "begin")
-      			.text(function(d) { return d;})
-      			.attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+    		console.log(keys);
+    		console.log(symbol);
+    		console.log(symbols);
+    		// draw legend colored rectangles
+    		legend.append("path")
+    			// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
+    			.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
+    	
+    			.attr("x", width + 0)
+    			.attr("width", 18)
+    			.attr("height", 18)
+    			// .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+    			.attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
+    		// draw legend text
+    		legend.append("text")
+    			// .attr("x", 100 + 0)
+    			// .attr("y", 4)
+    			.attr("dy", ".35em")
+    			.style("text-anchor", "begin")
+    			.text(function(d) { return d;})
+    			.attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
   		}
 
   		if(len <= 30 && category != "Select"){
