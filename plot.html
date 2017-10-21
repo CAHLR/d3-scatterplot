@@ -221,7 +221,7 @@ input{
 </form>
 
 <form name="form1_transparent" class="form1_transparent" onSubmit="return handleClick1()">
-			<label><p><br>Enter attribute value, and transparency values b/w 0(invisible)-1(solid):<br>(Currently doesn't work with simultaneously with search.</p></label>
+			<label><p><br>Enter attribute value, and opacity values b/w 0 and 1:<br>(Currently doesn't work with simultaneously with search.)</p></label>
             <input type="text" id="myVal1" placeholder="Match attri. val">
 			<input type="text" id="myVal2" placeholder="Opacity (match)">
 			<input type="text" id="myVal3" placeholder="Opacity (no match)">
@@ -536,7 +536,7 @@ function plotting5(){
 }
 
 var zoomed = 0;
-// search event
+// search event: myVal from search option
 function handleClick(event){
 				
                 console.log(document.getElementById("myVal").value);
@@ -544,7 +544,7 @@ function handleClick(event){
                 return false;
             }
 
-// transparent event
+// transparent event myVal1-3 from transparent options
 function handleClick1(event){
 			
                 console.log(document.getElementById("myVal1").value);
@@ -757,8 +757,12 @@ function highlighting(val, val1, val2) {
         d.x = +d.x
         d["y"] = +d["y"]
         for(var i=1;i<categories.length;i++){
-            numerics[categories[i]] = numerics[categories[i]] || (!isNaN(parseFloat(d[categories[i]]))); // jann: as long as one pt is numeric. if this change is good, will change s.t. we just check for !isNaN, and break once we find one
-    		    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseFloat(d[categories[i]]));
+          if (!isNaN(parseFloat(d[categories[i]]))) {
+            numerics[categories[i]] = 1;
+            break;
+          }
+          //   numerics[categories[i]] = numerics[categories[i]] || (!isNaN(parseFloat(d[categories[i]]))); // jann: as long as one pt is numeric. if this change is good, will change s.t. we just check for !isNaN, and break once we find one
+    		    // numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseFloat(d[categories[i]]));
         }
     		if (!(d[shaping_column] in symbol)) {
     			symbol[d[shaping_column]] = counter;
@@ -840,134 +844,137 @@ function highlighting(val, val1, val2) {
   	cy = 0;
   	ans = 0;
     // if circle and no zoom // jann pretty sure length >= 1 otherwise can only circle if first action
-  	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) 
-  	{
-  		console.log(document.getElementById("drawxy").value);
-  		draw = document.getElementById("drawxy").value;
-  		draw = draw.split(',');
-  		console.log("hello");
-  		cx = coordinatesx[0]
-  		cy = coordinatesy[0]
-  		
-  		coordinatesx[0] = xScale.invert(coordinatesx[0])
-  		coordinatesy[0] = yScale.invert(coordinatesy[0])
-  		console.log(coordinatesx, coordinatesy);
-  		
-  		for (var i=1 ; i <= 1000; i++)
-  		{		
-  			c = 0;
-  			t = 0;
-  			f = i;
-  			data.forEach(function(d) {
-              d.x = +d.x
-              d["y"] = +d["y"]
-  			
-    			// dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
-    			dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
-    			// console.log(dist)	
-    			if (d[draw[1]] == draw[2]) {
-    				if (dist <= f) {
-      				c += 1;
+  	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
+    		console.log(document.getElementById("drawxy").value);
+    		draw = document.getElementById("drawxy").value;
+    		draw = draw.split(',');
+    		console.log("hello");
+    		cx = coordinatesx[0]
+    		cy = coordinatesy[0]
+    		
+    		coordinatesx[0] = xScale.invert(coordinatesx[0])
+    		coordinatesy[0] = yScale.invert(coordinatesy[0])
+    		console.log(coordinatesx, coordinatesy);
+    		
+    		for (var i=1 ; i <= 1000; i++)
+    		{		
+    			c = 0;
+    			t = 0;
+    			f = i;
+    			data.forEach(function(d) {
+                d.x = +d.x
+                d["y"] = +d["y"]
+    			
+      			// dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
+      			dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
+      			// console.log(dist)	
+      			if (d[draw[1]] == draw[2]) {
+      				if (dist <= f) {
+        				c += 1;
+        			}
+        			t += 1;
       			}
-      			t += 1;
-    			}
-  			});
-    		console.log(c, t);
-    		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
-    				ans = f;
-    				break;
+    			});
+      		console.log(c, t);
+      		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
+      				ans = f;
+      				break;
+      		}
     		}
-  		}
     }
   	console.log(ans);	
   	if (ans != 0) {	
-  	console.log(xScale(ans))
-  	svg.append("circle")
-  		.attr("r", ans)
-  		.attr("cx", cx)
-  		.attr("cy", cy)
-  		.style("stroke", "black")    // set the line colour
-  		.style("stroke-width", 5)
-  		.style("fill", "green")
-  		.style("opacity", .2);
+      	console.log(xScale(ans))
+      	svg.append("circle")
+      		.attr("r", ans)
+      		.attr("cx", cx)
+      		.attr("cy", cy)
+      		.style("stroke", "black")    // set the line colour
+      		.style("stroke-width", 5)
+      		.style("fill", "green")
+      		.style("opacity", .2);
   	}
 
-    	svg.append("g")
-        	.attr("class", "x axis")
-        	.attr("transform", "translate(0," + height + ")")
-        	.call(xAxis)
-      	  .append("text")
-        	.attr("class", "label")
-        	.attr("x", width)
-        	.attr("y", -6)
-        	.style("text-anchor", "end")
-        	.text("");
+  	svg.append("g")
+      	.attr("class", "x axis")
+      	.attr("transform", "translate(0," + height + ")")
+      	.call(xAxis)
+    	  .append("text")
+      	.attr("class", "label")
+      	.attr("x", width)
+      	.attr("y", -6)
+      	.style("text-anchor", "end")
+      	.text("");
 
-    	// y-axis
-    	svg.append("g")
-        	.attr("class", "y axis")
-        	.call(yAxis)
-      	  .append("text")
-        	.attr("class", "label")
-        	.attr("transform", "rotate(-90)")
-        	.attr("y", 6)
-        	.attr("dy", ".71em")
-        	.style("text-anchor", "end")
-        	.text("");
+  	// y-axis
+  	svg.append("g")
+      	.attr("class", "y axis")
+      	.call(yAxis)
+    	  .append("text")
+      	.attr("class", "label")
+      	.attr("transform", "rotate(-90)")
+      	.attr("y", 6)
+      	.attr("dy", ".71em")
+      	.style("text-anchor", "end")
+      	.text("");
   	
   	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
-  		transparent_column = transparent_column.toString();
-  		val = val.toString();
+    		transparent_column = transparent_column.toString();
+    		val = val.toString();
   	}
   	else {
-  		val = val.toLowerCase();
+    		val = val.toLowerCase();
   	}
   	
   	// transparency according to transparent column value
   	var transp = function(d){
-                      var x = val.length === 0;
-                      return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
-                  };
+        var x = val.length === 0;
+        return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
+    };
   	
-  	var transpar = function(d) { 
-  				if (val !== ""){
-  					if (d[transparent_column] == val){
-  						return parseFloat(val1);
-  					}
-  						else{
-  							return parseFloat(val2);
-  						}
-  					}
-  				else { 
-  					return transp(d);}
-  				};
-  	 
-      var searchFunc = function(d){
-                      var x=d[category_search].toLowerCase().indexOf(val) < 0
-                      || val.length === 0;
-  		            return x ? 1 : 2;};
-      var searchFunc1 = function(d){
-                      var x=d.toLowerCase().indexOf(val) < 0
-                      || val.length === 0;
-  		            return x ? 1 : 2;};
+  	var transpar = function(d) {
+    		if (val !== ""){
+      			if (d[transparent_column] == val) {
+      				return parseFloat(val1);
+      			}
+      			else {
+      				return parseFloat(val2);
+      			}
+    		}
+    		else { 
+      			return transp(d);
+        }
+		};
+  	
+    // jann : pickup here for bringing search highlight to front
+    var searchFunc = function(d) {
+        var x=d[category_search].toLowerCase().indexOf(val) < 0
+        || val.length === 0;
+        return x ? 1 : 2;
+    };
+
+    var searchFunc1 = function(d) {
+        var x=d.toLowerCase().indexOf(val) < 0
+        || val.length === 0;
+        return x ? 1 : 2;
+    };
 
 
-      var searched_data = [], d_temp;
-      for (var i=0;i<temp3.length;i++) {
-              if ( searchFunc1(temp3[i])-1 ) {
-                      d_temp = {};
-                      for(var j=1;j<categories.length;j++) {
-                              d_temp[categories[j]] = dict1[categories[j]][i];
-                      }
-           if(searchdic(searched_data, d_temp) === true) {
-                  searched_data.push(d_temp);
-                  
-                  }
-              }
-          }
-      if ( val != "" && searched_data.length != 0) { 
-               var peopleTable1 = tabulate(searched_data, columns);
-          };
+    var searched_data = [], d_temp;
+    for (var i=0;i<temp3.length;i++) {
+        if ( searchFunc1(temp3[i])-1 ) {
+            d_temp = {};
+            for(var j=1;j<categories.length;j++) {
+                    d_temp[categories[j]] = dict1[categories[j]][i];
+            }
+            if(searchdic(searched_data, d_temp) === true) {
+                searched_data.push(d_temp);
+            }
+        }
+    }
+    if ( val != "" && searched_data.length != 0) { 
+        var peopleTable1 = tabulate(searched_data, columns);
+    };
   	
   	var sizes = {}
   	
