@@ -24,6 +24,7 @@ body {
   fill:#3399FF;
   fill-opacity:.5;
 }
+
 .not_possible {
   fill:rgb(200,200,200);
 }
@@ -33,12 +34,14 @@ body {
 .dot{
     stroke: #000;
 }
+
 .axis path,
 .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
 .tooltip {
   position: absolute;
   width: 250px;
@@ -53,52 +56,66 @@ body {
   background: rgba(255,255,255,0.9);
   pointer-events: none;
 }
-.select1_color{
-    margin-left: 124px;
-    margin-top: 800px;
-    position: absolute;
-}
-.select2_searching{
-    margin-left: 140px;
-    margin-top: 925px;
-    position: absolute;
-}
-.select4_transparent{
-    margin-left: 237px;
-    margin-top: 1050px;
-    position: absolute;
-}
-.select3_table{
-    position: absolute;
-    margin-left: 50px;
-    margin-top: 600px;
-}
-.select6_click{
-    margin-left: 190px;
-    margin-top: 875px;
-    position: absolute;
-}
-.select7_shaping{
-    margin-left: 140px;
-    margin-top: 1000px;
-    position: absolute;
-}
+
 input{
   width: 185px;
   /*text-align: center;*/
 }
 .input1{
-	width : 40px;
+  width : 40px;
 }
 .input2{
-	width : 230px;
-	height : 25px;
+  width : 230px;
+  height : 25px;
+}
+
+.p1_coloring {
+    margin-left: 20px;
+    margin-top: 800px;
+    position: absolute;
+    font-size: 150%;
+}
+.select1_color{
+    margin-left: 124px;
+    margin-top: 800px;
+    position: absolute;
+}
+.p1_coloring_spectrum_log {
+    margin-left: 20px;
+    margin-top: 825px;
+    position: absolute;
+    font-size: 150%;
+}
+
+.p2_searching {
+    margin-left: 20px;
+    margin-top: 1025px;
+    position: absolute;
+    font-size: 150%;
+}
+.select2_searching{
+    margin-left: 140px;
+    margin-top: 1025px;
+    position: absolute;
 }
 .form2_searching {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 950px;
+    margin-top: 1050px;
+}
+
+.p3_unknown {
+    margin-left: 1000px;
+    margin-top: 10px;
+    position: absolute;
+  white-space: nowrap;
+    font-size: 150%;
+}
+.select3_table{
+    position: absolute;
+    margin-left: 50px;
+    margin-top: 600px;
 }
 .form3_shaping_unsure__unused {
     text-align: left;
@@ -106,67 +123,70 @@ input{
     margin-left: 680px;
     margin-top: 925px;
 }
-.form1_transparent {
+
+.p4_transparent {
+    margin-left: 20px;
+    margin-top: 1100px;
+    position: absolute;
+    font-size: 150%;
+}
+.select4_transparent{
+    margin-left: 237px;
+    margin-top: 1100px;
+    position: absolute;
+}
+.form4_transparent {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 1050px;
+    margin-top: 1100px;
 }
-.p1_coloring {
+
+.p5_exact_match {
     margin-left: 20px;
-    margin-top: 800px;
+    margin-top: 975px;
     position: absolute;
     font-size: 150%;
 }
-.p8_zoom {
-    margin-left: 20px;
-    margin-top: 750px;
-    position: absolute;
-    font-size: 150%;
-}
-.p9_circle {
-    margin-left: 20px;
-    margin-top: 700px;
-    position: absolute;
-    font-size: 150%;
-}
-.p5_coloring_spectrum_log {
-    margin-left: 20px;
-    margin-top: 825px;
-    position: absolute;
-    font-size: 150%;
-}
+
 .p6_click {
     margin-left: 20px;
     margin-top: 875px;
     position: absolute;
     font-size: 150%;
 }
-.p2_searching {
+.select6_click{
+    margin-left: 190px;
+    margin-top: 875px;
+    position: absolute;
+}
+
+.p7_shaping {
     margin-left: 20px;
     margin-top: 925px;
     position: absolute;
     font-size: 150%;
 }
-.p7_shaping {
+.select7_shaping{
+    margin-left: 140px;
+    margin-top: 925px;
+    position: absolute;
+}
+
+.p8_zoom {
     margin-left: 20px;
-    margin-top: 1000px;
+    margin-top: 750px;
     position: absolute;
     font-size: 150%;
 }
-.p4_transparent {
+
+.p9_circle {
     margin-left: 20px;
-    margin-top: 1050px;
+    margin-top: 700px;
     position: absolute;
     font-size: 150%;
 }
-.p3_unknown {
-    margin-left: 1000px;
-    margin-top: 10px;
-    position: absolute;
-	white-space: nowrap;
-    font-size: 150%;
-}
+
 .bar rect {
   fill: steelblue;
 }
@@ -188,7 +208,7 @@ input{
     margin-left: 1000px;
 }
 #legend-svg {
-            vertical-align: top;
+    vertical-align: top;
 }
 .point {
   fill: steelblue;
@@ -197,17 +217,18 @@ input{
 </style>
 <body>
 <!-- Text, instructions, and buttons -->
-<p class="p9_circle"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
+<p class="p9_circle"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="fourth_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick9()" value="Draw" >Draw</button></p>
 
-<p class="p8_zoom"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox" onclick="handleClick7_checkZoom"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+<p class="p8_zoom"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox" onclick="handleClick8_checkZoom"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick9()" value="Zoom" >Zoom</button></p>
 
-<p class="p7_shaping"><b>Shape by: </b></p>
+<p class="p1_coloring" id="demo" ><b>Color by: </b></p>
+<p class="p1_coloring_spectrum_log">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox" onclick="handleClick1()">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox" onclick="handleClick1()"></p>
 
 <p class="p6_click"><b>Click on feature:</b></p>
 
-<p class="p5_coloring_spectrum_log">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox" onclick="handleClick5()">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox" onclick="handleClick5()"></p>
+<p class="p7_shaping"><b>Shape by: </b></p>
 
-<p class="p1_coloring" id="demo" ><b>Color by: </b></p>
+<p class="p5_exact_match"><b>Exact match:</b><input class="input1" type="checkbox" id="cbox5" value="fifth_checkbox"></input>(for search and transparent functions below) <button class = "input" onclick="handleClick5_checkExact()" value="Apply" >Apply</button></p>
 
 <p class="p2_searching" id="demo2" ><b>Search by: </b></p>
 
@@ -215,12 +236,12 @@ input{
 
 <p class="p3_unknown" id="demo3"></p>
 
-<form name="form2_searching" class="form2_searching" onSubmit="return handleClick()">
+<form name="form2_searching" class="form2_searching" onSubmit="return handleClick2()">
 			<input type="text" id="myVal" placeholder="Search text">
       <input name="Submit"  type="submit" value="Apply" >
 </form>
 
-<form name="form1_transparent" class="form1_transparent" onSubmit="return handleClick1()">
+<form name="form4_transparent" class="form4_transparent" onSubmit="return handleClick4()">
 			<label><p><br>Enter attribute value, and opacity values b/w 0 and 1:<br>(Currently doesn't work with simultaneously with search.)</p></label>
             <input type="text" id="myVal1" placeholder="Match attri. val">
 			<input type="text" id="myVal2" placeholder="Opacity (match)">
@@ -233,7 +254,7 @@ input{
 <script src="//d3js.org/d3-path.v0.1.min.js"></script>
 <script src="//d3js.org/d3-shape.v0.6.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
-<script src="crossfilter.min.js"></script>
+<script src="crossfilter.js"></script>
 
 
 <!-- Our JS -->
@@ -370,6 +391,7 @@ input{
           var cf = crossfilter(data_tab);
           // jann: 11/1 for each column, columns[i], return the value of it for that datum
           for (var i=0;i<columns.length;i++) {
+            console.log("columns[i] " + columns[i]);
               var byParty = cf.dimension(function(p) { return p[columns[i]]; }); 
               /*
                 p is an array of dictionaries similar to
@@ -400,6 +422,8 @@ input{
                   console.log(p.key + ": " + p.value);
               });
               output = output + "<br>";
+              console.log("i at " + i);
+
           }
           document.getElementById("demo3").innerHTML = output; 
           return table;
@@ -565,15 +589,23 @@ input{
   }
 
   var zoomed = 0;
+  
+  // log and spectrum events
+  function handleClick1(){
+      val = document.getElementById("myVal1").value; 
+      val1 = document.getElementById("myVal2").value; 
+      val2 = document.getElementById("myVal3").value;
+      highlighting(val, val1, val2);
+      // document.getElementById("zoomxy").value = ""
+  }
   // search event: myVal from search option
-  function handleClick(event){
+  function handleClick2(event){
       console.log(document.getElementById("myVal").value);
       highlighting(document.getElementById("myVal").value, "", "");
       return false;
   }
-
   // transparent event myVal1-3 from transparent options
-  function handleClick1(event){
+  function handleClick4(event){
       console.log(document.getElementById("myVal1").value);
       val = document.getElementById("myVal1").value; 
       val1 = document.getElementById("myVal2").value; 
@@ -581,31 +613,29 @@ input{
       highlighting(val, val1, val2);
       return false;
   }
+  function handleClick5_checkExact(event){
+      val = document.getElementById("myVal1").value; 
+      val1 = document.getElementById("myVal2").value; 
+      val2 = document.getElementById("myVal3").value;
+      highlighting(val, val1, val2);
+  }
+  function handleClick8_checkZoom(){
+    if (!document.getElementById('cbox3').checked) {
+      document.getElementById("zoomxy").value = ""; // clear the textbox
+      // may possibly want to clear zoomx and zoomy, but
+      // I don't think it's necessary
+    }
+  }
   // draw and zoom events
-  function handleClick4(){
+  function handleClick9(){
       val = document.getElementById("myVal1").value; 
       val1 = document.getElementById("myVal2").value; 
       val2 = document.getElementById("myVal3").value;
       highlighting(val, val1, val2);
     	// document.getElementById("zoomxy").value = ""
   }
-
-  function handleClick7_checkZoom(){
-    if (!document.getElementById('cbox3').checked) {
-      // may possibly want to clear zoomx and zoomy, but
-      // I don't think it's necessary
-    }
-  }
-  // log and spectrum events
-  function handleClick5(){
-      val = document.getElementById("myVal1").value; 
-      val1 = document.getElementById("myVal2").value; 
-      val2 = document.getElementById("myVal3").value;
-      highlighting(val, val1, val2);
-      // document.getElementById("zoomxy").value = ""
-  }
   // currently unused
-  function handleClick2(event){
+  function handleClickx(event){
       shaping_column = "Select";
       category = "Select";
       myForm.myVal.value = 0;
@@ -652,9 +682,9 @@ input{
     'spectral8': ['#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd'],
     'redBlackGreen': ['#ff0000', '#AA0000', '#550000', '#005500', '#00AA00', '#00ff00'],
 	};
-  scale = scale_d['spectral8']; 
+  scale = scale_d['spectral8'];
 
-  /* >>>> Function for plotting starts (goes to end) <<<< */
+  /* >>>> START function for plotting (goes to end) <<<< */
   function highlighting(val, val1, val2) {
     var svg;
     var temp1 = [], temp2 = [], temp3_searching_var = [];
@@ -675,7 +705,7 @@ input{
   			.append("g")
   		  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    /* >>>> Lasso starts <<<< */
+    /* >>>> START lasso <<<< */
     var lasso_start = function() {
     d3.select("table").remove();
     document.getElementById("demo3").innerHTML = "";
@@ -701,14 +731,13 @@ input{
       lasso.items()
            .style("fill", function(d) { return color(d[category]); });
 
-      // Style the selected dots  
-      // jann: here 11/1
-
+      // Style the selected dots
       lasso.items().filter(function(d) {return d.selected===true})
           .classed({"not_possible":false,"possible":false})
           .attr("r",7)
-          // .style("stroke", "yellow")
-          // .style("stroke-width", 2)
+          .style("stroke", "yellow")
+          .style("stroke-width", 2)
+
 
       var zsx = lasso.items().filter(function(d) {return d.selected===true});
       x_values = [];
@@ -736,6 +765,7 @@ input{
       }
 
       // render the table
+      console.log("construct table? selected_data length: " + selected_data.length);
       if(selected_data.length != 0) {
           var peopleTable =  tabulate(selected_data, columns, x_values); // jann: causes error with my data
       }
@@ -767,10 +797,10 @@ input{
     // Init the lasso on the svg:g that contains the dots
   	svg.call(lasso);
   	
-    /* >>>> Lasso ends <<<< */
+    /* >>>> END lasso <<<< */
 
 
-    /* >>>> Load data starts (goes to end) <<<< */
+    /* >>>> START load data (goes to end) <<<< */
   	d3.tsv(dataset, function(error, data) {
 
     	// change string (from CSV) into number format
@@ -802,7 +832,7 @@ input{
       		// console.log(d["z"] == parseInt(d["z"]));
       });
 
-      /* >>>> Color with spectrum start <<<< */
+      /* >>>> START Color with spectrum <<<< */
     	console.log(numerics);
     	console.log(category);
     	if (numerics[category] && document.getElementById('cbox1').checked) {
@@ -823,9 +853,9 @@ input{
       	//.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
     			.range(scale);	
     	}
-      /* >>>> Color with spectrum end <<<< */
+      /* >>>> END color with spectrum <<<< */
 
-      /* >>>> Zoom starts <<<< */
+      /* >>>> START zoom <<<< */
       // don't want dots overlapping axis, so add in buffer to data domain
     	var zoom = getParameterByName('zoom');
     	if (document.getElementById("cbox3").checked==false) {
@@ -863,7 +893,7 @@ input{
                     y_max = parseFloat(zoom.substr(commaIndex+1));
   				*/
       }
-      /* >>>> Zoom ends <<<< */
+      /* >>>> END zoom <<<< */
 
       xScale.domain([x_min, x_max]);
       yScale.domain([y_min, y_max]);
@@ -896,7 +926,7 @@ input{
           .style("text-anchor", "end")
           .text("");
 
-      /* >>>> Circle function (conflict with zoom) start <<<< */
+      /* >>>> START circle (conflict with zoom) <<<< */
     	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
       		console.log(document.getElementById("drawxy").value);
       		draw = document.getElementById("drawxy").value;
@@ -946,9 +976,9 @@ input{
         		.style("fill", "green")
         		.style("opacity", .2);
     	}
-      /* >>>> Circle function (conflict with zoom) end <<<< */
+      /* >>>> END circle (conflict with zoom) <<<< */
 
-    	/* >>>> Transparent function start <<<< */
+    	/* >>>> BEGIN transparent  <<<< */
     	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
       		transparent_column = transparent_column.toString();
       		val = val.toString();
@@ -958,23 +988,27 @@ input{
     	}
     	
     	// transparency according to transparent column value
+      // jann: this looks like it just returns 1...
+      // jann: now unused
     	var transp = function(d){
           var x = val.length === 0;
           return x ? 1 : (searchFunc(d)-1 ? 1:1); // 0.65 yellow 
       };
-    	/* >>>> Transparent function end <<<< */
+    	/* >>>> END transparent function <<<< */
 
     	var transpar = function(d) {
       		if (val !== ""){
-        			if (d[transparent_column] == val) {
-        				return parseFloat(val1);
-        			}
-        			else {
-        				return parseFloat(val2);
-        			}
+              var x;
+              if (document.getElementById('cbox5').checked) { // exact match checked, case counts too
+                x = d[transparent_column] == val; // if exact, x true
+              } else {
+                x = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val) > -1); // if match, x true
+              }
+              return x ? parseFloat(val1) : parseFloat(val2);
       		}
-      		else { 
-        			return transp(d);
+      		else {
+              return 1;
+        			// return transp(d); // (jann: transp looks like it just returns 1...)
           }
   		};
     	
@@ -986,9 +1020,18 @@ input{
       };
 
       var searchFunc1_searching = function(d) {
-          var x=d.toLowerCase().indexOf(val) < 0 // x = truthy if less than 0 falsey if not
-          || val.length === 0; // truthy if nothing specified in search box
+        if (d) { // had to add a check for null values
+          var x;
+          if (document.getElementById('cbox5').checked) {
+            x = d != val; // truthy if not equal (1 is not found, 2 is found)
+          } else {
+            x=d.toLowerCase().indexOf(val) < 0 || val.length === 0; // x = truthy if not found or if box empty
+          }
           return x ? 1 : 2;
+        }
+        else {
+            return 1;
+        }
       };
 
       // iterate through the search variable values of dataset
@@ -1023,7 +1066,7 @@ input{
     	var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
     	
     	
-    	
+    	/* >>>> BEGIN shape (draw dots) <<<< */
     	if (shaping_column !== "Select" ) {
     		// category = shaping_column;
     		svg.selectAll(".dot")
@@ -1062,7 +1105,7 @@ input{
     	else {
       	console.log(document.getElementById('cbox2').checked)	
         // draw dots
-        // jann: changing the searched dots is here
+        // jann: changing the searched and transparency dots is here
     		marked = {}
         var nonSelected = svg.selectAll(".dot")
             .data(data, function(d) { return searchFunc(d)-1 ? null:d ; });
@@ -1172,7 +1215,9 @@ input{
                 }
             });
     	}
+      /* >>>> END shape (plotting the dots) <<<< */
 
+      /* >>>> BEGIN click on feature <<<< */
     	svg.on("click",function() {
     		// svg.select("#myText").remove();
 
@@ -1184,6 +1229,7 @@ input{
         zoomy.unshift(coordinates1[1]);
     		console.log(coordinatesx, coordinatesy);
     	})
+      /* >>>> END click on feature <<<< */
     	
         
     	lasso.items(d3.selectAll(".dot"));
