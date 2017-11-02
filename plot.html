@@ -368,7 +368,8 @@ input{
 
           var output = "";
           var cf = crossfilter(data_tab);
-          for (var i=0;i<columns.length;i++) { // for each column, columns[i], return the value of it for that datum
+          // jann: 11/1 for each column, columns[i], return the value of it for that datum
+          for (var i=0;i<columns.length;i++) {
               var byParty = cf.dimension(function(p) { return p[columns[i]]; }); 
               /*
                 p is an array of dictionaries similar to
@@ -429,12 +430,14 @@ input{
   var category_search_data = [];
   var categories = [];
   var category_search;
-  if ("search" in dicts) { // if in query
+  // if in query
+  if ("search" in dicts) {
   	category_search = dicts["search"]; // category_search = value we are searching by
   	category_search_data.push(category_search); // add desired search value to array
   }
   categories.push("Select"); // "Select" always first in categories
-  if ("color" in dicts) { // if in query
+  // if in query
+  if ("color" in dicts) {
   	category = dicts["color"]; // category is the color value
   	categories.push(category); // add color value to categories
   }	else {
@@ -471,12 +474,13 @@ input{
     }
 
     if ("color" in dicts) {
-  	  category = categories[1]; // since color would be first, start with next
+      // since color would be first, start with next
+  	  category = categories[1];
     } else {
   	  category = categories[0];
     }
-
-    category_search = category_search_data[0]; // take first (search value)
+    // take first (search value)
+    category_search = category_search_data[0];
     dropDown1_searching.selectAll("option")
           .data(category_search_data)
           .enter()
@@ -650,7 +654,7 @@ input{
 	};
   scale = scale_d['spectral8']; 
 
-  // function for plotting
+  /* >>>> Function for plotting starts (goes to end) <<<< */
   function highlighting(val, val1, val2) {
     var svg;
     var temp1 = [], temp2 = [], temp3_searching_var = [];
@@ -664,16 +668,17 @@ input{
   // function zoom() {
   // 	svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
   //		}
+
     svg = d3.select("body").append("svg")
     		.attr("width", width + margin.left + margin.right)
     		.attr("height", height + margin.top + margin.bottom)
   			.append("g")
   		  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    // Lasso starts
+    /* >>>> Lasso starts <<<< */
     var lasso_start = function() {
     d3.select("table").remove();
-        document.getElementById("demo3").innerHTML = "";
+    document.getElementById("demo3").innerHTML = "";
     lasso.items()
         .attr("r",3.5) // reset size
         .style("fill",null) // clear all of the fills
@@ -696,10 +701,14 @@ input{
       lasso.items()
            .style("fill", function(d) { return color(d[category]); });
 
-      // Style the selected dots    
+      // Style the selected dots  
+      // jann: here 11/1
+
       lasso.items().filter(function(d) {return d.selected===true})
           .classed({"not_possible":false,"possible":false})
-          .attr("r",6.5)
+          .attr("r",7)
+          // .style("stroke", "yellow")
+          // .style("stroke-width", 2)
 
       var zsx = lasso.items().filter(function(d) {return d.selected===true});
       x_values = [];
@@ -728,9 +737,8 @@ input{
 
       // render the table
       if(selected_data.length != 0) {
-          var peopleTable = tabulate(selected_data, columns, x_values); // jann removed table for testing
+          var peopleTable =  tabulate(selected_data, columns, x_values); // jann: causes error with my data
       }
-      
 
       // Reset the style of the not selected dots
       lasso.items().filter(function(d) {return d.selected===false})
@@ -759,7 +767,10 @@ input{
     // Init the lasso on the svg:g that contains the dots
   	svg.call(lasso);
   	
-    // load data
+    /* >>>> Lasso ends <<<< */
+
+
+    /* >>>> Load data starts (goes to end) <<<< */
   	d3.tsv(dataset, function(error, data) {
 
     	// change string (from CSV) into number format
@@ -767,19 +778,19 @@ input{
     	var symbol = {};
       for(var i=1;i<categories.length;i++) {
           dict1[categories[i]] = [];
-  				numerics[categories[i]] = 0; // jann: previously = 1. Changed s.t. default not numeric
+  				numerics[categories[i]] = 0; // jann: previously = 1. Changed s.t. initialize to not numeric
       }
     	counter = 0;
       data.forEach(function(d) {
           d.x = +d.x
           d["y"] = +d["y"]
           for(var i=1;i<categories.length;i++){
+            // jann: as long as one pt is numeric, set to numeric *may cause problems later
             if (!isNaN(parseFloat(d[categories[i]]))) {
               numerics[categories[i]] = 1;
               break;
             }
-            //   numerics[categories[i]] = numerics[categories[i]] || (!isNaN(parseFloat(d[categories[i]]))); // jann: as long as one pt is numeric. if this change is good, will change s.t. we just check for !isNaN, and break once we find one
-      		    // numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseFloat(d[categories[i]]));
+      		  // numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseFloat(d[categories[i]]));
           }
       		if (!(d[shaping_column] in symbol)) {
       			symbol[d[shaping_column]] = counter;
@@ -790,10 +801,11 @@ input{
           temp3_searching_var.push(d[category_search]);
       		// console.log(d["z"] == parseInt(d["z"]));
       });
+
+      /* >>>> Color with spectrum start <<<< */
     	console.log(numerics);
     	console.log(category);
-    	// set color according to spectrum
-    	if (numerics[category] && document.getElementById('cbox1').checked) { // jann: consider this
+    	if (numerics[category] && document.getElementById('cbox1').checked) {
     		  console.log(category);
     	
           console.log(d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })), d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
@@ -811,11 +823,12 @@ input{
       	//.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
     			.range(scale);	
     	}
+      /* >>>> Color with spectrum end <<<< */
 
-      	// don't want dots overlapping axis, so add in buffer to data domain
+      /* >>>> Zoom starts <<<< */
+      // don't want dots overlapping axis, so add in buffer to data domain
     	var zoom = getParameterByName('zoom');
-    	if (document.getElementById("cbox3").checked==false) 
-    	{
+    	if (document.getElementById("cbox3").checked==false) {
           document.getElementById("zoomxy").value = "";
           zoomed = 0;
           x_max = d3.max(data, xValue)+1;
@@ -823,7 +836,8 @@ input{
           y_max = d3.max(data, yValue)+1;
           y_min = d3.min(data, yValue)-1; 
     	}
-    	// if (zoom != null) {
+
+      // if (zoom != null) {
     	if (document.getElementById("cbox3").checked==true && zoomx.length >= 2) { // jann : previously required zoomed==0, but I want to allow zooming chains
     					
   				x_max = xScale.invert(Math.max(zoomx[0], zoomx[1]))+1;
@@ -849,18 +863,40 @@ input{
                     y_max = parseFloat(zoom.substr(commaIndex+1));
   				*/
       }
+      /* >>>> Zoom ends <<<< */
 
       xScale.domain([x_min, x_max]);
       yScale.domain([y_min, y_max]);
-    	
     	// xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-      	// yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+      // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+      cx = 0;
+      cy = 0;
+      ans = 0;
+      // x-axis
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+          .append("text")
+          .attr("class", "label")
+          .attr("x", width)
+          .attr("y", -6)
+          .style("text-anchor", "end")
+          .text("");
 
-      	// x-axis
-    	cx = 0;
-    	cy = 0;
-    	ans = 0;
-      // if circle and no zoom // jann pretty sure length >= 1 otherwise can only circle if first action
+      // y-axis
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+          .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("");
+
+      /* >>>> Circle function (conflict with zoom) start <<<< */
     	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
       		console.log(document.getElementById("drawxy").value);
       		draw = document.getElementById("drawxy").value;
@@ -873,8 +909,7 @@ input{
       		coordinatesy[0] = yScale.invert(coordinatesy[0])
       		console.log(coordinatesx, coordinatesy);
       		
-      		for (var i=1 ; i <= 1000; i++)
-      		{		
+      		for (var i=1 ; i <= 1000; i++) {		
       			c = 0;
       			t = 0;
       			f = i;
@@ -900,41 +935,20 @@ input{
       		}
       }
     	console.log(ans);	
-    	if (ans != 0) {	
+    	if (ans != 0) {
         	console.log(xScale(ans))
         	svg.append("circle")
         		.attr("r", ans)
         		.attr("cx", cx)
         		.attr("cy", cy)
-        		.style("stroke", "black")    // set the line colour
+        		.style("stroke", "black") // set the line colour
         		.style("stroke-width", 5)
         		.style("fill", "green")
         		.style("opacity", .2);
     	}
+      /* >>>> Circle function (conflict with zoom) end <<<< */
 
-    	svg.append("g")
-        	.attr("class", "x axis")
-        	.attr("transform", "translate(0," + height + ")")
-        	.call(xAxis)
-      	  .append("text")
-        	.attr("class", "label")
-        	.attr("x", width)
-        	.attr("y", -6)
-        	.style("text-anchor", "end")
-        	.text("");
-
-    	// y-axis
-    	svg.append("g")
-        	.attr("class", "y axis")
-        	.call(yAxis)
-      	  .append("text")
-        	.attr("class", "label")
-        	.attr("transform", "rotate(-90)")
-        	.attr("y", 6)
-        	.attr("dy", ".71em")
-        	.style("text-anchor", "end")
-        	.text("");
-    	
+    	/* >>>> Transparent function start <<<< */
     	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
       		transparent_column = transparent_column.toString();
       		val = val.toString();
@@ -946,9 +960,10 @@ input{
     	// transparency according to transparent column value
     	var transp = function(d){
           var x = val.length === 0;
-          return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
+          return x ? 1 : (searchFunc(d)-1 ? 1:1); // 0.65 yellow 
       };
-    	
+    	/* >>>> Transparent function end <<<< */
+
     	var transpar = function(d) {
       		if (val !== ""){
         			if (d[transparent_column] == val) {
@@ -963,7 +978,7 @@ input{
           }
   		};
     	
-      // jann : pickup here for bringing search highlight to front
+      // bring search highlight to front
       var searchFunc = function(d) {
           var x=d[category_search].toLowerCase().indexOf(val) < 0
           || val.length === 0;
@@ -985,13 +1000,15 @@ input{
               for(var j=1;j<categories.length;j++) { // fill each category with datum's value
                       d_temp[categories[j]] = dict1[categories[j]][i];
               }
-              if(searchdic(searched_data, d_temp) === true) { // checks not duplicate jann : why? is this needed?
+              // checks not duplicate
+              // jann : why? is this needed?
+              if(searchdic(searched_data, d_temp) === true) { 
                   searched_data.push(d_temp);
               }
           }
       }
       if ( val != "" && searched_data.length != 0) {
-          // var peopleTable1 = tabulate(searched_data, columns);
+          var peopleTable1 = tabulate(searched_data, columns);
       };
     	
     	var sizes = {}
@@ -1042,9 +1059,10 @@ input{
                 .attr("y", (d3.event.pageY-35));
       		});	
     	}
-    	else {	
+    	else {
       	console.log(document.getElementById('cbox2').checked)	
-        // draw dots jann : changing the searched dots is here
+        // draw dots
+        // jann: changing the searched dots is here
     		marked = {}
         var nonSelected = svg.selectAll(".dot")
             .data(data, function(d) { return searchFunc(d)-1 ? null:d ; });
@@ -1118,7 +1136,7 @@ input{
             .attr("cy", yMap)
             .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
             .style("opacity",function(d) { return transpar(d);})
-            
+            // jann: here is the mouseover display
             .on("mouseover", function(d) {
                 tooltip.transition()
                        .duration(200)
@@ -1292,8 +1310,8 @@ input{
         		.text(function(d) { return d;});
     		}
       };
-    });
-  }
+    }); /* >>>> Load data ends <<<< */
+  } /* >>>> Function for plotting ends <<<< */
 </script>
 </body>
 </html>
