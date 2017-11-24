@@ -636,12 +636,13 @@ function handleClick3(event) {
             
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function handleClick4(){
-				
+		if (!document.getElementById('cbox3').checked) {
+      document.getElementById("zoomxy").value = ""; // clear the textbox
+    }
     val = document.getElementById("myVal1").value; 
     val1 = document.getElementById("myVal2").value; 
     val2 = document.getElementById("myVal3").value;
     highlighting(val, val1, val2);
-//	document.getElementById("zoomxy").value = ""
 }
 			
 // Checks the url query for name=value and extracts the value
@@ -870,7 +871,9 @@ function highlighting(val, val1, val2) {
         // don't want dots overlapping axis, so add in buffer to data domain
       	var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
 
-      	if (document.getElementById("cbox3").checked==false && zoomed == 0) {
+      	if (document.getElementById("cbox3").checked==false) {
+            document.getElementById("zoomxy").value = "";
+            zoomed = 0;
             x_max = d3.max(data, xValue)+1;
             x_min = d3.min(data, xValue)-1;
             y_max = d3.max(data, yValue)+1;
@@ -879,7 +882,7 @@ function highlighting(val, val1, val2) {
       	// if (zoom != null) {
     	
       	// if zoom is checked and conditions are satisfied
-      	if (document.getElementById("cbox3").checked==true && zoomed==0 && coordinatesx.length == 2) {
+      	if (document.getElementById("cbox3").checked==true && coordinatesx.length >= 2) {
       					
       			x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
       			x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
@@ -916,6 +919,7 @@ function highlighting(val, val1, val2) {
       	ans = 0;
   	
       	// check whether the circle checkbox is selected or not
+        // ?? may want to allow coordinatesx.length >= 1
       	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
         		console.log(document.getElementById("drawxy").value);
         		draw = document.getElementById("drawxy").value;
@@ -1177,8 +1181,8 @@ function highlighting(val, val1, val2) {
 
       		tooltip1.style("opacity", 0);
       		var coordinates1 = d3.mouse(this);
-      		coordinatesx.push(coordinates1[0]);
-      		coordinatesy.push(coordinates1[1]);
+      		coordinatesx.unshift(coordinates1[0]);
+      		coordinatesy.unshift(coordinates1[1]);
       		console.log(coordinatesx, coordinatesy);
       	})
       	
