@@ -228,7 +228,8 @@ input{
 <p class="p8"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
 
 <p class="p1" id="demo" ><b>Color by: </b></p>
-<p class="p5">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
+<p class="p5">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox" onclick="handleClick3()">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox" onclick="handleClick3()"></p>
+
 
 <p class="p6"><b>Click on feature: </b></p>
 
@@ -563,7 +564,7 @@ function plotting(){
 		// dropDown4.property( "value", "Select" );
 		category = d3.event.target.value;	
 		// shaping_column = "Select";
-		color = d3.scale.category20();
+		// color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
 		val = document.getElementById("myVal1").value; 
 		val1 = document.getElementById("myVal2").value; 
@@ -577,7 +578,7 @@ function plotting5(){
 		
 		// dropDown.property( "value", "Select" );
 		shaping_column = d3.event.target.value;	
-		color = d3.scale.category20();
+		// color = d3.scale.category20();
 		cValue = function(d) { return d[category];};
 		val = document.getElementById("myVal1").value; 
 		val1 = document.getElementById("myVal2").value; 
@@ -606,6 +607,32 @@ function handleClick1(event) {
     highlighting(val, val1, val2);
     return false;
 }
+
+// ?? I believe this function is unused, and draw also maps to handleClick4
+// it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
+function handleClick2(event){
+        
+        shaping_column = "Select";
+        category = "Select";
+        myForm.myVal.value = 0;
+        myForm1.myVal1.value = 0;
+        myForm1.myVal2.value = 0;
+        myForm1.myVal3.value = 0;
+        dropDown4.property( "value", "Select" );
+        dropDown.property( "value", "Select" );
+        highlighting("", "", "");
+        return false;
+}
+
+// spectrum / log event
+// it will be executed when spectrum/log is checked
+// ?? Can we collapse handleClick1,3,4?
+function handleClick3(event) {
+    val = document.getElementById("myVal1").value; 
+    val1 = document.getElementById("myVal2").value; 
+    val2 = document.getElementById("myVal3").value;
+    highlighting(val, val1, val2);
+}
             
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function handleClick4(){
@@ -617,22 +644,6 @@ function handleClick4(){
 //	document.getElementById("zoomxy").value = ""
 }
 			
-
-// ?? I believe this function is unused, and draw also maps to handleClick4
-// it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
-function handleClick2(event){
-				
-				shaping_column = "Select";
-				category = "Select";
-				myForm.myVal.value = 0;
-				myForm1.myVal1.value = 0;
-				myForm1.myVal2.value = 0;
-				myForm1.myVal3.value = 0;
-				dropDown4.property( "value", "Select" );
-				dropDown.property( "value", "Select" );
-        highlighting("", "", "");
-        return false;
-}
 // Checks the url query for name=value and extracts the value
 function getParameterByName(name, url) {
     if (!url) {
@@ -816,8 +827,8 @@ function highlighting(val, val1, val2) {
             for(var i=1;i<categories.length;i++){
                 // add every attribute of point to the {category:[val1,val2,...]}
                 dict1[categories[i]].push(d[categories[i]]);
-                // revoke a category's numerics status if find an entry has a non-Int value for that category
-    				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseInt(d[categories[i]]));
+                // revoke a category's numerics status if find an entry has a non-Int and non-null value for that category
+    				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseInt(d[categories[i]]));
             }
             // fill the symbol dictionary with all possible values of the shaping column as keys
             // value is the order of points
@@ -837,10 +848,6 @@ function highlighting(val, val1, val2) {
     	  if (numerics[category] && document.getElementById('cbox1').checked) {
         		console.log(category);
         	
-        	  console.log(
-              d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })),
-              d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); }))
-            );
             // take log if log checkbox checked
         		if (document.getElementById('cbox2').checked) {
         				m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
@@ -850,14 +857,18 @@ function highlighting(val, val1, val2) {
         				m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
         		}
 
+            console.log(m1, m2);
+
         		color = d3.scale.linear()
         	     .domain(linspace(m1, m2,scale.length))
           	  //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
         			.range(scale);	
-    	  }
+    	  } else {
+            color = d3.scale.category20();
+        }
 
         // don't want dots overlapping axis, so add in buffer to data domain
-      	var zoom = getParameterByName('zoom'); // unused
+      	var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
 
       	if (document.getElementById("cbox3").checked==false && zoomed == 0) {
             x_max = d3.max(data, xValue)+1;
