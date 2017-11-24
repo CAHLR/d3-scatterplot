@@ -54,117 +54,140 @@ body {
   background: rgba(255,255,255,0.9);
   pointer-events: none;
 }
+/*The dropdown selectors*/
+/*Coloring*/
 .select1{
-    margin-left: 200px;
+    margin-left: 122px;
     margin-top: 800px;
     position: absolute;
 }
+/*Searching*/
 .select2{
-    margin-left: 200px;
-    margin-top: 850px;
+    margin-left: 140px;
+    margin-top: 925px;
     position: absolute;
 }
-.select4{
-    margin-left: 200px;
-    margin-top: 950px;
-    position: absolute;
-}
+/*?? Used in table in tabulate*/
 .select3{
     position: absolute;
     margin-left: 50px;
     margin-top: 600px;
-    }
+}
+/*Transparent*/
+.select4{
+    margin-left: 237px;
+    margin-top: 1050px;
+    position: absolute;
+}
+/*Click on feature*/
 .select5{
-    margin-left: 700px;
-    margin-top: 800px;
+    margin-left: 190px;
+    margin-top: 875px;
     position: absolute;
 }
+/*Shaping*/
 .select6{
-    margin-left: 500px;
-    margin-top: 850px;
+    margin-left: 135px;
+    margin-top: 1000px;
     position: absolute;
 }
+/*?? Default input textbox*/
 input{
-        width: 100px;
+        width: 145px;
 }
+/*The checkbox*/
 .input1{
 	width : 40px;
 }
+/*Input textbox for circle and zoom*/
 .input2{
-	width : 200px;
+	width : 180px;
 	height : 25px;
 }
+/*Transparent*/
+.form1 {
+    text-align: left;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 1050px;
+}
+/*Search*/
 .form2 {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 900px;
+    margin-top: 950px;
 }
+/*Unused*/
 .form3 {
     text-align: left;
     position: absolute;
     margin-left: 680px;
     margin-top: 850px;
 }
-.form1 {
-    text-align: left;
-    position: absolute;
-    margin-left: 20px;
-    margin-top: 1000px;
-}
+/*Wrapper for each option*/
+/*Coloring column*/
 .p1 {
     margin-left: 20px;
     margin-top: 800px;
     position: absolute;
     font-size: 150%;
 }
+/*Searching column*/
+.p2 {
+    margin-left: 20px;
+    margin-top: 925px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Side table*/
+.p3 {
+    margin-left: 1000px;
+    margin-top: 10px;
+    position: absolute;
+  white-space: nowrap;
+    font-size: 150%;
+}
+/*Transparent column*/
+.p4 {
+    margin-left: 20px;
+    margin-top: 1050px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Spectrum and log*/
+.p5 {
+    margin-left: 20px;
+    margin-top: 825px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Click on feature*/
+.p6 {
+    margin-left: 20px;
+    margin-top: 875px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Shaping column*/
+.p7 {
+    margin-left: 20px;
+    margin-top: 1000px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Zoom*/
 .p8 {
     margin-left: 20px;
     margin-top: 750px;
     position: absolute;
     font-size: 150%;
 }
+/*Circle*/
 .p9 {
     margin-left: 20px;
     margin-top: 700px;
     position: absolute;
-    font-size: 150%;
-}
-.p5 {
-    margin-left: 350px;
-    margin-top: 800px;
-    position: absolute;
-    font-size: 150%;
-}
-.p6 {
-    margin-left: 570px;
-    margin-top: 800px;
-    position: absolute;
-    font-size: 150%;
-}
-.p2 {
-    margin-left: 20px;
-    margin-top: 850px;
-    position: absolute;
-    font-size: 150%;
-}
-.p7 {
-    margin-left: 350px;
-    margin-top: 850px;
-    position: absolute;
-    font-size: 150%;
-}
-.p4 {
-    margin-left: 20px;
-    margin-top: 950px;
-    position: absolute;
-    font-size: 150%;
-}
-.p3 {
-    margin-left: 1000px;
-    margin-top: 10px;
-    position: absolute;
-	white-space: nowrap;
     font-size: 150%;
 }
 .bar rect {
@@ -174,12 +197,14 @@ input{
   fill: #fff;
   font: 10px sans-serif;
 }
+/*Never referenced - unused*/
 .div1 {
     position: absolute;    
     height: 400px;
     width: 600px;
     margin-left:1000px;
 }
+/*Never referenced - unused*/
 .div2 {
     position: absolute;
     margin-top: 400px;
@@ -187,6 +212,7 @@ input{
     width: 600px;
     margin-left: 1000px;
 }
+/*Never referenced - unused*/
 #legend-svg {
             vertical-align: top;
 }
@@ -197,30 +223,37 @@ input{
 </style>
 <body>
 
-<p class="p9">Circle<input class="input1" type="checkbox" id="cbox4" value="third_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select one points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
-<p class="p8">zoom<input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select two points after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+<p class="p9"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="fourth_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 
-<p class="p7">Shaping Column</p>
-<p class="p6">Click on feature</p>
-<p class="p5">spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
-<p class="p1" id="demo" >Coloring column</p>
-<p class="p2" id="demo2" >Searching column</p>
-<p class="p4" id="demo4" >Transparent column</p>
+<p class="p8"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+
+<p class="p1" id="demo" ><b>Color by: </b></p>
+<p class="p5">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox"></p>
+
+<p class="p6"><b>Click on feature: </b></p>
+
+<p class="p2" id="demo2" ><b>Search by: </b></p>
+
+<p class="p7"><b>Shape by: </b></p>
+
+<p class="p4" id="demo4" ><b>Transparent attribute: </b></p>
+<!-- Side Table -->
 <p class="p3" id="demo3"></p>
 
 
 <!-- The handleClick() function will be executed when the search button is pressed  -->
 <form name="myform" class="form2" onSubmit="return handleClick()">
-            <input name="Submit"  type="submit" value="Search" >
-			<input type="text" id="myVal" placeholder="Enter text&hellip;"></form>
+			<input type="text" id="myVal" placeholder="Search text">
+      <input name="Submit"  type="submit" value="Apply" >
+</form>
 			
-<!-- The handleClick1() function will be executed when the search button is pressed  -->
+<!-- The handleClick1() function will be executed when the transparent button is pressed  -->
 <form name="myform1" class="form1" onSubmit="return handleClick1()">
-			<label><h4>Enter attribute value and transparent values b/w 0-1</h4></label><br>
-            <input type="text" id="myVal1" placeholder="Enter column value&hellip;">
-			<input type="text" id="myVal2" placeholder="Enter value&hellip;">
-			<input type="text" id="myVal3" placeholder="Enter value&hellip;">
-			<input name="Submit"  type="submit" value="Transparent">
+			<label><p><br>Enter attribute value, and opacity values b/w 0 and 1:<br>(Currently doesn't work with simultaneously with search.)</p></label>
+            <input type="text" id="myVal1" placeholder="Match attri. val">
+			<input type="text" id="myVal2" placeholder="Opacity (match)">
+      <input type="text" id="myVal3" placeholder="Opacity (no match)">
+      <input name="Submit"  type="submit" value="Apply">
 </form>
 <!-- These javascript modules are used to draw the interactive plot  -->
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -230,19 +263,20 @@ input{
 <script src="crossfilter.min.js"></script>
 <script>
 
-<!-- The location of svg plot is determined by the following margins -->
+// <!-- The location of svg plot is determined by the following margins -->
 var margin = {top: 40, right: 40, bottom: 40, left: 40},
     width = 700 - margin.left - margin.right,
     height = 700 - margin.top - margin.bottom;
 
-<!-- This step is performed to parse the url to identify the dataset and the default coloring column  -->
+// <!-- This step is performed to parse the url to identify the dataset and the default coloring column  -->
 var query = window.location.search.substring(1);
 var temp_query = query.split("&");
 var dicts = {};
 var tvars;
-for(var i=0;i<temp_query.length;i++){
+for(var i=0;i<temp_query.length;i++) {
 	tvars = temp_query[i].split("=");
-	dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");}
+	dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");
+}
 if ("dataset" in dicts) {
 	dataset = dicts["dataset"];
 }	else {
@@ -259,9 +293,7 @@ if ("dataset" in dicts) {
 // setup x 
 var xValue = function(d) { return d.x;}, // data -> value
     xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) { 
-				return xScale(xValue(d));}, // data -> display
-			
+    xMap = function(d) {return xScale(xValue(d));}, // data -> display	
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
@@ -279,7 +311,7 @@ var tooltip1 = d3.select("body").append("div")
 				.attr("class", "tooltip1")
 				.style("opacity", 0);
 
-// to print all the key values pairs on the webpage (used to display the summary)                 
+// to print all the key values pairs of a point (used to display the summary on the webpage)
 var print_array = function(arr, d) {
         var x = "";
         for (var i=0; i<arr.length; i++) {
@@ -287,7 +319,7 @@ var print_array = function(arr, d) {
         }
         x = x + d.x + "<br>" + d["y"];
         return x;
-    };
+};
 
 // setup fill color
 var category;
@@ -298,14 +330,12 @@ var feature_column = "";
 var shaping_column = "";
 
 // coloring will be done according to the values determined by cValue
-var cValue = function(d) {
-	return d[category];
-	}, cValue2 = function(d) {
-		return Math.log(parseInt(d[category]));
-	},
+var cValue = function(d) {return d[category];},
+    cValue2 = function(d) {return Math.log(parseInt(d[category]));},
     color = d3.scale.category20();
 
 // used to search a particular substring in the list of requested feature column
+// used to determine whether we should add find to arri, hence the t/f -> f/t
 var searchdic = function(arri, find) {
     for(var i=0;i<arri.length;i++) {
         if(JSON.stringify(find) === JSON.stringify(arri[i])){
@@ -320,8 +350,8 @@ var tabulate = function(data_tab, columns) {
 
     var table = d3.select("body").append("table")
             .attr("class", "select3"),
-            thead = table.append("thead"),
-            tbody = table.append("tbody");
+        thead = table.append("thead"),
+        tbody = table.append("tbody");
 
     // append the header row
     thead.append("tr")
@@ -349,49 +379,57 @@ var tabulate = function(data_tab, columns) {
         .attr("style", "font-family: Courier") // sets the font style
             .html(function(d) { return d.value; });
 
-        var output = "";
-        var cf = crossfilter(data_tab);
-        for (var i=0;i<columns.length;i++) {
+    /* ?? crossfilter? */
+    var output = "";
+    var cf = crossfilter(data_tab);
+    for (var i=0;i<columns.length;i++) {
         var byParty = cf.dimension(function(p) { return p[columns[i]]; });
         output = output + "<b>" +columns[i] + "</b>" + "<br>";
         var groupByParty = byParty.group();
-            groupByParty.top(5).forEach(function(p, i) {
+        groupByParty.top(5).forEach(function(p, i) {
             output = output + p.key + ": " + p.value + "<br>";
             console.log(p.key + ": " + p.value);
         });
         output = output + "<br>";
-        }
-        document.getElementById("demo3").innerHTML = output; 
-        return table;
-        }
+    }
+    // side table
+    document.getElementById("demo3").innerHTML = output; 
+    return table;
+}
 
 // create the dropdown menu
+// Coloring
 var dropDown = d3.select("body").append("select")
                  .attr("class", "select1")
                  .attr("name", "category");
 
+// Searching
 var dropDown1 = d3.select("body").append("select")
                  .attr("class", "select2")
                  .attr("name", "category");
 
+// Transparent
 var dropDown2 = d3.select("body").append("select")
                  .attr("class", "select4")
                  .attr("name", "category");
 
+// Click on feature
 var dropDown3 = d3.select("body").append("select")
                  .attr("class", "select5")
                  .attr("name", "category");
 
+// Shaping
 var dropDown4 = d3.select("body").append("select")
                  .attr("class", "select6")
                  .attr("name", "category");
 
 var category_search_data = [];
+// categories stores the name of all the columns
 var categories = [];
+// category_search stores the name of column according to which searching is to be done
 var category_search;
 
-// categories stores the name of all the columns
-// category_search stores the name of column according to which searching is to be done
+
 // check whether the searching column is provided in the url or not
 if ("search" in dicts) {
 	category_search = dicts["search"];
@@ -418,91 +456,108 @@ var x_max, x_min, y_max, y_min;
 
 // getting header from csv file to make drowdown menus
 d3.tsv(dataset, function(data) {
-  console.log(data[0]);
-  temp = Object.keys(data[0]);
-  temp.splice(temp.indexOf('x'), 1);
-  temp.splice(temp.indexOf('y'), 1);
+    console.log(data[0]);
+    temp = Object.keys(data[0]);
+    // remove x and y
+    temp.splice(temp.indexOf('x'), 1);
+    temp.splice(temp.indexOf('y'), 1);
 
-  for(var i=0;i<temp.length;i++)
-	if (temp[i] != category_search) {
-      category_search_data.push(temp[i]);
-	}
-  
-  for(var i=0;i<temp.length;i++){
-	if (temp[i] != category) {
-      categories.push(temp[i]);
-	  temp_cat.push(temp[i]);
-	}
-    columns.push(temp[i]);
-  }
-  if ("color" in dicts) {
-	  category = categories[1];
-  } else {
-	  category = categories[0];
-  }
-  category_search = category_search_data[0];
-  dropDown1.selectAll("option")
-        .data(category_search_data)
-        .enter()
-        .append("option")
-        .text(function(d) { return d;})
-        .text(function(d) {return d;});
-  dropDown.selectAll("option")
-        .data(temp_cat)
-        .enter()
-        .append("option")
-        .text(function(d) { return d;})
-        .text(function(d) {return d;});
-  dropDown2.selectAll("option")
-        .data(temp_cat)
-        .enter()
-        .append("option")
-        .text(function(d) { return d;})
-        .text(function(d) {return d;});
-  dropDown3.selectAll("option")
-        .data(temp_cat)
-        .enter()
-        .append("option")
-        .text(function(d) { return d;})
-        .text(function(d) {return d;});
-  dropDown4.selectAll("option")
-        .data(temp_cat)
-        .enter()
-        .append("option")
-        .text(function(d) { return d;})
-        .text(function(d) {return d;});
-  shaping_column = "Select";
-  feature_column = category_search_data[0];
-  transparent_column = "Select";
+    for(var i=0;i<temp.length;i++)
+      	if (temp[i] != category_search) {
+            category_search_data.push(temp[i]);
+      	}
+    
+    for(var i=0;i<temp.length;i++) {
+        // category already pushed
+      	if (temp[i] != category) {
+            categories.push(temp[i]);
+      	    temp_cat.push(temp[i]);
+      	}
+        columns.push(temp[i]);
+    }
+    // check whether the coloring column is provided in the url or not
+    // ?? is this necessary? category is already defined with the same procedure outside the function
+    if ("color" in dicts) {
+  	  category = categories[1];
+    } else {
+      // "Select"
+  	  category = categories[0];
+    }
+    category_search = category_search_data[0];
+    // Searching
+    dropDown1.selectAll("option")
+          .data(category_search_data)
+          .enter()
+          .append("option")
+          .text(function(d) { return d;})
+          .text(function(d) {return d;});
+    // Coloring
+    dropDown.selectAll("option")
+          .data(temp_cat)
+          .enter()
+          .append("option")
+          .text(function(d) { return d;})
+          .text(function(d) {return d;});
+    // Transparent
+    dropDown2.selectAll("option")
+          .data(temp_cat)
+          .enter()
+          .append("option")
+          .text(function(d) { return d;})
+          .text(function(d) {return d;});
+    // Click on feature
+    dropDown3.selectAll("option")
+          .data(temp_cat)
+          .enter()
+          .append("option")
+          .text(function(d) { return d;})
+          .text(function(d) {return d;});
+    // Shaping
+    dropDown4.selectAll("option")
+          .data(temp_cat)
+          .enter()
+          .append("option")
+          .text(function(d) { return d;})
+          .text(function(d) {return d;});
+    shaping_column = "Select";
+    feature_column = category_search_data[0];
+    transparent_column = "Select";
 });
 
 // whenever any one of the drowdown menu's selected column is changes the plot is generated according to the value of dropdown menu selected
+// Coloring
 dropDown.on("change", plotting);
+// Searching
 dropDown1.on("change", plotting2);
+// Transparent
 dropDown2.on("change", plotting3);
+// Click on feature
 dropDown3.on("change", plotting4);
+// Shaping
 dropDown4.on("change", plotting5);
 
 if ("q" in dicts) {
-highlighting(dicts["q"], "", "");
+    highlighting(dicts["q"], "", "");
 } else { 
-highlighting("", "", "");
+    highlighting("", "", "");
 }
 
 // the functions to call when the value of dropdown menu is changes
+// Click on feature
 function plotting4(){
 		feature_column = d3.event.target.value;
 }
-
+// Transparent
 function plotting3(){
 		transparent_column = d3.event.target.value;
 }
-
+// Searching
 function plotting2(){
-        category_search = d3.event.target.value;
+    category_search = d3.event.target.value;
 }
 
 // function to call for change event
+// Coloring
 function plotting(){
 		
 		// dropDown4.property( "value", "Select" );
@@ -517,6 +572,7 @@ function plotting(){
 }
 
 // function to call for change event
+// Shaping
 function plotting5(){
 		
 		// dropDown.property( "value", "Select" );
@@ -530,38 +586,39 @@ function plotting5(){
 }
 
 var zoomed = 0;
-
+/* ?? why do some of the following handlers have return false? */
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
-function handleClick(event){
-                console.log(document.getElementById("myVal").value);
-                highlighting(document.getElementById("myVal").value, "", "");
-                return false;
-            }
+function handleClick(event) {
+    console.log(document.getElementById("myVal").value);
+    highlighting(document.getElementById("myVal").value, "", "");
+    return false;
+}
 
 // transparent event
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
-function handleClick1(event){
+function handleClick1(event) {
 			
-                console.log(document.getElementById("myVal1").value);
-				val = document.getElementById("myVal1").value; 
-				val1 = document.getElementById("myVal2").value; 
-				val2 = document.getElementById("myVal3").value;
-                highlighting(val, val1, val2);
-                return false;
-            }
+    console.log(document.getElementById("myVal1").value);
+    val = document.getElementById("myVal1").value; 
+    val1 = document.getElementById("myVal2").value; 
+    val2 = document.getElementById("myVal3").value;
+    highlighting(val, val1, val2);
+    return false;
+}
             
-// it will be executed when zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
+// it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function handleClick4(){
 				
-				val = document.getElementById("myVal1").value; 
-				val1 = document.getElementById("myVal2").value; 
-				val2 = document.getElementById("myVal3").value;
-                highlighting(val, val1, val2);
-			//	document.getElementById("zoomxy").value = ""
-            }
+    val = document.getElementById("myVal1").value; 
+    val1 = document.getElementById("myVal2").value; 
+    val2 = document.getElementById("myVal3").value;
+    highlighting(val, val1, val2);
+//	document.getElementById("zoomxy").value = ""
+}
 			
 
+// ?? I believe this function is unused, and draw also maps to handleClick4
 // it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
 function handleClick2(event){
 				
@@ -573,32 +630,33 @@ function handleClick2(event){
 				myForm1.myVal3.value = 0;
 				dropDown4.property( "value", "Select" );
 				dropDown.property( "value", "Select" );
-                highlighting("", "", "");
-                return false;
-            }
+        highlighting("", "", "");
+        return false;
+}
+// Checks the url query for name=value and extracts the value
 function getParameterByName(name, url) {
-            if (!url) {
-                url = window.location.href;
-            }
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                    results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
+    if (!url) {
+        url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 function linspace(start, end, n) {
-        var out = [];
-        var delta = (end - start) / (n - 1);
-        var i = 0;
-        while(i < (n - 1)) {
-            out.push(start + (i * delta));
-            i++;
-        }
-        out.push(end);
-        return out;
+    var out = [];
+    var delta = (end - start) / (n - 1);
+    var i = 0;
+    while(i < (n - 1)) {
+        out.push(start + (i * delta));
+        i++;
     }
+    out.push(end);
+    return out;
+}
 	
 coordinatesx = [];
 coordinatesy = [];
@@ -608,80 +666,87 @@ var scale_d = {
     'puOr11': ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'],
     'spectral8': ['#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd'],
     'redBlackGreen': ['#ff0000', '#AA0000', '#550000', '#005500', '#00AA00', '#00ff00'],
-	};
+};
 scale = scale_d['spectral8']; 
 
 // function for plotting
-function highlighting(val, val1, val2){
+function highlighting(val, val1, val2) {
 
     var svg;
     var temp1 = [], temp2 = [], temp3 = [];
     var dict1 = {};
     
     // to remove the existing svg plot if any
+    // clear side table
     document.getElementById("demo3").innerHTML = ""; 
     d3.select("svg").remove();
     d3.select("table").remove();
     d3.select("svg").remove();
 	
-	// function zoom() {
-	// 	svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-//		}
+  	// function zoom() {
+  	// 	svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    //		}
 
     // the location of svg image will be determined
     svg = d3.select("body").append("svg")
     		.attr("width", width + margin.left + margin.right)
     		.attr("height", height + margin.top + margin.bottom)
   			.append("g")
-			.attr("transform","translate(" + margin.left + "," + margin.top + ")");
+			  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 	
-
+    /* https://github.com/skokenes/D3-Lasso-Plugin */
+    /* plugin also handles selected and possible settings */
     // Lasso starts
     var lasso_start = function() {
-    d3.select("table").remove();
+        d3.select("table").remove();
         document.getElementById("demo3").innerHTML = "";
-    lasso.items()
-        .attr("r",3.5) // reset size
-        .style("fill",null) // clear all of the fills
-        .classed({"not_possible":true,"selected":false}); // style as not possible
+        lasso.items()
+            .attr("r",3.5) // reset size
+            .style("fill",null) // clear all of the fills (greys out)
+            .classed({"not_possible":true,"selected":false}); // style as not possible
     };
 
     var lasso_draw = function() {
-    // Style the possible dots
-    lasso.items().filter(function(d) {return d.possible===true})
-        .classed({"not_possible":false,"possible":true});
+        // Style the possible dots
+        lasso.items().filter(function(d) {return d.possible===true})
+            .classed({"not_possible":false,"possible":true});
 
-    // Style the not possible dot
-    lasso.items().filter(function(d) {return d.possible===false})
-        .classed({"not_possible":true,"possible":false})
-        .style("stroke", "#000");
+        // Style the not possible dot
+        lasso.items().filter(function(d) {return d.possible===false})
+            .classed({"not_possible":true,"possible":false})
+            .style("stroke", "#000");
     };
 
     var lasso_end = function() {
+        // Reset the color of all dots
+        lasso.items()
+             .style("fill", function(d) { return color(d[category]); });
 
-    // Reset the color of all dots
-    lasso.items()
-         .style("fill", function(d) { return color(d[category]); });
+        // Style the selected dots    
+        lasso.items().filter(function(d) {return d.selected===true})
+            .classed({"not_possible":false,"possible":false})
+            .attr("r",6.5);
 
-    // Style the selected dots    
-    lasso.items().filter(function(d) {return d.selected===true})
-        .classed({"not_possible":false,"possible":false})
-        .attr("r",6.5)
-
-    var zsx = lasso.items().filter(function(d) {return d.selected===true});
-	
-    x_values = [];
-    y_values = [];
-    for (var i=0; i<zsx[0].length; i++) {
+        // get values for table -> array inside a list
+        var zsx = lasso.items().filter(function(d) {return d.selected===true});
+        x_values = [];
+        y_values = [];
+        // adjust the x and y values
+        for (var i=0; i<zsx[0].length; i++) {
             x_values.push(((((zsx[0][i].getBBox().x+6.5) * (x_max - x_min))/width + x_min )));
             y_values.push(((((zsx[0][i].getBBox().y+6.5) * (y_min - y_max))/height + y_max)));
-        }       
-    var selected_data=[];
-    for (var ii=0;ii<x_values.length;ii++) {
-        for (var jj=0;jj<temp1.length;jj++) {
-            x_values[ii] = +(x_values[ii].toFixed(3));
-            y_values[ii] = +(y_values[ii].toFixed(5));
-            if ( (x_values[ii] === +(temp1[jj].toFixed(3))) && (y_values[ii] === +(temp2[jj].toFixed(5))) ) {
+        }
+        var selected_data=[];
+
+        // Compare every selected point to all points (tempX)
+        // in order to match coordinates with actual data 
+        for (var ii=0;ii<x_values.length;ii++) {
+            console.log("lasso_end gathering selected data");
+            console.log(temp1.length);
+            for (var jj=0;jj<temp1.length;jj++) {
+                x_values[ii] = +(x_values[ii].toFixed(3));
+                y_values[ii] = +(y_values[ii].toFixed(5));
+                if ( (x_values[ii] === +(temp1[jj].toFixed(3))) && (y_values[ii] === +(temp2[jj].toFixed(5))) ) {
                     all_values = {};
                     for (var k=1;k<categories.length;k++) {
                         all_values[categories[k]] = (dict1[categories[k]][jj]);
@@ -693,19 +758,21 @@ function highlighting(val, val1, val2){
                 }
             }
         }
-	
-    // render the table for the points selected by lasso
-    if(selected_data.length != 0) {
+    	
+        // render the table for the points selected by lasso
+        if(selected_data.length != 0) {
+            console.log("about to tabulate");
+            console.log(selected_data);
+            console.log(columns);
+            console.log(x_values);
             var peopleTable = tabulate(selected_data, columns, x_values);
         }
-    
-
-    // Reset the style of the not selected dots
-    lasso.items().filter(function(d) {return d.selected===false})
-        .classed({"not_possible":false,"possible":false})
-        .attr("r",3)
-        .style("stroke", "#000");
-
+        
+        // Reset the style of the not selected dots (we made them 0.5 smaller)
+        lasso.items().filter(function(d) {return d.selected===false})
+            .classed({"not_possible":false,"possible":false})
+            .attr("r",3)
+            .style("stroke", "#000");
     };
 
     // Create the area where the lasso event can be triggered
@@ -724,486 +791,509 @@ function highlighting(val, val1, val2){
         .on("draw",lasso_draw) // lasso draw function
         .on("end",lasso_end); // lasso end function
 
-    // Init the lasso on the svg:g that contains the dots
-	svg.call(lasso);
+    // Init the lasso object on the svg:g that contains the dots
+	  svg.call(lasso);
 		
     // load data
-	d3.tsv(dataset, function(error, data) {
+	  d3.tsv(dataset, function(error, data) {
 
-	// change string (from CSV) into number format
-	var numerics = {};
-	var symbol = {};
-    for(var i=1;i<categories.length;i++) {
-                dict1[categories[i]] = [];
-				numerics[categories[i]] = 1;
-            }
-	counter = 0;
-    data.forEach(function(d) {
+    	  // change string (from CSV) into number format
+    	  var numerics = {};
+    	  var symbol = {};
+        //Omitting Select (0)
+        for(var i=1;i<categories.length;i++) {
+            // initialize the value for each category pair to empty list
+            dict1[categories[i]] = [];
+            // initialize all categories as numeric
+    				numerics[categories[i]] = 1;
+        }
+    	  counter = 0;
+        data.forEach(function(d) {
+            // coerce the data to numbers
             d.x = +d.x
             d["y"] = +d["y"]
+
             for(var i=1;i<categories.length;i++){
+                // add every attribute of point to the {category:[val1,val2,...]}
                 dict1[categories[i]].push(d[categories[i]]);
-				numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseInt(d[categories[i]]));
-        }
-			if (!(d[shaping_column] in symbol)) {
-				symbol[d[shaping_column]] = counter;
-				counter = counter + 1;
-			}
+                // revoke a category's numerics status if find an entry has a non-Int value for that category
+    				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == parseInt(d[categories[i]]));
+            }
+            // fill the symbol dictionary with all possible values of the shaping column as keys
+            // value is the order of points
+      			if (!(d[shaping_column] in symbol)) {
+        				symbol[d[shaping_column]] = counter;
+        				counter = counter + 1;
+      			}
+            // push all x values, y values, and all category search values into temp1/2/3
             temp1.push(d.x);
             temp2.push(d["y"]);
             temp3.push(d[category_search]);
-			// console.log(d["z"] == parseInt(d["z"]));
-     	 });
-	console.log(numerics);
-	console.log(category);
-	// set color according to spectrum
-	if (numerics[category] && document.getElementById('cbox1').checked) {
-		console.log(category);
-	
-	console.log(d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })), d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-		if (document.getElementById('cbox2').checked)
-			{
-				m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-				m2 = (d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-				}
-				else{
-				m1 = (d3.min(data.map(function(d) {return parseInt(d[category])})));
-				m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
-			}
+    			// console.log(d["z"] == parseInt(d["z"]));
+        });
+    	  console.log(numerics);
+    	  console.log(category);
+    	  // set color according to spectrum
+    	  if (numerics[category] && document.getElementById('cbox1').checked) {
+        		console.log(category);
+        	
+        	  console.log(
+              d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })),
+              d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); }))
+            );
+            // take log if log checkbox checked
+        		if (document.getElementById('cbox2').checked) {
+        				m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
+        				m2 = (d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
+        		} else{
+        				m1 = (d3.min(data.map(function(d) {return parseInt(d[category])})));
+        				m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
+        		}
 
-		color = d3.scale.linear()
-	.domain(linspace(m1, m2,scale.length))
-	//.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
-			.range(scale);	
-	 }
+        		color = d3.scale.linear()
+        	     .domain(linspace(m1, m2,scale.length))
+          	  //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
+        			.range(scale);	
+    	  }
 
-  	// don't want dots overlapping axis, so add in buffer to data domain
-	var zoom = getParameterByName('zoom');
-	if (document.getElementById("cbox3").checked==false && zoomed == 0) 
-	{
-    x_max = d3.max(data, xValue)+1;
-    x_min = d3.min(data, xValue)-1;
-    y_max = d3.max(data, yValue)+1;
-    y_min = d3.min(data, yValue)-1; 
-	}
-	// if (zoom != null) {
-	
-	// check whether the zoom checkbox is selected or not
-	if (document.getElementById("cbox3").checked==true && zoomed==0 && coordinatesx.length == 2){
-					
-					x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
-					x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
-					y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
-					y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
+        // don't want dots overlapping axis, so add in buffer to data domain
+      	var zoom = getParameterByName('zoom'); // unused
 
-					console.log(x_max, x_min, y_max, y_min);
-					document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
-					
-					zoomed = 1;
-					// document.getElementById("cbox3").checked = false;
-					/*
-                    zoom = zoom.substr(1, zoom.length-2);
-                    commaIndex = zoom.indexOf(',');
-                    x_min = parseFloat(zoom.substr(0, commaIndex));
-                    zoom = zoom.substr(commaIndex+1);
-                    commaIndex = zoom.indexOf(',');
-                    x_max = parseFloat(zoom.substr(0, commaIndex));
-                    zoom = zoom.substr(commaIndex+1);
-                    commaIndex = zoom.indexOf(',');
-                    y_min = parseFloat(zoom.substr(0, commaIndex));
-                    y_max = parseFloat(zoom.substr(commaIndex+1));
-					*/
-                }
-                xScale.domain([x_min, x_max]);
-                yScale.domain([y_min, y_max]);
-	
-	// xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-  	// yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+      	if (document.getElementById("cbox3").checked==false && zoomed == 0) {
+            x_max = d3.max(data, xValue)+1;
+            x_min = d3.min(data, xValue)-1;
+            y_max = d3.max(data, yValue)+1;
+            y_min = d3.min(data, yValue)-1; 
+      	}
+      	// if (zoom != null) {
+    	
+      	// if zoom is checked and conditions are satisfied
+      	if (document.getElementById("cbox3").checked==true && zoomed==0 && coordinatesx.length == 2) {
+      					
+      			x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
+      			x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
+      			y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
+      			y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
 
-  	// x-axis
-	cx = 0;
-	cy = 0;
-	ans = 0;
-	
-	// check whether the circle checkbox is selected or not
-	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) 
-	{
-		console.log(document.getElementById("drawxy").value);
-		draw = document.getElementById("drawxy").value;
-		draw = draw.split(',');
-		console.log("hello");
-		cx = coordinatesx[0]
-		cy = coordinatesy[0]
-		
-		coordinatesx[0] = xScale.invert(coordinatesx[0])
-		coordinatesy[0] = yScale.invert(coordinatesy[0])
-		console.log(coordinatesx, coordinatesy);
-		
-		for (var i=1 ; i <= 1000; i++)
-		{		
-			c = 0;
-			t = 0;
-			f = i;
-			data.forEach(function(d) {
-            d.x = +d.x
-            d["y"] = +d["y"]
-			
-			// dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
-			dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
-			// console.log(dist)	
-			if (d[draw[1]] == draw[2]) {
-				if (dist <= f) {
-				c += 1;
-			}
-			t += 1;
-			}
-			});
-		console.log(c, t);
-		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
-				ans = f;
-				break;
-		}
-			
-	}
-}
-	console.log(ans);	
-	if (ans != 0) {	
-	console.log(xScale(ans))
-	svg.append("circle")
-		.attr("r", ans)
-		.attr("cx", cx)
-		.attr("cy", cy)
-		.style("stroke", "black")    // set the line colour
-		.style("stroke-width", 5)
-		.style("fill", "green")
-		.style("opacity", .2);
-	}
-	
-	// draw the x-axis of plot
-  	svg.append("g")
-      	.attr("class", "x axis")
-      	.attr("transform", "translate(0," + height + ")")
-      	.call(xAxis)
-    	.append("text")
-      	.attr("class", "label")
-      	.attr("x", width)
-      	.attr("y", -6)
-      	.style("text-anchor", "end")
-      	.text("");
+      			console.log(x_max, x_min, y_max, y_min);
+      			document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
+      			
+      			zoomed = 1;
+      					// document.getElementById("cbox3").checked = false;
+      					/*
+                          zoom = zoom.substr(1, zoom.length-2);
+                          commaIndex = zoom.indexOf(',');
+                          x_min = parseFloat(zoom.substr(0, commaIndex));
+                          zoom = zoom.substr(commaIndex+1);
+                          commaIndex = zoom.indexOf(',');
+                          x_max = parseFloat(zoom.substr(0, commaIndex));
+                          zoom = zoom.substr(commaIndex+1);
+                          commaIndex = zoom.indexOf(',');
+                          y_min = parseFloat(zoom.substr(0, commaIndex));
+                          y_max = parseFloat(zoom.substr(commaIndex+1));
+      					*/
+        }
+        xScale.domain([x_min, x_max]);
+        yScale.domain([y_min, y_max]);
+    	
+      	// xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+        	// yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
-  	// draw the y-axis of plot
-  	svg.append("g")
-      	.attr("class", "y axis")
-      	.call(yAxis)
-    	.append("text")
-      	.attr("class", "label")
-      	.attr("transform", "rotate(-90)")
-      	.attr("y", 6)
-      	.attr("dy", ".71em")
-      	.style("text-anchor", "end")
-      	.text("");
+        // x-axis
+      	cx = 0;
+      	cy = 0;
+      	ans = 0;
+  	
+      	// check whether the circle checkbox is selected or not
+      	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
+        		console.log(document.getElementById("drawxy").value);
+        		draw = document.getElementById("drawxy").value;
+        		draw = draw.split(',');
+        		cx = coordinatesx[0]
+        		cy = coordinatesy[0]
+
+        		// invert: Given a value from the range, returns the corresponding value from the domain. Inversion is useful for interaction, say to determine the data value corresponding to the position of the mouse.
+            console.log("before invert");
+            console.log(coordinatesx[0], coordinatesy[0]);
+        		coordinatesx[0] = xScale.invert(coordinatesx[0])
+        		coordinatesy[0] = yScale.invert(coordinatesy[0])
+            console.log("after invert");
+            console.log(coordinatesx[0], coordinatesy[0]);
+        		console.log(coordinatesx, coordinatesy);
+
+            /* I think this would make more sense, as drawxy never gets a value, so I'm not sure why we compare
+               using draw values in the for loop.
+                console.log(document.getElementById("drawxy").value);
+                draw = document.getElementById("drawxy").value;
+                draw = draw.split(',');
+                document.getElementById("drawxy").value = "X:["+parseInt(coordinatesx[0])+"] Y:["+parseInt(coordinatesy[0])+"]";
+        		*/
+        		for (var i=1 ; i <= 1000; i++) {
+          			c = 0;
+          			t = 0;
+          			f = i;
+          			data.forEach(function(d) {
+                    d.x = +d.x
+                    d["y"] = +d["y"]
+          			
+              			// dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
+              			dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
+              			// console.log(dist)	
+              			if (d[draw[1]] == draw[2]) {
+                				if (dist <= f) {
+                				    c += 1;
+              			    }
+              			    t += 1;
+              			}
+          			});
+            		console.log(c, t);
+            		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
+            				ans = f;
+            				break;
+            		}
+        			
+        	  }
+        }
+      	console.log(ans);	
+      	if (ans != 0) {	// Currently will always != 0
+          	console.log(xScale(ans))
+          	svg.append("circle")
+          		.attr("r", ans)
+          		.attr("cx", cx)
+          		.attr("cy", cy)
+          		.style("stroke", "black")    // set the line colour
+          		.style("stroke-width", 5)
+          		.style("fill", "green")
+          		.style("opacity", .2);
+      	}
+    	
+      	// draw the x-axis of plot
+      	svg.append("g")
+          	.attr("class", "x axis")
+          	.attr("transform", "translate(0," + height + ")")
+          	.call(xAxis)
+        	.append("text")
+          	.attr("class", "label")
+          	.attr("x", width)
+          	.attr("y", -6)
+          	.style("text-anchor", "end")
+          	.text("");
+
+      	// draw the y-axis of plot
+      	svg.append("g")
+          	.attr("class", "y axis")
+          	.call(yAxis)
+        	.append("text")
+          	.attr("class", "label")
+          	.attr("transform", "rotate(-90)")
+          	.attr("y", 6)
+          	.attr("dy", ".71em")
+          	.style("text-anchor", "end")
+          	.text("");
+      	
+      	// to identify the condition of transparent column values
+      	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
+      		transparent_column = transparent_column.toString();
+      		val = val.toString(); // ?? no to lower case here?
+      	}
+      	else {
+      		val = val.toLowerCase();
+      	}
 	
-	// to identify the condition of transparent column values
-	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
-		transparent_column = transparent_column.toString();
-		val = val.toString();
-	}
-	else {
-		val = val.toLowerCase();
-	}
-	
-	// transparency according to transparent column value
-	var transp = function(d){
-                    var x = val.length === 0;
-                    return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
-                };
-	var transpar = function(d) { 
-				if (val !== ""){
-					if (d[transparent_column] == val){
-						return parseFloat(val1);
-					}
-						else{
-							return parseFloat(val2);
-						}
-					}
-				else { 
-					return transp(d);}
-				};
-				
-	// searching according to the substring given and searching column 
-    var searchFunc = function(d){
-                    var x = d[category_search].toLowerCase().indexOf(val) < 0
+      	// transparency according to transparent column value
+      	var transp = function(d) {
+            var x = val.length === 0; // true if no val specified
+            // ?? return 1 if no value specified, 1 otherwise??
+            return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
+        };
+      	var transpar = function(d) { 
+      			if (val !== ""){
+                // if point's transp column value is equal to the value specified, return val1, else val2
+      					if (d[transparent_column] == val){
+      						return parseFloat(val1);
+      					} else{
+      						return parseFloat(val2);
+      					}
+      			}
+      			else {
+      				return transp(d);
+            }
+      	};
+    				
+    	  // searching according to the substring given and searching column 
+        var searchFunc = function(d) {
+            // x truthy if not found
+            var x = d[category_search].toLowerCase().indexOf(val) < 0
                     || val.length === 0;
-		            return x ? 1 : 2;};
-    var searchFunc1 = function(d){
-                    var x = d.toLowerCase().indexOf(val) < 0
-                    || val.length === 0;
-		            return x ? 1 : 2;};
+            // return 1 if not found, 2 if found
+            return x ? 1 : 2;
+        };
 
-    var searched_data = [], d_temp;
-    for (var i=0;i<temp3.length;i++) {
+        var searchFunc1 = function(d) {
+            // x true if not found
+            var x = d.toLowerCase().indexOf(val) < 0
+                    || val.length === 0;
+            // return 1 if not found, 2 if found
+            return x ? 1 : 2;
+        };
+
+        var searched_data = [], d_temp;
+        for (var i=0;i<temp3.length;i++) {
+            // 0 if found, 1 if not found
             if ( searchFunc1(temp3[i])-1 ) {
-                    d_temp = {};
-                    for(var j=1;j<categories.length;j++) {
-                            d_temp[categories[j]] = dict1[categories[j]][i];
-                    }
-         if(searchdic(searched_data, d_temp) === true) {
-                searched_data.push(d_temp);
-                
+                d_temp = {};
+                // enter all data into dictionary
+                for(var j=1;j<categories.length;j++) {
+                    d_temp[categories[j]] = dict1[categories[j]][i];
+                }
+                if(searchdic(searched_data, d_temp) === true) {
+                    searched_data.push(d_temp);
                 }
             }
         }
-    if ( val != "" && searched_data.length != 0) { 
-             var peopleTable1 = tabulate(searched_data, columns);
+        // create the table
+        if ( val != "" && searched_data.length != 0) { 
+            var peopleTable1 = tabulate(searched_data, columns);
         };
-		
-	// determines the rotation of symbols that can be done
-	var sizes = {}
-	sizes[0] = ["0", "90", "0", "0"]
-	sizes[1] = ["0", "45", "0", "0"]
-	sizes[2] = ["0", "90", "0", "0"]
-	sizes[3] = ["0", "45", "0", "0"]
-	sizes[4] = ["0", "90", "0", "0"]
-	sizes[5] = ["0", "0", "0", "0"]
-	var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
+    		
+      	// determines the rotation of symbols that can be done
+      	var sizes = {}
+      	sizes[0] = ["0", "90", "0", "0"]
+      	sizes[1] = ["0", "45", "0", "0"]
+      	sizes[2] = ["0", "90", "0", "0"]
+      	sizes[3] = ["0", "45", "0", "0"]
+      	sizes[4] = ["0", "90", "0", "0"]
+      	sizes[5] = ["0", "0", "0", "0"]
+      	var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
 	
-	// shaping of symbols according to the shaping column
-	if (shaping_column !== "Select" ) {
-		// category = shaping_column;
-		svg.selectAll(".dot")
-      	.data(data)
-    	.enter().append("path")
-        .attr("class", "point")
-		// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-		.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}))
-	.attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
-      	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-        .style("opacity",function(d) { return transpar(d);})
-      	.on("mouseover", function(d) {
+      	// shaping of symbols according to the shaping column
+      	if (shaping_column !== "Select" ) {
+      		// category = shaping_column;
+      		svg.selectAll(".dot")
+            	.data(data)
+          	  .enter().append("path")
+              .attr("class", "point")
+      		// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
+      		    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}))
+      	      .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
+            	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+              .style("opacity",function(d) { return transpar(d);})
 
-        tooltip.transition()
-               .duration(200)
-               .style("opacity", 1);
-        tooltip.html(
-                print_array(category_search_data, d))
-                  .style("left", 60 + "px")
-                  .style("top", 30 + "px");
-        })
-        .on("mouseout", function(d) {
-			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
-			.style("fill", function(d) { return color(cValue(d));});
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
-        })
-		.on("click", function(d) {
-			
-			svg.append("text")
-			.text(d[feature_column])
-			.attr("x", (d3.event.pageX-50))
-            .attr("y", (d3.event.pageY-35));
-		});	
-	}
-	else {	
-		
-		console.log(document.getElementById('cbox2').checked)	
-		// draw dots
-		marked = {}
-    svg.selectAll(".dot")
-      	.data(data)
-    	.enter().append("circle")
-        .attr("class", "dot")
-      	.attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
-        .style("stroke", function(d){ return searchFunc(d)-1 ? "yellow":"#000";})
-        .style("stroke-width", function(d){ return searchFunc(d);})
-      	.attr("cx", xMap)
-      	.attr("cy", yMap)
-      	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-        .style("opacity",function(d) { return transpar(d);})
+            	.on("mouseover", function(d) {
+                  tooltip.transition()
+                         .duration(200)
+                         .style("opacity", 1);
+                  tooltip.html(
+                          print_array(category_search_data, d))
+                            .style("left", 60 + "px")
+                            .style("top", 30 + "px");
+              })
+              .on("mouseout", function(d) {
+            			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+            			        .style("fill", function(d) { return color(cValue(d));});
+                  tooltip.transition()
+                          .duration(500)
+                          .style("opacity", 0);
+              })
+          		.on("click", function(d) {
+            			svg.append("text")
+                    			.text(d[feature_column])
+                    			.attr("x", (d3.event.pageX-50))
+                          .attr("y", (d3.event.pageY-35));
+          		});
+      	} else {
+      		// console.log(document.getElementById('cbox2').checked)	
+      		// draw dots
+      		marked = {}
+          svg.selectAll(".dot")
+            	.data(data)
+          	  .enter().append("circle")
+              .attr("class", "dot")
+            	.attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+              .style("stroke", function(d){ return searchFunc(d)-1 ? "yellow":"#000";})
+              .style("stroke-width", function(d){ return searchFunc(d);})
+            	.attr("cx", xMap)
+            	.attr("cy", yMap)
+            	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+              .style("opacity",function(d) { return transpar(d);})
+            	
+          		.on("mouseover", function(d) {
+                  tooltip.transition()
+                         .duration(200)
+                         .style("opacity", 1);
+                  tooltip.html(print_array(category_search_data, d))
+                          .style("left", 60 + "px")
+                          .style("top", 30 + "px");
+              })
+
+          		.on("mouseout", function(d) {
+              		tooltip.transition()
+                         .duration(500)
+                         .style("opacity", 0);
+              })
+                 
+          		.on("click", function(d) {
+              		// console.log("Hello");
+              		if (!([d3.event.pageX, d3.event.pageY] in marked)) {
+                  		marked[[d3.event.pageX, d3.event.pageY]] = true;
+                  		marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
+                  		marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
+                  		marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
+                  		marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
+                  		marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
+                  		marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
+                  		marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
+                  		marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
+                  		svg.append("text")
+                  			.text(d[feature_column])
+                  			.attr("x", (d3.event.pageX-50))
+                        .attr("y", (d3.event.pageY-35));
+                			/*
+                			tooltip1.transition()
+                			   .attr("class", "tooltip1")
+                               .style("opacity", 1);	
+                			   
+                			tooltip1.html("<b>"+d[feature_column]+"</b>")
+                               .style("left", (d3.event.pageX + 10) + "px")
+                               .style("top", (d3.event.pageY - 10) + "px");	
+              			   */
+              		}
+          		});
+  	    }
+      	// the event to call on click event
+      	svg.on("click",function() {
+      		// svg.select("#myText").remove();
+
+      		tooltip1.style("opacity", 0);
+      		var coordinates1 = d3.mouse(this);
+      		coordinatesx.push(coordinates1[0]);
+      		coordinatesy.push(coordinates1[1]);
+      		console.log(coordinatesx, coordinatesy);
+      	})
       	
-		.on("mouseover", function(d) {
+          
+      	lasso.items(d3.selectAll(".dot"));
+      	var len = color.domain().length;
+        // if spectrum
+      	if (numerics[category] && document.getElementById('cbox1').checked) {
+      		
+        		if (document.getElementById('cbox2').checked) {
+          			m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
+          			m2 = (d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
+        		} else {
+        			m1 = (d3.min(data.map(function(d) {return parseInt(d[category])})));
+        			m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
 
-        tooltip.transition()
-               .duration(200)
-               .style("opacity", 1);
-        tooltip.html(
-                print_array(category_search_data, d))
-                  .style("left", 60 + "px")
-                  .style("top", 30 + "px");
-        })
-			.on("mouseout", function(d) {
-			tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
-        })
-       
-		.on("click", function(d) {
-			
-		console.log("Hello");
-		if (!([d3.event.pageX, d3.event.pageY] in marked)){
-		marked[[d3.event.pageX, d3.event.pageY]] = true;
-		marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
-		marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
-		marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
-		marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
-		marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
-		marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
-		marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
-		marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
-		svg.append("text")
-			.text(d[feature_column])
-			.attr("x", (d3.event.pageX-50))
-            .attr("y", (d3.event.pageY-35));
-			/*
-			tooltip1.transition()
-			   .attr("class", "tooltip1")
-               .style("opacity", 1);	
-			   
-			tooltip1.html("<b>"+d[feature_column]+"</b>")
-               .style("left", (d3.event.pageX + 10) + "px")
-               .style("top", (d3.event.pageY - 10) + "px");	
-			   */
-			   }
-		});
-	}
-	// the event to call on click event
-	svg.on("click",function() {
-		// svg.select("#myText").remove();
+        		}
+        		console.log(m1, m2);
+        		var legend = svg.selectAll(".legend")
+        			.data(color.domain())
+        			.enter().append("g")
+        			.attr("class", "legend");
 
-		tooltip1.style("opacity", 0);
-		var coordinates1 = d3.mouse(this);
-		coordinatesx.push(coordinates1[0]);
-		coordinatesy.push(coordinates1[1]);
-		console.log(coordinatesx, coordinatesy);
-	})
-	
-    
-	lasso.items(d3.selectAll(".dot"));
-	var len = color.domain().length;
-	
-	if (numerics[category] && document.getElementById('cbox1').checked) {
-		
-		if (document.getElementById('cbox2').checked)
-		{
-			m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-			m2 = (d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-			}
-			else{
-			m1 = (d3.min(data.map(function(d) {return parseInt(d[category])})));
-			m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
+        		var gradient = legend.append('defs')
+                    .append('linearGradient')
+                    .attr('id', 'gradient')
+                    .attr('x1', '0%') // bottom
+                    .attr('y1', '100%')
+                    .attr('x2', '0%') // to top
+                    .attr('y2', '0%')
+                    .attr('spreadMethod', 'pad');
 
-			}
-		console.log(m1, m2);
-		var legend = svg.selectAll(".legend")
-			.data(color.domain())
-			.enter().append("g")
-			.attr("class", "legend");
+        		var pct = linspace(0, 100, scale.length).map(function(d) {
+                return Math.round(d) + '%';
+            });
 
-		var gradient = legend.append('defs')
-            .append('linearGradient')
-            .attr('id', 'gradient')
-            .attr('x1', '0%') // bottom
-            .attr('y1', '100%')
-            .attr('x2', '0%') // to top
-            .attr('y2', '0%')
-            .attr('spreadMethod', 'pad');
+            var colourPct = d3.zip(pct, scale);
+            colourPct.forEach(function(d) {
+                gradient.append('stop')
+                    .attr('offset', d[0])
+                    .attr('stop-color', d[1])
+                    .attr('stop-opacity', 1);
+            });
 
-		var pct = linspace(0, 100, scale.length).map(function(d) {
-            return Math.round(d) + '%';
-        });
+        		legend.append('rect')
+        				.attr('x1', 0)
+        				.attr('y1', 0)
+        				.attr('width', 18)
+        				.attr('height', 150)
+        				.attr("transform", "translate(" + 582 + ", 0)")
+        				.style('fill', 'url(#gradient)');
 
-        var colourPct = d3.zip(pct, scale);
-        colourPct.forEach(function(d) {
-            gradient.append('stop')
-                .attr('offset', d[0])
-                .attr('stop-color', d[1])
-                .attr('stop-opacity', 1);
-        });
+            var legendScale = d3.scale.linear()
+                .domain([m1, m2])
+                .range([150, 0]);
 
-		legend.append('rect')
-				.attr('x1', 0)
-				.attr('y1', 0)
-				.attr('width', 18)
-				.attr('height', 150)
-				.attr("transform", "translate(" + 582 + ", 0)")
-				.style('fill', 'url(#gradient)');
+            var legendAxis = d3.svg.axis()
+                .scale(legendScale)
+                .orient("right")
+                // .tickValues([m1, m2])
+                .ticks(10);
 
-        var legendScale = d3.scale.linear()
-            .domain([m1, m2])
-            .range([150, 0]);
+        		legend.append("g")
+          			.attr("class", "legend axis")
+                .attr("transform", "translate(" + 600 + ", 0)")
+          			.call(legendAxis);
+      	} else { // no spectrum
+        		var keys = Object.keys(symbol)
+        		leng = keys.length;
+        		if (leng<20 && shaping_column != "Select") {
+        			// draw legend
+        		    // ?? Not sure why, but this legend appears not to show
+              	var legend = svg.selectAll(".legend")
+              			.data(keys)
+              			.enter().append("g")
+              			// .attr("class", "legend");
+              			// .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+            		console.log(keys);
+            		console.log(symbol);
+            		console.log(symbols);
+            		// draw legend colored rectangles
+            		legend.append("path")
+              			// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
+              			.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
+              			.attr("x", width + 0)
+              			.attr("width", 18)
+              			.attr("height", 18)
+              			// .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+              			.attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
+            		// draw legend text
+            		legend.append("text")
+              			// .attr("x", 100 + 0)
+              			// .attr("y", 4)
+              			.attr("dy", ".35em")
+              			.style("text-anchor", "begin")
+              			.text(function(d) { return d;})
+              			.attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+        		}
 
-        var legendAxis = d3.svg.axis()
-            .scale(legendScale)
-            .orient("right")
-            // .tickValues([m1, m2])
-            .ticks(10);
+        		if(len <= 30 && category != "Select") {
 
-		legend.append("g")
-			.attr("class", "legend axis")
-            .attr("transform", "translate(" + 600 + ", 0)")
-			.call(legendAxis);
-	}
-	else {
-		var keys = Object.keys(symbol)
-		leng = keys.length;
-		if (leng<20 && shaping_column != "Select"){
-			// draw legend
-		
-	var legend = svg.selectAll(".legend")
-			.data(keys)
-			.enter().append("g")
-			// .attr("class", "legend");
-			// .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-		console.log(keys);
-		console.log(symbol);
-		console.log(symbols);
-		// draw legend colored rectangles
-		legend.append("path")
-			// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-			.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-	
-			.attr("x", width + 0)
-			.attr("width", 18)
-			.attr("height", 18)
-			// .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-			.attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-		// draw legend text
-		legend.append("text")
-			// .attr("x", 100 + 0)
-			// .attr("y", 4)
-			.attr("dy", ".35em")
-			.style("text-anchor", "begin")
-			.text(function(d) { return d;})
-			.attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-		}
+                // draw legend
+              	var legend = svg.selectAll(".legend")
+              		.data(color.domain())
+              		.enter().append("g")
+              		.attr("class", "legend")
+              		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+            		
+              	// draw legend colored rectangles
+              	legend.append("rect")
+              		.attr("x", width + 6)
+              		.attr("width", 18)
+              		.attr("height", 18)
+              		.style("fill", color);
 
-		if(len <= 30 && category != "Select"){
-
-    // draw legend
-	var legend = svg.selectAll(".legend")
-		.data(color.domain())
-		.enter().append("g")
-		.attr("class", "legend")
-		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-		
-	// draw legend colored rectangles
-	legend.append("rect")
-		.attr("x", width + 6)
-		.attr("width", 18)
-		.attr("height", 18)
-		.style("fill", color);
-
-	// draw legend text
-	legend.append("text")
-		.attr("x", width + 0)
-		.attr("y", 9)
-		.attr("dy", ".35em")
-		.style("text-anchor", "end")
-		.text(function(d) { return d;});
-		}
-    };
-    });
-}
+              	// draw legend text
+              	legend.append("text")
+              		.attr("x", width + 0)
+              		.attr("y", 9)
+              		.attr("dy", ".35em")
+              		.style("text-anchor", "end")
+              		.text(function(d) { return d;});
+        		}
+        };
+    }); // end load data
+} // end highlighting
 </script>
 </body>
 </html>
