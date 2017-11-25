@@ -479,7 +479,7 @@ d3.tsv(dataset, function(data) {
     // check whether the coloring column is provided in the url or not
     // ?? is this necessary? category is already defined with the same procedure outside the function
     if ("color" in dicts) {
-  	  category = categories[1];
+  	  category = categories[1]; // since color would be first, start with next
     } else {
       // "Select"
   	  category = categories[0];
@@ -828,8 +828,12 @@ function highlighting(val, val1, val2) {
             for(var i=1;i<categories.length;i++){
                 // add every attribute of point to the {category:[val1,val2,...]}
                 dict1[categories[i]].push(d[categories[i]]);
-                // revoke a category's numerics status if find an entry has a non-Int and non-null value for that category
+                // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
     				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseInt(d[categories[i]]));
+                // any non-empty non-numeric will forever set that category to false
+                if (!numerics[categories[i]]) {
+                    break;
+                }
             }
             // fill the symbol dictionary with all possible values of the shaping column as keys
             // value is the order of points
