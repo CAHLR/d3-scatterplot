@@ -64,7 +64,7 @@ body {
 /*Searching*/
 .select2{
     margin-left: 140px;
-    margin-top: 925px;
+    margin-top: 975px;
     position: absolute;
 }
 /*?? Used in table in tabulate*/
@@ -76,7 +76,7 @@ body {
 /*Transparent*/
 .select4{
     margin-left: 237px;
-    margin-top: 1050px;
+    margin-top: 1075px;
     position: absolute;
 }
 /*Click on feature*/
@@ -88,7 +88,7 @@ body {
 /*Shaping*/
 .select6{
     margin-left: 135px;
-    margin-top: 1000px;
+    margin-top: 925px;
     position: absolute;
 }
 /*?? Default input textbox*/
@@ -109,14 +109,14 @@ input{
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 1050px;
+    margin-top: 1125px;
 }
 /*Search*/
 .form2 {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 950px;
+    margin-top: 1025px;
 }
 /*Unused*/
 .form3 {
@@ -136,7 +136,7 @@ input{
 /*Searching column*/
 .p2 {
     margin-left: 20px;
-    margin-top: 925px;
+    margin-top: 975px;
     position: absolute;
     font-size: 150%;
 }
@@ -151,7 +151,7 @@ input{
 /*Transparent column*/
 .p4 {
     margin-left: 20px;
-    margin-top: 1050px;
+    margin-top: 1075px;
     position: absolute;
     font-size: 150%;
 }
@@ -172,7 +172,7 @@ input{
 /*Shaping column*/
 .p7 {
     margin-left: 20px;
-    margin-top: 1000px;
+    margin-top: 925px;
     position: absolute;
     font-size: 150%;
 }
@@ -187,6 +187,20 @@ input{
 .p9 {
     margin-left: 20px;
     margin-top: 700px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Exact match - search*/
+.p10 {
+    margin-left: 20px;
+    margin-top: 1000px;
+    position: absolute;
+    font-size: 150%;
+}
+/*Exact match - transparent*/
+.p11 {
+    margin-left: 20px;
+    margin-top: 1100px;
     position: absolute;
     font-size: 150%;
 }
@@ -233,11 +247,15 @@ input{
 
 <p class="p6"><b>Click on feature: </b></p>
 
-<p class="p2" id="demo2" ><b>Search by: </b></p>
-
 <p class="p7"><b>Shape by: </b></p>
 
+
+<p class="p2" id="demo2" ><b>Search by: </b></p>
+<p class="p10">Exact match:<input class="input1" type="checkbox" id="cbox5" value="fifth_checkbox" onclick="handleClick()"></p>
+
 <p class="p4" id="demo4" ><b>Transparent attribute: </b></p>
+<p class="p11">Exact match:<input class="input1" type="checkbox" id="cb6" value="sixth_checkbox" onclick="handleClick1()"></p>
+
 <!-- Side Table -->
 <p class="p3" id="demo3"></p>
 
@@ -250,12 +268,13 @@ input{
 			
 <!-- The handleClick1() function will be executed when the transparent button is pressed  -->
 <form name="myform1" class="form1" onSubmit="return handleClick1()">
-			<label><p><br>Enter attribute value, and opacity values b/w 0 and 1:<br>(Currently doesn't work with simultaneously with search.)</p></label>
-            <input type="text" id="myVal1" placeholder="Match attri. val">
+			<p><br>Enter attribute value, and opacity values b/w 0 and 1:<br>(Currently doesn't work with simultaneously with search.)</p>
+      <input type="text" id="myVal1" placeholder="Match attri. val">
 			<input type="text" id="myVal2" placeholder="Opacity (match)">
       <input type="text" id="myVal3" placeholder="Opacity (no match)">
       <input name="Submit"  type="submit" value="Apply">
 </form>
+
 <!-- These javascript modules are used to draw the interactive plot  -->
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="//d3js.org/d3-path.v0.1.min.js"></script>
@@ -332,7 +351,7 @@ var shaping_column = "";
 
 // coloring will be done according to the values determined by cValue
 var cValue = function(d) {return d[category];},
-    cValue2 = function(d) {return Math.log(parseInt(d[category]));},
+    cValue2 = function(d) {return Math.log(parseFloat(d[category]));},
     color = d3.scale.category20();
 
 // used to search a particular substring in the list of requested feature column
@@ -378,13 +397,18 @@ var tabulate = function(data_tab, columns) {
         .enter()
         .append("td")
         .attr("style", "font-family: Courier") // sets the font style
-            .html(function(d) { return d.value; });
+        .html(function(d) { return d.value; });
 
-    /* ?? crossfilter? */
+    /*
+      crossfilter dimensions and group by
+      http://animateddata.co.uk/articles/crossfilter/
+    */
     var output = "";
     var cf = crossfilter(data_tab);
-    for (var i=0;i<columns.length;i++) {
-        var byParty = cf.dimension(function(p) { return p[columns[i]]; });
+    /* crossfilter currently only supports up to 32 columns) */
+    for (var i=0;i<columns.length && i<32;i++) {
+        var byParty = cf.dimension(function(p) {
+            return p[columns[i]]; });
         output = output + "<b>" +columns[i] + "</b>" + "<br>";
         var groupByParty = byParty.group();
         groupByParty.top(5).forEach(function(p, i) {
@@ -587,6 +611,7 @@ function plotting5(){
 }
 
 var zoomed = 0;
+var needZoom = false;
 /* ?? why do some of the following handlers have return false? */
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
@@ -642,6 +667,7 @@ function handleClick4(){
     val = document.getElementById("myVal1").value; 
     val1 = document.getElementById("myVal2").value; 
     val2 = document.getElementById("myVal3").value;
+    needZoom = true;
     highlighting(val, val1, val2);
 }
 			
@@ -814,7 +840,7 @@ function highlighting(val, val1, val2) {
     	  var symbol = {};
         //Omitting Select (0)
         for(var i=1;i<categories.length;i++) {
-            // initialize the value for each category pair to empty list
+            // initialize the value for each category key to empty list
             dict1[categories[i]] = [];
             // initialize all categories as numeric
     				numerics[categories[i]] = 1;
@@ -829,11 +855,12 @@ function highlighting(val, val1, val2) {
                 // add every attribute of point to the {category:[val1,val2,...]}
                 dict1[categories[i]].push(d[categories[i]]);
                 // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
-    				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseInt(d[categories[i]]));
+    				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
+                /* this was causing problems */
                 // any non-empty non-numeric will forever set that category to false
-                if (!numerics[categories[i]]) {
-                    break;
-                }
+                // if (!numerics[categories[i]]) {
+                //     break;
+                // }
             }
             // fill the symbol dictionary with all possible values of the shaping column as keys
             // value is the order of points
@@ -855,11 +882,11 @@ function highlighting(val, val1, val2) {
         	
             // take log if log checkbox checked
         		if (document.getElementById('cbox2').checked) {
-        				m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-        				m2 = (d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
+        				m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+        				m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
         		} else{
-        				m1 = (d3.min(data.map(function(d) {return parseInt(d[category])})));
-        				m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
+        				m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
+        				m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
         		}
 
             console.log(m1, m2);
@@ -878,6 +905,7 @@ function highlighting(val, val1, val2) {
       	if (document.getElementById("cbox3").checked==false) {
             document.getElementById("zoomxy").value = "";
             zoomed = 0;
+            needZoom = false;
             x_max = d3.max(data, xValue)+1;
             x_min = d3.min(data, xValue)-1;
             y_max = d3.max(data, yValue)+1;
@@ -886,7 +914,7 @@ function highlighting(val, val1, val2) {
       	// if (zoom != null) {
     	
       	// if zoom is checked and conditions are satisfied
-      	if (document.getElementById("cbox3").checked==true && coordinatesx.length >= 2) {
+      	if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
       					
       			x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
       			x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
@@ -897,6 +925,7 @@ function highlighting(val, val1, val2) {
       			document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
       			
       			zoomed = 1;
+            needZoom = false;
       					// document.getElementById("cbox3").checked = false;
       					/*
                           zoom = zoom.substr(1, zoom.length-2);
@@ -965,7 +994,7 @@ function highlighting(val, val1, val2) {
               			    t += 1;
               			}
           			});
-            		console.log(c, t);
+            		// console.log(c, t);
             		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
             				ans = f;
             				break;
@@ -974,7 +1003,7 @@ function highlighting(val, val1, val2) {
         	  }
         }
       	console.log(ans);	
-      	if (ans != 0) {	// Currently will always != 0
+      	if (ans != 0) {
           	console.log(xScale(ans))
           	svg.append("circle")
           		.attr("r", ans)
@@ -1016,7 +1045,7 @@ function highlighting(val, val1, val2) {
       		val = val.toString(); // ?? no to lower case here?
       	}
       	else {
-      		val = val.toLowerCase();
+      		val = val.toString();
       	}
 	
       	// transparency according to transparent column value
@@ -1028,7 +1057,17 @@ function highlighting(val, val1, val2) {
       	var transpar = function(d) { 
       			if (val !== ""){
                 // if point's transp column value is equal to the value specified, return val1, else val2
-      					if (d[transparent_column] == val){
+                var match;
+                if (document.getElementById('cb6').checked) {
+                    // console.log("Using exact match");
+                    match = d[transparent_column] == val;
+                } else {
+                    val = val.toLowerCase();
+                    match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val) > -1);
+                }
+
+      					if (match){
+                  // console.log(val, " matches ", d[transparent_column]);
       						return parseFloat(val1);
       					} else{
       						return parseFloat(val2);
@@ -1042,29 +1081,49 @@ function highlighting(val, val1, val2) {
     	  // searching according to the substring given and searching column 
         var searchFunc = function(d) {
             // x truthy if not found
-            var x = d[category_search].toLowerCase().indexOf(val) < 0
-                    || val.length === 0;
+            var match;
+            if (document.getElementById('cbox5').checked) {
+                console.log("Using exact match");
+                match = d[transparent_column] != val;
+            } else {
+                val = val.toLowerCase();
+                match = d[category_search].toLowerCase().indexOf(val) < 0
+                || val.length === 0;
+            }
+            // var match = d[category_search].toLowerCase().indexOf(val) < 0
+            //         || val.length === 0;
             // return 1 if not found, 2 if found
-            return x ? 1 : 2;
+            return match ? 1 : 2;
         };
 
         var searchFunc1 = function(d) {
             // x true if not found
-            var x = d.toLowerCase().indexOf(val) < 0
-                    || val.length === 0;
+            var match;
+            if (document.getElementById('cbox5').checked) {
+                // console.log("Using exact match");
+                match = d != val;
+            } else {
+                val = val.toLowerCase();
+                match = d.toLowerCase().indexOf(val) < 0
+                || val.length === 0;
+            }
+            // var match = d.toLowerCase().indexOf(val) < 0
+            //         || val.length === 0;
             // return 1 if not found, 2 if found
-            return x ? 1 : 2;
+            return match ? 1 : 2;
         };
 
         var searched_data = [], d_temp;
+        /* temp3 holds the value of every point for the search column */
         for (var i=0;i<temp3.length;i++) {
-            // 0 if found, 1 if not found
+            // 0 if found val in this point, 1 if not found
             if ( searchFunc1(temp3[i])-1 ) {
                 d_temp = {};
                 // enter all data into dictionary
                 for(var j=1;j<categories.length;j++) {
                     d_temp[categories[j]] = dict1[categories[j]][i];
                 }
+                // only add to searched_data if not already in
                 if(searchdic(searched_data, d_temp) === true) {
                     searched_data.push(d_temp);
                 }
@@ -1085,6 +1144,8 @@ function highlighting(val, val1, val2) {
       	sizes[5] = ["0", "0", "0", "0"]
       	var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
 	
+        /*** BEGIN drawing dots ***/
+
       	// shaping of symbols according to the shaping column
       	if (shaping_column !== "Select" ) {
       		// category = shaping_column;
@@ -1179,6 +1240,8 @@ function highlighting(val, val1, val2) {
               		}
           		});
   	    }
+        /*** END drawing dots ***/
+
       	// the event to call on click event
       	svg.on("click",function() {
       		// svg.select("#myText").remove();
@@ -1197,11 +1260,11 @@ function highlighting(val, val1, val2) {
       	if (numerics[category] && document.getElementById('cbox1').checked) {
       		
         		if (document.getElementById('cbox2').checked) {
-          			m1 = (d3.min(data.map(function(d) {return Math.log(parseInt(d[category])); })));
-          			m2 = (d3.max(data.map(function(d) {return Math.log(parseInt(d[category])); })));
+          			m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+          			m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
         		} else {
-        			m1 = (d3.min(data.map(function(d) {return parseInt(d[category])})));
-        			m2 = (d3.max(data.map(function(d) {return parseInt(d[category])})));
+        			m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
+        			m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
 
         		}
         		console.log(m1, m2);
