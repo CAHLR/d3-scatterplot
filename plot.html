@@ -97,12 +97,12 @@ input{
 }
 /*The checkbox*/
 .input1{
-	width : 40px;
+  width : 40px;
 }
 /*Input textbox for circle and zoom*/
 .input2{
-	width : 180px;
-	height : 25px;
+  width : 180px;
+  height : 25px;
 }
 /*Transparent*/
 .form1 {
@@ -251,10 +251,10 @@ input{
 
 
 <p class="p2" id="demo2" ><b>Search by: </b></p>
-<p class="p10">Exact match:<input class="input1" type="checkbox" id="cbox5" value="fifth_checkbox" onclick="handleClick()"></p>
+<p class="p10">Exact match: <input class="input1" type="checkbox" id="cbox5" value="fifth_checkbox" onclick="handleCheck()"></p>
 
 <p class="p4" id="demo4" ><b>Transparent attribute: </b></p>
-<p class="p11">Exact match:<input class="input1" type="checkbox" id="cb6" value="sixth_checkbox" onclick="handleClick1()"></p>
+<p class="p11">Exact match: <input class="input1" type="checkbox" id="cbox6" value="sixth_checkbox" onclick="handleCheck1()"></p>
 
 <!-- Side Table -->
 <p class="p3" id="demo3"></p>
@@ -262,15 +262,15 @@ input{
 
 <!-- The handleClick() function will be executed when the search button is pressed  -->
 <form name="myform" class="form2" onSubmit="return handleClick()">
-			<input type="text" id="myVal" placeholder="Search text">
+      <input type="text" id="myVal" placeholder="Search text">
       <input name="Submit"  type="submit" value="Apply" >
 </form>
-			
+      
 <!-- The handleClick1() function will be executed when the transparent button is pressed  -->
 <form name="myform1" class="form1" onSubmit="return handleClick1()">
-			<p><br>Enter attribute value, and opacity values b/w 0 and 1:<br>(Currently doesn't work with simultaneously with search.)</p>
+      <p>Enter attribute value, and opacity values b/w 0 and 1: <br>(Currently doesn't work simultaneously with search.)</p>
       <input type="text" id="myVal1" placeholder="Match attri. val">
-			<input type="text" id="myVal2" placeholder="Opacity (match)">
+      <input type="text" id="myVal2" placeholder="Opacity (match)">
       <input type="text" id="myVal3" placeholder="Opacity (no match)">
       <input name="Submit"  type="submit" value="Apply">
 </form>
@@ -283,24 +283,24 @@ input{
 <script src="crossfilter.min.js"></script>
 <script>
 
-// <!-- The location of svg plot is determined by the following margins -->
+// The location of svg plot is determined by the following margins
 var margin = {top: 40, right: 40, bottom: 40, left: 40},
     width = 700 - margin.left - margin.right,
     height = 700 - margin.top - margin.bottom;
 
-// <!-- This step is performed to parse the url to identify the dataset and the default coloring column  -->
+// This step is performed to parse the url to identify the dataset and the default coloring column
 var query = window.location.search.substring(1);
 var temp_query = query.split("&");
 var dicts = {};
 var tvars;
 for(var i=0;i<temp_query.length;i++) {
-	tvars = temp_query[i].split("=");
-	dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");
+  tvars = temp_query[i].split("=");
+  dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");
 }
 if ("dataset" in dicts) {
-	dataset = dicts["dataset"];
-}	else {
-	dataset = "joined_data.csv";
+  dataset = dicts["dataset"];
+} else {
+  dataset = "joined_data.csv";
 }
 
 /* 
@@ -313,7 +313,7 @@ if ("dataset" in dicts) {
 // setup x 
 var xValue = function(d) { return d.x;}, // data -> value
     xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) {return xScale(xValue(d));}, // data -> display	
+    xMap = function(d) {return xScale(xValue(d));}, // data -> display  
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
@@ -324,12 +324,12 @@ var yValue = function(d) { return d["y"];}, // data -> value
 
 // add the tooltip area to the webpage
 var tooltip = d3.select("body").append("div")
-				.attr("class", "tooltip")
-				.style("opacity", 0);
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
 var tooltip1 = d3.select("body").append("div")
-				.attr("class", "tooltip1")
-				.style("opacity", 0);
+        .attr("class", "tooltip1")
+        .style("opacity", 0);
 
 // to print all the key values pairs of a point (used to display the summary on the webpage)
 var print_array = function(arr, d) {
@@ -457,18 +457,18 @@ var category_search;
 
 // check whether the searching column is provided in the url or not
 if ("search" in dicts) {
-	category_search = dicts["search"];
-	category_search_data.push(category_search);
+  category_search = dicts["search"];
+  category_search_data.push(category_search);
 }
 categories.push("Select");
 
 // category stores the name of column according to which coloring is to be done
 // check whether the coloring column is provided in the url or not
 if ("color" in dicts) {
-	category = dicts["color"];
-	categories.push(category);
-}	else {
-	category = "Select";
+  category = dicts["color"];
+  categories.push(category);
+} else {
+  category = "Select";
 }
 
 // temp_cat is just the copy of categories
@@ -488,25 +488,25 @@ d3.tsv(dataset, function(data) {
     temp.splice(temp.indexOf('y'), 1);
 
     for(var i=0;i<temp.length;i++)
-      	if (temp[i] != category_search) {
+        if (temp[i] != category_search) {
             category_search_data.push(temp[i]);
-      	}
+        }
     
     for(var i=0;i<temp.length;i++) {
         // category already pushed
-      	if (temp[i] != category) {
+        if (temp[i] != category) {
             categories.push(temp[i]);
-      	    temp_cat.push(temp[i]);
-      	}
+            temp_cat.push(temp[i]);
+        }
         columns.push(temp[i]);
     }
     // check whether the coloring column is provided in the url or not
     // ?? is this necessary? category is already defined with the same procedure outside the function
     if ("color" in dicts) {
-  	  category = categories[1]; // since color would be first, start with next
+      category = categories[1]; // since color would be first, start with next
     } else {
       // "Select"
-  	  category = categories[0];
+      category = categories[0];
     }
     category_search = category_search_data[0];
     // Searching
@@ -570,11 +570,11 @@ if ("q" in dicts) {
 // the functions to call when the value of dropdown menu is changes
 // Click on feature
 function plotting4(){
-		feature_column = d3.event.target.value;
+    feature_column = d3.event.target.value;
 }
 // Transparent
 function plotting3(){
-		transparent_column = d3.event.target.value;
+    transparent_column = d3.event.target.value;
 }
 // Searching
 function plotting2(){
@@ -584,34 +584,34 @@ function plotting2(){
 // function to call for change event
 // Coloring
 function plotting(){
-		
-		// dropDown4.property( "value", "Select" );
-		category = d3.event.target.value;	
-		// shaping_column = "Select";
-		// color = d3.scale.category20();
-		cValue = function(d) { return d[category];};
-		val = document.getElementById("myVal1").value; 
-		val1 = document.getElementById("myVal2").value; 
-		val2 = document.getElementById("myVal3").value;
-		highlighting(val, val1, val2);				
+    // dropDown4.property( "value", "Select" );
+    category = d3.event.target.value; 
+    // shaping_column = "Select";
+    // color = d3.scale.category20();
+    cValue = function(d) { return d[category];};
+    val = document.getElementById("myVal1").value; 
+    val1 = document.getElementById("myVal2").value; 
+    val2 = document.getElementById("myVal3").value;
+    highlighting(val, val1, val2);        
 }
 
 // function to call for change event
 // Shaping
 function plotting5(){
-		
-		// dropDown.property( "value", "Select" );
-		shaping_column = d3.event.target.value;	
-		// color = d3.scale.category20();
-		cValue = function(d) { return d[category];};
-		val = document.getElementById("myVal1").value; 
-		val1 = document.getElementById("myVal2").value; 
-		val2 = document.getElementById("myVal3").value;
-		highlighting(val, val1, val2);				
+    
+    // dropDown.property( "value", "Select" );
+    shaping_column = d3.event.target.value; 
+    // color = d3.scale.category20();
+    cValue = function(d) { return d[category];};
+    val = document.getElementById("myVal1").value; 
+    val1 = document.getElementById("myVal2").value; 
+    val2 = document.getElementById("myVal3").value;
+    highlighting(val, val1, val2);        
 }
 
 var zoomed = 0;
 var needZoom = false;
+var needDrawCircle = false;
 /* ?? why do some of the following handlers have return false? */
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
@@ -620,11 +620,15 @@ function handleClick(event) {
     highlighting(document.getElementById("myVal").value, "", "");
     return false;
 }
+function handleCheck(event) {
+    if (document.getElementById("myVal").value) {
+        handleClick();
+    }
+}
 
 // transparent event
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
 function handleClick1(event) {
-			
     console.log(document.getElementById("myVal1").value);
     val = document.getElementById("myVal1").value; 
     val1 = document.getElementById("myVal2").value; 
@@ -632,11 +636,15 @@ function handleClick1(event) {
     highlighting(val, val1, val2);
     return false;
 }
+function handleCheck1(event) {
+    if (document.getElementById("myVal1").value) {
+        handleClick1();
+    }
+}
 
 // ?? I believe this function is unused, and draw also maps to handleClick4
 // it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
 function handleClick2(event){
-        
         shaping_column = "Select";
         category = "Select";
         myForm.myVal.value = 0;
@@ -661,7 +669,7 @@ function handleClick3(event) {
             
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function handleClick4(){
-		if (!document.getElementById('cbox3').checked) {
+    if (!document.getElementById('cbox3').checked) {
       document.getElementById("zoomxy").value = ""; // clear the textbox
     }
     val = document.getElementById("myVal1").value; 
@@ -670,7 +678,9 @@ function handleClick4(){
     needZoom = true;
     highlighting(val, val1, val2);
 }
-			
+
+
+      
 // Checks the url query for name=value and extracts the value
 function getParameterByName(name, url) {
     if (!url) {
@@ -695,7 +705,7 @@ function linspace(start, end, n) {
     out.push(end);
     return out;
 }
-	
+  
 coordinatesx = [];
 coordinatesy = [];
 
@@ -720,20 +730,20 @@ function highlighting(val, val1, val2) {
     d3.select("svg").remove();
     d3.select("table").remove();
     d3.select("svg").remove();
-	
-  	// function zoom() {
-  	// 	svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    //		}
+  
+    // function zoom() {
+    //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    //    }
 
     // the location of svg image will be determined
     svg = d3.select("body").append("svg")
-    		.attr("width", width + margin.left + margin.right)
-    		.attr("height", height + margin.top + margin.bottom)
-  			.append("g")
-			  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-	
-    /* https://github.com/skokenes/D3-Lasso-Plugin */
-    /* plugin also handles selected and possible settings */
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+  
+    /* https://github.com/skokenes/D3-Lasso-Plugin
+       plugin also handles selected and possible settings */
     // Lasso starts
     var lasso_start = function() {
         d3.select("table").remove();
@@ -796,7 +806,7 @@ function highlighting(val, val1, val2) {
                 }
             }
         }
-    	
+      
         // render the table for the points selected by lasso
         if(selected_data.length != 0) {
             console.log("about to tabulate");
@@ -830,22 +840,22 @@ function highlighting(val, val1, val2) {
         .on("end",lasso_end); // lasso end function
 
     // Init the lasso object on the svg:g that contains the dots
-	  svg.call(lasso);
-		
+    svg.call(lasso);
+    
     // load data
-	  d3.tsv(dataset, function(error, data) {
+    d3.tsv(dataset, function(error, data) {
 
-    	  // change string (from CSV) into number format
-    	  var numerics = {};
-    	  var symbol = {};
+        // change string (from CSV) into number format
+        var numerics = {};
+        var symbol = {};
         //Omitting Select (0)
         for(var i=1;i<categories.length;i++) {
             // initialize the value for each category key to empty list
             dict1[categories[i]] = [];
             // initialize all categories as numeric
-    				numerics[categories[i]] = 1;
+            numerics[categories[i]] = 1;
         }
-    	  counter = 0;
+        counter = 0;
         data.forEach(function(d) {
             // coerce the data to numbers
             d.x = +d.x
@@ -855,8 +865,8 @@ function highlighting(val, val1, val2) {
                 // add every attribute of point to the {category:[val1,val2,...]}
                 dict1[categories[i]].push(d[categories[i]]);
                 // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
-    				    numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
-                /* this was causing problems */
+                numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
+                /* the following was causing problems */
                 // any non-empty non-numeric will forever set that category to false
                 // if (!numerics[categories[i]]) {
                 //     break;
@@ -864,45 +874,43 @@ function highlighting(val, val1, val2) {
             }
             // fill the symbol dictionary with all possible values of the shaping column as keys
             // value is the order of points
-      			if (!(d[shaping_column] in symbol)) {
-        				symbol[d[shaping_column]] = counter;
-        				counter = counter + 1;
-      			}
+            if (!(d[shaping_column] in symbol)) {
+                symbol[d[shaping_column]] = counter;
+                counter = counter + 1;
+            }
             // push all x values, y values, and all category search values into temp1/2/3
             temp1.push(d.x);
             temp2.push(d["y"]);
             temp3.push(d[category_search]);
-    			// console.log(d["z"] == parseInt(d["z"]));
+          // console.log(d["z"] == parseInt(d["z"]));
         });
-    	  console.log(numerics);
-    	  console.log(category);
-    	  // set color according to spectrum
-    	  if (numerics[category] && document.getElementById('cbox1').checked) {
-        		console.log(category);
-        	
+        console.log(numerics);
+        console.log(category);
+        // set color according to spectrum
+        if (numerics[category] && document.getElementById('cbox1').checked) {
             // take log if log checkbox checked
-        		if (document.getElementById('cbox2').checked) {
-        				m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
-        				m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
-        		} else{
-        				m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
-        				m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
-        		}
+            if (document.getElementById('cbox2').checked) {
+                m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+                m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+            } else{
+                m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
+                m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
+            }
 
             console.log(m1, m2);
 
-        		color = d3.scale.linear()
-        	     .domain(linspace(m1, m2,scale.length))
-          	  //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
-        			.range(scale);	
-    	  } else {
+            color = d3.scale.linear()
+               .domain(linspace(m1, m2,scale.length))
+              //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
+              .range(scale);  
+        } else {
             color = d3.scale.category20();
         }
 
         // don't want dots overlapping axis, so add in buffer to data domain
-      	var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
+        var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
 
-      	if (document.getElementById("cbox3").checked==false) {
+        if (document.getElementById("cbox3").checked==false) {
             document.getElementById("zoomxy").value = "";
             zoomed = 0;
             needZoom = false;
@@ -910,24 +918,23 @@ function highlighting(val, val1, val2) {
             x_min = d3.min(data, xValue)-1;
             y_max = d3.max(data, yValue)+1;
             y_min = d3.min(data, yValue)-1; 
-      	}
-      	// if (zoom != null) {
-    	
-      	// if zoom is checked and conditions are satisfied
-      	if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
-      					
-      			x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
-      			x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
-      			y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
-      			y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
+        }
+      
+        // if zoom is checked and conditions are satisfied
+        if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
+                
+            x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
+            x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
+            y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
+            y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
 
-      			console.log(x_max, x_min, y_max, y_min);
-      			document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
-      			
-      			zoomed = 1;
+            console.log(x_max, x_min, y_max, y_min);
+            document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
+            
+            zoomed = 1;
             needZoom = false;
-      					// document.getElementById("cbox3").checked = false;
-      					/*
+                // document.getElementById("cbox3").checked = false;
+                /*
                           zoom = zoom.substr(1, zoom.length-2);
                           commaIndex = zoom.indexOf(',');
                           x_min = parseFloat(zoom.substr(0, commaIndex));
@@ -938,127 +945,117 @@ function highlighting(val, val1, val2) {
                           commaIndex = zoom.indexOf(',');
                           y_min = parseFloat(zoom.substr(0, commaIndex));
                           y_max = parseFloat(zoom.substr(commaIndex+1));
-      					*/
+                */
         }
         xScale.domain([x_min, x_max]);
         yScale.domain([y_min, y_max]);
-    	
-      	// xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-        	// yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+      
+        // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+          // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
         // x-axis
-      	cx = 0;
-      	cy = 0;
-      	ans = 0;
-  	
-      	// check whether the circle checkbox is selected or not
+        cx = 0;
+        cy = 0;
+        ans = 0;
+    
+        // check whether the circle checkbox is selected or not
         // ?? may want to allow coordinatesx.length >= 1
-      	if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
-        		console.log(document.getElementById("drawxy").value);
-        		draw = document.getElementById("drawxy").value;
-        		draw = draw.split(',');
-        		cx = coordinatesx[0]
-        		cy = coordinatesy[0]
+        if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
+            console.log(document.getElementById("drawxy").value);
+            draw = document.getElementById("drawxy").value;
+            draw = draw.split(',');
+            cx = coordinatesx[0]
+            cy = coordinatesy[0]
 
-        		// invert: Given a value from the range, returns the corresponding value from the domain. Inversion is useful for interaction, say to determine the data value corresponding to the position of the mouse.
+            /* 
+              invert: Given a value from the range, returns the corresponding value from the domain.
+              Inversion is useful for interaction, say to determine the data value corresponding to the position of the mouse.
+            */
             console.log("before invert");
             console.log(coordinatesx[0], coordinatesy[0]);
-        		coordinatesx[0] = xScale.invert(coordinatesx[0])
-        		coordinatesy[0] = yScale.invert(coordinatesy[0])
+            coordinatesx[0] = xScale.invert(coordinatesx[0])
+            coordinatesy[0] = yScale.invert(coordinatesy[0])
             console.log("after invert");
             console.log(coordinatesx[0], coordinatesy[0]);
-        		console.log(coordinatesx, coordinatesy);
+            console.log(coordinatesx, coordinatesy);
 
-            /* I think this would make more sense, as drawxy never gets a value, so I'm not sure why we compare
-               using draw values in the for loop.
-                console.log(document.getElementById("drawxy").value);
-                draw = document.getElementById("drawxy").value;
-                draw = draw.split(',');
-                document.getElementById("drawxy").value = "X:["+parseInt(coordinatesx[0])+"] Y:["+parseInt(coordinatesy[0])+"]";
-        		*/
-        		for (var i=1 ; i <= 1000; i++) {
-          			c = 0;
-          			t = 0;
-          			f = i;
-          			data.forEach(function(d) {
+            for (var i=1 ; i <= 1000; i++) {
+                c = 0;
+                t = 0;
+                f = i;
+                data.forEach(function(d) {
                     d.x = +d.x
                     d["y"] = +d["y"]
-          			
-              			// dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
-              			dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
-              			// console.log(dist)	
-              			if (d[draw[1]] == draw[2]) {
-                				if (dist <= f) {
-                				    c += 1;
-              			    }
-              			    t += 1;
-              			}
-          			});
-            		// console.log(c, t);
-            		if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
-            				ans = f;
-            				break;
-            		}
-        			
-        	  }
+                
+                    // dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
+                    dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
+                    // console.log(dist)  
+                    if (d[draw[1]] == draw[2]) {
+                        if (dist <= f) {
+                            c += 1;
+                        }
+                        t += 1;
+                    }
+                });
+                // console.log(c, t);
+                if (parseInt(c*100/t) >= 100*parseFloat(draw[0])) {
+                    ans = f;
+                    break;
+                }
+              
+            }
         }
-      	console.log(ans);	
-      	if (ans != 0) {
-          	console.log(xScale(ans))
-          	svg.append("circle")
-          		.attr("r", ans)
-          		.attr("cx", cx)
-          		.attr("cy", cy)
-          		.style("stroke", "black")    // set the line colour
-          		.style("stroke-width", 5)
-          		.style("fill", "green")
-          		.style("opacity", .2);
-      	}
-    	
-      	// draw the x-axis of plot
-      	svg.append("g")
-          	.attr("class", "x axis")
-          	.attr("transform", "translate(0," + height + ")")
-          	.call(xAxis)
-        	.append("text")
-          	.attr("class", "label")
-          	.attr("x", width)
-          	.attr("y", -6)
-          	.style("text-anchor", "end")
-          	.text("");
+        console.log(ans); 
+        if (ans != 0) {
+            console.log(xScale(ans))
+            svg.append("circle")
+              .attr("r", ans)
+              .attr("cx", cx)
+              .attr("cy", cy)
+              .style("stroke", "black")    // set the line colour
+              .style("stroke-width", 5)
+              .style("fill", "green")
+              .style("opacity", .2);
+        }
+      
+        // draw the x-axis of plot
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+          .append("text")
+            .attr("class", "label")
+            .attr("x", width)
+            .attr("y", -6)
+            .style("text-anchor", "end")
+            .text("");
 
-      	// draw the y-axis of plot
-      	svg.append("g")
-          	.attr("class", "y axis")
-          	.call(yAxis)
-        	.append("text")
-          	.attr("class", "label")
-          	.attr("transform", "rotate(-90)")
-          	.attr("y", 6)
-          	.attr("dy", ".71em")
-          	.style("text-anchor", "end")
-          	.text("");
-      	
-      	// to identify the condition of transparent column values
-      	if (transparent_column !== "Select" && val !== "" && val2 !== "") {
-      		transparent_column = transparent_column.toString();
-      		val = val.toString(); // ?? no to lower case here?
-      	}
-      	else {
-      		val = val.toString();
-      	}
-	
-      	// transparency according to transparent column value
-      	var transp = function(d) {
-            var x = val.length === 0; // true if no val specified
-            // ?? return 1 if no value specified, 1 otherwise??
-            return x ? 1 : (searchFunc(d)-1 ? 1:1);//0.65 yellow 
-        };
-      	var transpar = function(d) { 
-      			if (val !== ""){
+        // draw the y-axis of plot
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("");
+        
+        // to identify the condition of transparent column values
+        if (transparent_column !== "Select" && val !== "" && val2 !== "") {
+            transparent_column = transparent_column.toString();
+            val = val.toString(); // ?? no to lower case here?
+        }
+        else {
+            val = val.toString();
+        }
+
+        var transpar = function(d) { 
+            if (val !== "" && typeof d != 'undefined') {
                 // if point's transp column value is equal to the value specified, return val1, else val2
                 var match;
-                if (document.getElementById('cb6').checked) {
+                if (document.getElementById('cbox6').checked) {
                     // console.log("Using exact match");
                     match = d[transparent_column] == val;
                 } else {
@@ -1066,51 +1063,55 @@ function highlighting(val, val1, val2) {
                     match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val) > -1);
                 }
 
-      					if (match){
-                  // console.log(val, " matches ", d[transparent_column]);
-      						return parseFloat(val1);
-      					} else{
-      						return parseFloat(val2);
-      					}
-      			}
-      			else {
-      				return transp(d);
+                if (match){
+                  return parseFloat(val1);
+                } else{
+                  return parseFloat(val2);
+                }
             }
-      	};
-    				
-    	  // searching according to the substring given and searching column 
+            else {
+                return 1;
+            }
+        };
+            
+        // searching according to the substring given and searching column 
         var searchFunc = function(d) {
+            if (typeof d[category_search] == 'undefined' ) {
+                return 1;
+            }
             // x truthy if not found
-            var match;
+            var noMatch;
             if (document.getElementById('cbox5').checked) {
-                console.log("Using exact match");
-                match = d[transparent_column] != val;
+                noMatch = d[category_search] != val;
             } else {
                 val = val.toLowerCase();
-                match = d[category_search].toLowerCase().indexOf(val) < 0
+                noMatch = d[category_search].toLowerCase().indexOf(val) < 0
                 || val.length === 0;
             }
-            // var match = d[category_search].toLowerCase().indexOf(val) < 0
+            // var noMatch = d[category_search].toLowerCase().indexOf(val) < 0
             //         || val.length === 0;
             // return 1 if not found, 2 if found
-            return match ? 1 : 2;
+            return noMatch ? 1 : 2;
         };
 
         var searchFunc1 = function(d) {
+            if (typeof d == 'undefined' ) {
+                return 1;
+            }
             // x true if not found
-            var match;
+            var noMatch;
             if (document.getElementById('cbox5').checked) {
                 // console.log("Using exact match");
-                match = d != val;
+                noMatch = d != val;
             } else {
                 val = val.toLowerCase();
-                match = d.toLowerCase().indexOf(val) < 0
+                noMatch = d.toLowerCase().indexOf(val) < 0
                 || val.length === 0;
             }
-            // var match = d.toLowerCase().indexOf(val) < 0
+            // var noMatch = d.toLowerCase().indexOf(val) < 0
             //         || val.length === 0;
             // return 1 if not found, 2 if found
-            return match ? 1 : 2;
+            return noMatch ? 1 : 2;
         };
 
         var searched_data = [], d_temp;
@@ -1133,33 +1134,38 @@ function highlighting(val, val1, val2) {
         if ( val != "" && searched_data.length != 0) { 
             var peopleTable1 = tabulate(searched_data, columns);
         };
-    		
-      	// determines the rotation of symbols that can be done
-      	var sizes = {}
-      	sizes[0] = ["0", "90", "0", "0"]
-      	sizes[1] = ["0", "45", "0", "0"]
-      	sizes[2] = ["0", "90", "0", "0"]
-      	sizes[3] = ["0", "45", "0", "0"]
-      	sizes[4] = ["0", "90", "0", "0"]
-      	sizes[5] = ["0", "0", "0", "0"]
-      	var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
-	
+        
+        // determines the rotation of symbols that can be done
+        var sizes = {}
+        sizes[0] = ["0", "90", "0", "0"]
+        sizes[1] = ["0", "45", "0", "0"]
+        sizes[2] = ["0", "90", "0", "0"]
+        sizes[3] = ["0", "45", "0", "0"]
+        sizes[4] = ["0", "90", "0", "0"]
+        sizes[5] = ["0", "0", "0", "0"]
+        var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
+  
         /*** BEGIN drawing dots ***/
 
-      	// shaping of symbols according to the shaping column
-      	if (shaping_column !== "Select" ) {
-      		// category = shaping_column;
-      		svg.selectAll(".dot")
-            	.data(data)
-          	  .enter().append("path")
+        // shaping of symbols according to the shaping column
+        if (shaping_column !== "Select" ) {
+          // category = shaping_column;
+          var points = svg.selectAll(".dot")
+              .data(data)
+              .enter();
+
+          points.append("path")
+              .filter(function(d){ return (searchFunc(d) == 1); })
               .attr("class", "point")
-      		// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-      		    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}))
-      	      .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
-            	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+              .style("stroke", "#000")
+              .style("stroke-width", 1)
+          // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
+              .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return searchFunc(d)-1 ? 180:30;}))
+              .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
+              .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
               .style("opacity",function(d) { return transpar(d);})
 
-            	.on("mouseover", function(d) {
+              .on("mouseover", function(d) {
                   tooltip.transition()
                          .duration(200)
                          .style("opacity", 1);
@@ -1169,35 +1175,72 @@ function highlighting(val, val1, val2) {
                             .style("top", 30 + "px");
               })
               .on("mouseout", function(d) {
-            			d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
-            			        .style("fill", function(d) { return color(cValue(d));});
+                  d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+                          .style("fill", function(d) { return color(cValue(d));});
                   tooltip.transition()
                           .duration(500)
                           .style("opacity", 0);
               })
-          		.on("click", function(d) {
-            			svg.append("text")
-                    			.text(d[feature_column])
-                    			.attr("x", (d3.event.pageX-50))
+              .on("click", function(d) {
+                  svg.append("text")
+                          .text(d[feature_column])
+                          .attr("x", (d3.event.pageX-50))
                           .attr("y", (d3.event.pageY-35));
-          		});
-      	} else {
-      		// console.log(document.getElementById('cbox2').checked)	
-      		// draw dots
-      		marked = {}
-          svg.selectAll(".dot")
-            	.data(data)
-          	  .enter().append("circle")
-              .attr("class", "dot")
-            	.attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
-              .style("stroke", function(d){ return searchFunc(d)-1 ? "yellow":"#000";})
-              .style("stroke-width", function(d){ return searchFunc(d);})
-            	.attr("cx", xMap)
-            	.attr("cy", yMap)
-            	.style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+              });
+
+          points.append("path")
+              .filter(function(d){ return (searchFunc(d) == 2); })
+              .attr("class", "point")
+              .style("stroke", "yellow")
+              .style("stroke-width", 2)
+          // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
+              .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return searchFunc(d)-1 ? 180:30;}))
+              .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
+              .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
               .style("opacity",function(d) { return transpar(d);})
-            	
-          		.on("mouseover", function(d) {
+
+              .on("mouseover", function(d) {
+                  tooltip.transition()
+                         .duration(200)
+                         .style("opacity", 1);
+                  tooltip.html(
+                          print_array(category_search_data, d))
+                            .style("left", 60 + "px")
+                            .style("top", 30 + "px");
+              })
+              .on("mouseout", function(d) {
+                  d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+                          .style("fill", function(d) { return color(cValue(d));});
+                  tooltip.transition()
+                          .duration(500)
+                          .style("opacity", 0);
+              })
+              .on("click", function(d) {
+                  svg.append("text")
+                          .text(d[feature_column])
+                          .attr("x", (d3.event.pageX-50))
+                          .attr("y", (d3.event.pageY-35));
+              });
+        } else {
+          // console.log(document.getElementById('cbox2').checked)  
+          // draw dots
+          marked = {}
+          var points = svg.selectAll(".dot")
+              .data(data)
+              .enter();
+
+          points.append("circle")
+              .filter(function(d){ return (searchFunc(d) == 1); })
+              .attr("class", "dot")
+              .attr("r", 3)
+              .style("stroke", "#000")
+              .style("stroke-width", 1)
+              .attr("cx", xMap)
+              .attr("cy", yMap)
+              .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+              .style("opacity",function(d) { return transpar(d);})
+              
+              .on("mouseover", function(d) {
                   tooltip.transition()
                          .duration(200)
                          .style("opacity", 1);
@@ -1206,74 +1249,125 @@ function highlighting(val, val1, val2) {
                           .style("top", 30 + "px");
               })
 
-          		.on("mouseout", function(d) {
-              		tooltip.transition()
+              .on("mouseout", function(d) {
+                  tooltip.transition()
                          .duration(500)
                          .style("opacity", 0);
               })
                  
-          		.on("click", function(d) {
-              		// console.log("Hello");
-              		if (!([d3.event.pageX, d3.event.pageY] in marked)) {
-                  		marked[[d3.event.pageX, d3.event.pageY]] = true;
-                  		marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
-                  		marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
-                  		marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
-                  		marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
-                  		marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
-                  		marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
-                  		marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
-                  		marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
-                  		svg.append("text")
-                  			.text(d[feature_column])
-                  			.attr("x", (d3.event.pageX-50))
+              .on("click", function(d) {
+                  if (!([d3.event.pageX, d3.event.pageY] in marked)) {
+                      marked[[d3.event.pageX, d3.event.pageY]] = true;
+                      marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
+                      marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
+                      marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
+                      marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
+                      marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
+                      marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
+                      marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
+                      marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
+                      svg.append("text")
+                        .text(d[feature_column])
+                        .attr("x", (d3.event.pageX-50))
                         .attr("y", (d3.event.pageY-35));
-                			/*
-                			tooltip1.transition()
-                			   .attr("class", "tooltip1")
-                               .style("opacity", 1);	
-                			   
-                			tooltip1.html("<b>"+d[feature_column]+"</b>")
+                      /*
+                      tooltip1.transition()
+                         .attr("class", "tooltip1")
+                               .style("opacity", 1);  
+                         
+                      tooltip1.html("<b>"+d[feature_column]+"</b>")
                                .style("left", (d3.event.pageX + 10) + "px")
-                               .style("top", (d3.event.pageY - 10) + "px");	
-              			   */
-              		}
-          		});
-  	    }
+                               .style("top", (d3.event.pageY - 10) + "px"); 
+                       */
+                  }
+              });
+          points.append("circle")
+            .filter(function(d){ return (searchFunc(d) == 2); })
+            .attr("class", "dot")
+            .attr("r", 7)
+            .style("stroke", "yellow")
+            .style("stroke-width", 2)
+            .attr("cx", xMap)
+            .attr("cy", yMap)
+            .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+            .style("opacity",function(d) { return transpar(d);})
+            // jann: here is the mouseover display
+            .on("mouseover", function(d) {
+                tooltip.transition()
+                       .duration(200)
+                       .style("opacity", 1);
+                tooltip.html(
+                        print_array(category_search_data, d))
+                          .style("left", 60 + "px")
+                          .style("top", 30 + "px");
+            })
+
+            .on("mouseout", function(d) {
+                tooltip.transition()
+                       .duration(500)
+                       .style("opacity", 0);
+            })
+           
+            .on("click", function(d) {
+                console.log("Hello");
+                if (!([d3.event.pageX, d3.event.pageY] in marked)){
+                    marked[[d3.event.pageX, d3.event.pageY]] = true;
+                    marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
+                    marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
+                    marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
+                    marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
+                    marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
+                    marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
+                    marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
+                    marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
+                    svg.append("text")
+                      .text(d[feature_column])
+                      .attr("x", (d3.event.pageX-50))
+                      .attr("y", (d3.event.pageY-35));
+                }
+            });
+        }
         /*** END drawing dots ***/
 
-      	// the event to call on click event
-      	svg.on("click",function() {
-      		// svg.select("#myText").remove();
+        // the event to call on click event
+        svg.on("click",function() {
+          // svg.select("#myText").remove();
 
-      		tooltip1.style("opacity", 0);
-      		var coordinates1 = d3.mouse(this);
-      		coordinatesx.unshift(coordinates1[0]);
-      		coordinatesy.unshift(coordinates1[1]);
-      		console.log(coordinatesx, coordinatesy);
-      	})
-      	
-          
-      	lasso.items(d3.selectAll(".dot"));
-      	var len = color.domain().length;
+          tooltip1.style("opacity", 0);
+          var coordinates1 = d3.mouse(this);
+          coordinatesx.unshift(coordinates1[0]);
+          coordinatesy.unshift(coordinates1[1]);
+          console.log(coordinatesx, coordinatesy);
+        })
+        
+        /* can move up into the if/else, but more clear to separate functionality */
+        if (shaping_column !== "Select" ) {
+            /* .point didn't work, leaving for next iteration to fix */
+            // lasso.items(d3.selectAll(".point"));
+            lasso.items(d3.selectAll(".dot"));
+        } else {
+            lasso.items(d3.selectAll(".dot"));
+        }
+
+        var len = color.domain().length;
         // if spectrum
-      	if (numerics[category] && document.getElementById('cbox1').checked) {
-      		
-        		if (document.getElementById('cbox2').checked) {
-          			m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
-          			m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
-        		} else {
-        			m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
-        			m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
+        if (numerics[category] && document.getElementById('cbox1').checked) {
+          
+            if (document.getElementById('cbox2').checked) {
+                m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+                m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+            } else {
+              m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
+              m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
 
-        		}
-        		console.log(m1, m2);
-        		var legend = svg.selectAll(".legend")
-        			.data(color.domain())
-        			.enter().append("g")
-        			.attr("class", "legend");
+            }
+            console.log(m1, m2);
+            var legend = svg.selectAll(".legend")
+              .data(color.domain())
+              .enter().append("g")
+              .attr("class", "legend");
 
-        		var gradient = legend.append('defs')
+            var gradient = legend.append('defs')
                     .append('linearGradient')
                     .attr('id', 'gradient')
                     .attr('x1', '0%') // bottom
@@ -1282,7 +1376,7 @@ function highlighting(val, val1, val2) {
                     .attr('y2', '0%')
                     .attr('spreadMethod', 'pad');
 
-        		var pct = linspace(0, 100, scale.length).map(function(d) {
+            var pct = linspace(0, 100, scale.length).map(function(d) {
                 return Math.round(d) + '%';
             });
 
@@ -1294,13 +1388,13 @@ function highlighting(val, val1, val2) {
                     .attr('stop-opacity', 1);
             });
 
-        		legend.append('rect')
-        				.attr('x1', 0)
-        				.attr('y1', 0)
-        				.attr('width', 18)
-        				.attr('height', 150)
-        				.attr("transform", "translate(" + 582 + ", 0)")
-        				.style('fill', 'url(#gradient)');
+            legend.append('rect')
+                .attr('x1', 0)
+                .attr('y1', 0)
+                .attr('width', 18)
+                .attr('height', 150)
+                .attr("transform", "translate(" + 582 + ", 0)")
+                .style('fill', 'url(#gradient)');
 
             var legendScale = d3.scale.linear()
                 .domain([m1, m2])
@@ -1312,67 +1406,67 @@ function highlighting(val, val1, val2) {
                 // .tickValues([m1, m2])
                 .ticks(10);
 
-        		legend.append("g")
-          			.attr("class", "legend axis")
+            legend.append("g")
+                .attr("class", "legend axis")
                 .attr("transform", "translate(" + 600 + ", 0)")
-          			.call(legendAxis);
-      	} else { // no spectrum
-        		var keys = Object.keys(symbol)
-        		leng = keys.length;
-        		if (leng<20 && shaping_column != "Select") {
-        			// draw legend
-        		    // ?? Not sure why, but this legend appears not to show
-              	var legend = svg.selectAll(".legend")
-              			.data(keys)
-              			.enter().append("g")
-              			// .attr("class", "legend");
-              			// .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-            		console.log(keys);
-            		console.log(symbol);
-            		console.log(symbols);
-            		// draw legend colored rectangles
-            		legend.append("path")
-              			// .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-              			.attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-              			.attr("x", width + 0)
-              			.attr("width", 18)
-              			.attr("height", 18)
-              			// .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-              			.attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-            		// draw legend text
-            		legend.append("text")
-              			// .attr("x", 100 + 0)
-              			// .attr("y", 4)
-              			.attr("dy", ".35em")
-              			.style("text-anchor", "begin")
-              			.text(function(d) { return d;})
-              			.attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-        		}
+                .call(legendAxis);
+        } else { // no spectrum
+            var keys = Object.keys(symbol)
+            leng = keys.length;
+            if (leng<20 && shaping_column != "Select") {
+              // draw legend
+                // ?? Not sure why, but this legend appears not to show
+                var legend = svg.selectAll(".legend")
+                    .data(keys)
+                    .enter().append("g")
+                    // .attr("class", "legend");
+                    // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+                console.log(keys);
+                console.log(symbol);
+                console.log(symbols);
+                // draw legend colored rectangles
+                legend.append("path")
+                    // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
+                    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
+                    .attr("x", width + 0)
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+                    .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
+                // draw legend text
+                legend.append("text")
+                    // .attr("x", 100 + 0)
+                    // .attr("y", 4)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "begin")
+                    .text(function(d) { return d;})
+                    .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+            }
 
-        		if(len <= 30 && category != "Select") {
+            if(len <= 30 && category != "Select") {
 
                 // draw legend
-              	var legend = svg.selectAll(".legend")
-              		.data(color.domain())
-              		.enter().append("g")
-              		.attr("class", "legend")
-              		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-            		
-              	// draw legend colored rectangles
-              	legend.append("rect")
-              		.attr("x", width + 6)
-              		.attr("width", 18)
-              		.attr("height", 18)
-              		.style("fill", color);
+                var legend = svg.selectAll(".legend")
+                  .data(color.domain())
+                  .enter().append("g")
+                  .attr("class", "legend")
+                  .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                
+                // draw legend colored rectangles
+                legend.append("rect")
+                  .attr("x", width + 6)
+                  .attr("width", 18)
+                  .attr("height", 18)
+                  .style("fill", color);
 
-              	// draw legend text
-              	legend.append("text")
-              		.attr("x", width + 0)
-              		.attr("y", 9)
-              		.attr("dy", ".35em")
-              		.style("text-anchor", "end")
-              		.text(function(d) { return d;});
-        		}
+                // draw legend text
+                legend.append("text")
+                  .attr("x", width + 0)
+                  .attr("y", 9)
+                  .attr("dy", ".35em")
+                  .style("text-anchor", "end")
+                  .text(function(d) { return d;});
+            }
         };
     }); // end load data
 } // end highlighting
