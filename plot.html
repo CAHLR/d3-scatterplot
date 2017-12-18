@@ -101,7 +101,7 @@ input{
 }
 /*Input textbox for circle and zoom*/
 .input2{
-  width : 180px;
+  width : 225px;
   height : 25px;
 }
 /*Transparent*/
@@ -213,7 +213,7 @@ input{
 }
 /*Never referenced - unused*/
 .div1 {
-    position: absolute;    
+    position: absolute;
     height: 400px;
     width: 600px;
     margin-left:1000px;
@@ -265,7 +265,7 @@ input{
       <input type="text" id="myVal" placeholder="Search text">
       <input name="Submit"  type="submit" value="Apply" >
 </form>
-      
+
 <!-- The handleClick1() function will be executed when the transparent button is pressed  -->
 <form name="myform1" class="form1" onSubmit="return handleClick1()">
       <p>Enter attribute value, and opacity values b/w 0 and 1: <br>(Currently doesn't work simultaneously with search.)</p>
@@ -281,6 +281,7 @@ input{
 <script src="//d3js.org/d3-shape.v0.6.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
 <script src="crossfilter.min.js"></script>
+<script src="math.min.js"></script>
 <script>
 
 // The location of svg plot is determined by the following margins
@@ -297,23 +298,67 @@ for(var i=0;i<temp_query.length;i++) {
   tvars = temp_query[i].split("=");
   dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");
 }
+console.log(dicts)
 if ("dataset" in dicts) {
   dataset = dicts["dataset"];
 } else {
   dataset = "joined_data.csv";
 }
+var weights_2darray = [];
+var biases_1darray = [];
+var vocab_1darray = [];
+var vectorspace_2darray = [];
+// Semantic model option set up
+if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
+    console.log('Using semantic model.\nGetting matrices...');
+    var weightsfile = dataset.split(".")[0]+'_weights.tsv';
+    var biasesfile = dataset.split(".")[0]+'_biases.tsv';
+    var vocabfile = dataset.split(".")[0]+'_vocab.tsv';
+    var vectorfile = dataset.split(".")[0]+'_vectors.tsv';
+    console.log(weightsfile)
+    console.log(vectorfile)
+    d3.tsv(vectorfile, function(text){
+        console.log(text)
+        vectorspace_2darray = text.map( Object.values );
+        vectorspace_2darray = vectorspace_2darray.map(function(elem) {
+            return elem.map(function(elem2) {
+                return parseFloat(elem2);
+            });
+        });
+    });
+    d3.tsv(weightsfile, function(text){
+        weights_2darray = text.map( Object.values );
+        weights_2darray = weights_2darray.map(function(elem) {
+            return elem.map(function(elem2) {
+                return parseFloat(elem2);
+            });
+        });
+    });
+    d3.tsv(biasesfile, function(text){
+        biases_1darray = text.map( Object.values );
+        biases_1darray = Object.values(biases_1darray.map(Number));
+    });
+    d3.tsv(vocabfile, function(text){
+        vocab_1darray = text.map( Object.values );
+        vocab_1darray = Object.values(vocab_1darray.map(String));
+        // vocab_1darray = vocab_1darray.reduce(function(a, b){
+        //     return a.concat(b);
+        // });
+    });
 
-/* 
+}
+
+/*
  * value accessor - returns the value to encode for a given data object.
  * scale - maps value to a visual display encoding, such as a pixel position.
  * map function - maps from data value to display value
  * axis - sets up axis
- */ 
+ */
 
-// setup x 
+// setup x
 var xValue = function(d) { return d.x;}, // data -> value
     xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) {return xScale(xValue(d));}, // data -> display  
+    xMap = function(d) {return xScale(xValue(d));}, // data -> display
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
@@ -418,7 +463,7 @@ var tabulate = function(data_tab, columns) {
         output = output + "<br>";
     }
     // side table
-    document.getElementById("demo3").innerHTML = output; 
+    document.getElementById("demo3").innerHTML = output;
     return table;
 }
 
@@ -491,7 +536,7 @@ d3.tsv(dataset, function(data) {
         if (temp[i] != category_search) {
             category_search_data.push(temp[i]);
         }
-    
+
     for(var i=0;i<temp.length;i++) {
         // category already pushed
         if (temp[i] != category) {
@@ -563,7 +608,7 @@ dropDown4.on("change", plotting5);
 
 if ("q" in dicts) {
     highlighting(dicts["q"], "", "");
-} else { 
+} else {
     highlighting("", "", "");
 }
 
@@ -585,28 +630,28 @@ function plotting2(){
 // Coloring
 function plotting(){
     // dropDown4.property( "value", "Select" );
-    category = d3.event.target.value; 
+    category = d3.event.target.value;
     // shaping_column = "Select";
     // color = d3.scale.category20();
     cValue = function(d) { return d[category];};
-    val = document.getElementById("myVal1").value; 
-    val1 = document.getElementById("myVal2").value; 
+    val = document.getElementById("myVal1").value;
+    val1 = document.getElementById("myVal2").value;
     val2 = document.getElementById("myVal3").value;
-    highlighting(val, val1, val2);        
+    highlighting(val, val1, val2);
 }
 
 // function to call for change event
 // Shaping
 function plotting5(){
-    
+
     // dropDown.property( "value", "Select" );
-    shaping_column = d3.event.target.value; 
+    shaping_column = d3.event.target.value;
     // color = d3.scale.category20();
     cValue = function(d) { return d[category];};
-    val = document.getElementById("myVal1").value; 
-    val1 = document.getElementById("myVal2").value; 
+    val = document.getElementById("myVal1").value;
+    val1 = document.getElementById("myVal2").value;
     val2 = document.getElementById("myVal3").value;
-    highlighting(val, val1, val2);        
+    highlighting(val, val1, val2);
 }
 
 var zoomed = 0;
@@ -630,8 +675,8 @@ function handleCheck(event) {
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
 function handleClick1(event) {
     console.log(document.getElementById("myVal1").value);
-    val = document.getElementById("myVal1").value; 
-    val1 = document.getElementById("myVal2").value; 
+    val = document.getElementById("myVal1").value;
+    val1 = document.getElementById("myVal2").value;
     val2 = document.getElementById("myVal3").value;
     highlighting(val, val1, val2);
     return false;
@@ -661,26 +706,26 @@ function handleClick2(event){
 // it will be executed when spectrum/log is checked
 // ?? Can we collapse handleClick1,3,4?
 function handleClick3(event) {
-    val = document.getElementById("myVal1").value; 
-    val1 = document.getElementById("myVal2").value; 
+    val = document.getElementById("myVal1").value;
+    val1 = document.getElementById("myVal2").value;
     val2 = document.getElementById("myVal3").value;
     highlighting(val, val1, val2);
 }
-            
+
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function handleClick4(){
     if (!document.getElementById('cbox3').checked) {
       document.getElementById("zoomxy").value = ""; // clear the textbox
     }
-    val = document.getElementById("myVal1").value; 
-    val1 = document.getElementById("myVal2").value; 
+    val = document.getElementById("myVal1").value;
+    val1 = document.getElementById("myVal2").value;
     val2 = document.getElementById("myVal3").value;
     needZoom = true;
     highlighting(val, val1, val2);
 }
 
 
-      
+
 // Checks the url query for name=value and extracts the value
 function getParameterByName(name, url) {
     if (!url) {
@@ -705,7 +750,7 @@ function linspace(start, end, n) {
     out.push(end);
     return out;
 }
-  
+
 coordinatesx = [];
 coordinatesy = [];
 
@@ -715,7 +760,7 @@ var scale_d = {
     'spectral8': ['#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd'],
     'redBlackGreen': ['#ff0000', '#AA0000', '#550000', '#005500', '#00AA00', '#00ff00'],
 };
-scale = scale_d['spectral8']; 
+scale = scale_d['spectral8'];
 
 // function for plotting
 function highlighting(val, val1, val2) {
@@ -723,14 +768,15 @@ function highlighting(val, val1, val2) {
     var svg;
     var temp1 = [], temp2 = [], temp3 = [];
     var dict1 = {};
-    
+    var selected_data_indices=[];
+
     // to remove the existing svg plot if any
     // clear side table
-    document.getElementById("demo3").innerHTML = ""; 
+    document.getElementById("demo3").innerHTML = "";
     d3.select("svg").remove();
     d3.select("table").remove();
     d3.select("svg").remove();
-  
+
     // function zoom() {
     //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     //    }
@@ -741,7 +787,7 @@ function highlighting(val, val1, val2) {
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-  
+
     /* https://github.com/skokenes/D3-Lasso-Plugin
        plugin also handles selected and possible settings */
     // Lasso starts
@@ -770,7 +816,7 @@ function highlighting(val, val1, val2) {
         lasso.items()
              .style("fill", function(d) { return color(d[category]); });
 
-        // Style the selected dots    
+        // Style the selected dots
         lasso.items().filter(function(d) {return d.selected===true})
             .classed({"not_possible":false,"possible":false})
             .attr("r",6.5);
@@ -785,9 +831,9 @@ function highlighting(val, val1, val2) {
             y_values.push(((((zsx[0][i].getBBox().y+6.5) * (y_min - y_max))/height + y_max)));
         }
         var selected_data=[];
-
+        selected_data_indices=[];
         // Compare every selected point to all points (tempX)
-        // in order to match coordinates with actual data 
+        // in order to match coordinates with actual data
         for (var ii=0;ii<x_values.length;ii++) {
             console.log("lasso_end gathering selected data");
             console.log(temp1.length);
@@ -795,6 +841,7 @@ function highlighting(val, val1, val2) {
                 x_values[ii] = +(x_values[ii].toFixed(3));
                 y_values[ii] = +(y_values[ii].toFixed(5));
                 if ( (x_values[ii] === +(temp1[jj].toFixed(3))) && (y_values[ii] === +(temp2[jj].toFixed(5))) ) {
+                    selected_data_indices.push(jj);
                     all_values = {};
                     for (var k=1;k<categories.length;k++) {
                         all_values[categories[k]] = (dict1[categories[k]][jj]);
@@ -806,16 +853,51 @@ function highlighting(val, val1, val2) {
                 }
             }
         }
-      
         // render the table for the points selected by lasso
-        if(selected_data.length != 0) {
+        num_lasso_selected = selected_data.length;
+        if(num_lasso_selected != 0) {
             console.log("about to tabulate");
             console.log(selected_data);
             console.log(columns);
             console.log(x_values);
             var peopleTable = tabulate(selected_data, columns, x_values);
+
+            console.log(selected_data_indices)
+            console.log(vectorspace_2darray);
+            console.log(weights_2darray);
+            console.log(biases_1darray);
+            console.log(vocab_1darray);
+
+
+            console.log(math.sqrt(-4));
+            var sum_vectors = vectorspace_2darray[selected_data_indices[0]];
+            for (i=1; i < num_lasso_selected; i++) {
+                console.log(vectorspace_2darray[selected_data_indices[i]]);
+                sum_vectors = math.add(sum_vectors, vectorspace_2darray[selected_data_indices[i]]);
+                console.log(sum_vectors);
+            }
+            var avg_vectors = sum_vectors.map(function(x) { return x / num_lasso_selected; });
+            var mul = math.multiply(avg_vectors, weights_2darray);
+            var add = math.add(mul, biases_1darray);
+            function findIndicesOfMax(inp, count) {
+                var outp = new Array();
+                for (var i = 0; i < inp.length; i++) {
+                    outp.push(i);
+                    if (outp.length > count) {
+                        outp.sort(function(a, b) { return inp[b] - inp[a]; });
+                        outp.pop();
+                    }
+                }
+                return outp;
+            }
+            // get indices of 10 greatest elements
+            var indices = findIndicesOfMax(add, 10);
+            console.log("Top predicted vocab words:")
+            for (i=0; i<10; i++) {
+                console.log(vocab_1darray[indices[i]]);
+            }
         }
-        
+
         // Reset the style of the not selected dots (we made them 0.5 smaller)
         lasso.items().filter(function(d) {return d.selected===false})
             .classed({"not_possible":false,"possible":false})
@@ -841,7 +923,7 @@ function highlighting(val, val1, val2) {
 
     // Init the lasso object on the svg:g that contains the dots
     svg.call(lasso);
-    
+
     // load data
     d3.tsv(dataset, function(error, data) {
 
@@ -902,7 +984,7 @@ function highlighting(val, val1, val2) {
             color = d3.scale.linear()
                .domain(linspace(m1, m2,scale.length))
               //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
-              .range(scale);  
+              .range(scale);
         } else {
             color = d3.scale.category20();
         }
@@ -917,12 +999,12 @@ function highlighting(val, val1, val2) {
             x_max = d3.max(data, xValue)+1;
             x_min = d3.min(data, xValue)-1;
             y_max = d3.max(data, yValue)+1;
-            y_min = d3.min(data, yValue)-1; 
+            y_min = d3.min(data, yValue)-1;
         }
-      
+
         // if zoom is checked and conditions are satisfied
         if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
-                
+
             x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
             x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
             y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
@@ -930,7 +1012,7 @@ function highlighting(val, val1, val2) {
 
             console.log(x_max, x_min, y_max, y_min);
             document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
-            
+
             zoomed = 1;
             needZoom = false;
                 // document.getElementById("cbox3").checked = false;
@@ -949,7 +1031,7 @@ function highlighting(val, val1, val2) {
         }
         xScale.domain([x_min, x_max]);
         yScale.domain([y_min, y_max]);
-      
+
         // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
           // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
@@ -957,7 +1039,7 @@ function highlighting(val, val1, val2) {
         cx = 0;
         cy = 0;
         ans = 0;
-    
+
         // check whether the circle checkbox is selected or not
         // ?? may want to allow coordinatesx.length >= 1
         if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
@@ -967,7 +1049,7 @@ function highlighting(val, val1, val2) {
             cx = coordinatesx[0]
             cy = coordinatesy[0]
 
-            /* 
+            /*
               invert: Given a value from the range, returns the corresponding value from the domain.
               Inversion is useful for interaction, say to determine the data value corresponding to the position of the mouse.
             */
@@ -986,10 +1068,10 @@ function highlighting(val, val1, val2) {
                 data.forEach(function(d) {
                     d.x = +d.x
                     d["y"] = +d["y"]
-                
+
                     // dist = Math.sqrt((d.x - coordinatesx[0])*(d.x - coordinatesx[0]) + (d["y"] - coordinatesy[0])*(d["y"] - coordinatesy[0]))
                     dist = Math.sqrt((xScale(d.x) - xScale(coordinatesx[0]))*(xScale(d.x) - xScale(coordinatesx[0])) + (yScale(d["y"]) - yScale(coordinatesy[0]))*(yScale(d["y"]) - yScale(coordinatesy[0])))
-                    // console.log(dist)  
+                    // console.log(dist)
                     if (d[draw[1]] == draw[2]) {
                         if (dist <= f) {
                             c += 1;
@@ -1002,10 +1084,10 @@ function highlighting(val, val1, val2) {
                     ans = f;
                     break;
                 }
-              
+
             }
         }
-        console.log(ans); 
+        console.log(ans);
         if (ans != 0) {
             console.log(xScale(ans))
             svg.append("circle")
@@ -1017,7 +1099,7 @@ function highlighting(val, val1, val2) {
               .style("fill", "green")
               .style("opacity", .2);
         }
-      
+
         // draw the x-axis of plot
         svg.append("g")
             .attr("class", "x axis")
@@ -1041,7 +1123,7 @@ function highlighting(val, val1, val2) {
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .text("");
-        
+
         // to identify the condition of transparent column values
         if (transparent_column !== "Select" && val !== "" && val2 !== "") {
             transparent_column = transparent_column.toString();
@@ -1051,7 +1133,7 @@ function highlighting(val, val1, val2) {
             val = val.toString();
         }
 
-        var transpar = function(d) { 
+        var transpar = function(d) {
             if (val !== "" && typeof d != 'undefined') {
                 // if point's transp column value is equal to the value specified, return val1, else val2
                 var match;
@@ -1059,8 +1141,7 @@ function highlighting(val, val1, val2) {
                     // console.log("Using exact match");
                     match = d[transparent_column] == val;
                 } else {
-                    val = val.toLowerCase();
-                    match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val) > -1);
+                    match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val.toLowerCase()) > -1);
                 }
 
                 if (match){
@@ -1073,24 +1154,20 @@ function highlighting(val, val1, val2) {
                 return 1;
             }
         };
-            
-        // searching according to the substring given and searching column 
+
+        // searching according to the substring given and searching column
         var searchFunc = function(d) {
             if (typeof d[category_search] == 'undefined' ) {
                 return 1;
             }
-            // x truthy if not found
+            // noMatch truthy if not found
             var noMatch;
             if (document.getElementById('cbox5').checked) {
                 noMatch = d[category_search] != val;
             } else {
-                val = val.toLowerCase();
-                noMatch = d[category_search].toLowerCase().indexOf(val) < 0
+                noMatch = d[category_search].toLowerCase().indexOf(val.toLowerCase()) < 0
                 || val.length === 0;
             }
-            // var noMatch = d[category_search].toLowerCase().indexOf(val) < 0
-            //         || val.length === 0;
-            // return 1 if not found, 2 if found
             return noMatch ? 1 : 2;
         };
 
@@ -1104,13 +1181,9 @@ function highlighting(val, val1, val2) {
                 // console.log("Using exact match");
                 noMatch = d != val;
             } else {
-                val = val.toLowerCase();
-                noMatch = d.toLowerCase().indexOf(val) < 0
+                noMatch = d.toLowerCase().indexOf(val.toLowerCase()) < 0
                 || val.length === 0;
             }
-            // var noMatch = d.toLowerCase().indexOf(val) < 0
-            //         || val.length === 0;
-            // return 1 if not found, 2 if found
             return noMatch ? 1 : 2;
         };
 
@@ -1131,10 +1204,10 @@ function highlighting(val, val1, val2) {
             }
         }
         // create the table
-        if ( val != "" && searched_data.length != 0) { 
+        if ( val != "" && searched_data.length != 0) {
             var peopleTable1 = tabulate(searched_data, columns);
         };
-        
+
         // determines the rotation of symbols that can be done
         var sizes = {}
         sizes[0] = ["0", "90", "0", "0"]
@@ -1144,7 +1217,7 @@ function highlighting(val, val1, val2) {
         sizes[4] = ["0", "90", "0", "0"]
         sizes[5] = ["0", "0", "0", "0"]
         var symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
-  
+
         /*** BEGIN drawing dots ***/
 
         // shaping of symbols according to the shaping column
@@ -1222,7 +1295,7 @@ function highlighting(val, val1, val2) {
                           .attr("y", (d3.event.pageY-35));
               });
         } else {
-          // console.log(document.getElementById('cbox2').checked)  
+          // console.log(document.getElementById('cbox2').checked)
           // draw dots
           marked = {}
           var points = svg.selectAll(".dot")
@@ -1239,7 +1312,7 @@ function highlighting(val, val1, val2) {
               .attr("cy", yMap)
               .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
               .style("opacity",function(d) { return transpar(d);})
-              
+
               .on("mouseover", function(d) {
                   tooltip.transition()
                          .duration(200)
@@ -1254,7 +1327,7 @@ function highlighting(val, val1, val2) {
                          .duration(500)
                          .style("opacity", 0);
               })
-                 
+
               .on("click", function(d) {
                   if (!([d3.event.pageX, d3.event.pageY] in marked)) {
                       marked[[d3.event.pageX, d3.event.pageY]] = true;
@@ -1273,11 +1346,11 @@ function highlighting(val, val1, val2) {
                       /*
                       tooltip1.transition()
                          .attr("class", "tooltip1")
-                               .style("opacity", 1);  
-                         
+                               .style("opacity", 1);
+
                       tooltip1.html("<b>"+d[feature_column]+"</b>")
                                .style("left", (d3.event.pageX + 10) + "px")
-                               .style("top", (d3.event.pageY - 10) + "px"); 
+                               .style("top", (d3.event.pageY - 10) + "px");
                        */
                   }
               });
@@ -1307,7 +1380,7 @@ function highlighting(val, val1, val2) {
                        .duration(500)
                        .style("opacity", 0);
             })
-           
+
             .on("click", function(d) {
                 console.log("Hello");
                 if (!([d3.event.pageX, d3.event.pageY] in marked)){
@@ -1339,11 +1412,9 @@ function highlighting(val, val1, val2) {
           coordinatesy.unshift(coordinates1[1]);
           console.log(coordinatesx, coordinatesy);
         })
-        
+
         /* can move up into the if/else, but more clear to separate functionality */
         if (shaping_column !== "Select" ) {
-            /* .point didn't work, leaving for next iteration to fix */
-            // lasso.items(d3.selectAll(".point"));
             lasso.items(d3.selectAll(".dot"));
         } else {
             lasso.items(d3.selectAll(".dot"));
@@ -1352,7 +1423,7 @@ function highlighting(val, val1, val2) {
         var len = color.domain().length;
         // if spectrum
         if (numerics[category] && document.getElementById('cbox1').checked) {
-          
+
             if (document.getElementById('cbox2').checked) {
                 m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
                 m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
@@ -1451,7 +1522,7 @@ function highlighting(val, val1, val2) {
                   .enter().append("g")
                   .attr("class", "legend")
                   .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-                
+
                 // draw legend colored rectangles
                 legend.append("rect")
                   .attr("x", width + 6)
