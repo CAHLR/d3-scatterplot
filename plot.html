@@ -143,7 +143,7 @@ input{
 /*Side table*/
 .p3 {
     margin-left: 1000px;
-    margin-top: 10px;
+    margin-top: 20px;
     position: absolute;
   white-space: nowrap;
     font-size: 150%;
@@ -204,6 +204,13 @@ input{
     position: absolute;
     font-size: 150%;
 }
+/*Display top predicted words*/
+.p12 {
+    margin-left: 20px;
+    margin-top: 10px;
+    position: absolute;
+    font-size: 200%;
+}
 .bar rect {
   fill: steelblue;
 }
@@ -228,7 +235,7 @@ input{
 }
 /*Never referenced - unused*/
 #legend-svg {
-            vertical-align: top;
+    vertical-align: top;
 }
 .point {
   fill: steelblue;
@@ -236,7 +243,7 @@ input{
 }
 </style>
 <body>
-
+<p class="p12" id="predicted_words"></p>
 <p class="p9"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="fourth_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 
 <p class="p8"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
@@ -285,9 +292,9 @@ input{
 <script>
 
 // The location of svg plot is determined by the following margins
-var margin = {top: 40, right: 40, bottom: 40, left: 40},
+var margin = {top: 50, right: 40, bottom: 40, left: 40},
     width = 700 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
+    height = 710 - margin.top - margin.bottom;
 
 // This step is performed to parse the url to identify the dataset and the default coloring column
 var query = window.location.search.substring(1);
@@ -298,7 +305,6 @@ for(var i=0;i<temp_query.length;i++) {
   tvars = temp_query[i].split("=");
   dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");
 }
-console.log(dicts)
 if ("dataset" in dicts) {
   dataset = dicts["dataset"];
 } else {
@@ -315,8 +321,8 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     var biasesfile = dataset.split(".")[0]+'_biases.tsv';
     var vocabfile = dataset.split(".")[0]+'_vocab.tsv';
     var vectorfile = dataset.split(".")[0]+'_vectors.tsv';
-    console.log(weightsfile)
-    console.log(vectorfile)
+
+    console.log("Reading " + vectorfile)
     d3.tsv(vectorfile, function(text){
         console.log(text)
         vectorspace_2darray = text.map( Object.values );
@@ -326,6 +332,7 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
             });
         });
     });
+    console.log("Reading " + weightsfile)
     d3.tsv(weightsfile, function(text){
         weights_2darray = text.map( Object.values );
         weights_2darray = weights_2darray.map(function(elem) {
@@ -334,18 +341,16 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
             });
         });
     });
+    console.log("Reading " + biasesfile)
     d3.tsv(biasesfile, function(text){
         biases_1darray = text.map( Object.values );
         biases_1darray = Object.values(biases_1darray.map(Number));
     });
+    console.log("Reading " + vocabfile)
     d3.tsv(vocabfile, function(text){
         vocab_1darray = text.map( Object.values );
         vocab_1darray = Object.values(vocab_1darray.map(String));
-        // vocab_1darray = vocab_1darray.reduce(function(a, b){
-        //     return a.concat(b);
-        // });
     });
-
 }
 
 /*
@@ -768,7 +773,6 @@ function highlighting(val, val1, val2) {
     var svg;
     var temp1 = [], temp2 = [], temp3 = [];
     var dict1 = {};
-    var selected_data_indices=[];
 
     // to remove the existing svg plot if any
     // clear side table
@@ -831,7 +835,7 @@ function highlighting(val, val1, val2) {
             y_values.push(((((zsx[0][i].getBBox().y+6.5) * (y_min - y_max))/height + y_max)));
         }
         var selected_data=[];
-        selected_data_indices=[];
+        var selected_data_indices=[];
         // Compare every selected point to all points (tempX)
         // in order to match coordinates with actual data
         for (var ii=0;ii<x_values.length;ii++) {
@@ -855,46 +859,46 @@ function highlighting(val, val1, val2) {
         }
         // render the table for the points selected by lasso
         num_lasso_selected = selected_data.length;
-        if(num_lasso_selected != 0) {
-            console.log("about to tabulate");
+        if (num_lasso_selected > 0) {
+            console.log("Rendering table...");
             console.log(selected_data);
             console.log(columns);
             console.log(x_values);
             var peopleTable = tabulate(selected_data, columns, x_values);
+            if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
+                console.log("Predicting words...")
+                console.log(selected_data_indices)
 
-            console.log(selected_data_indices)
-            console.log(vectorspace_2darray);
-            console.log(weights_2darray);
-            console.log(biases_1darray);
-            console.log(vocab_1darray);
-
-
-            console.log(math.sqrt(-4));
-            var sum_vectors = vectorspace_2darray[selected_data_indices[0]];
-            for (i=1; i < num_lasso_selected; i++) {
-                console.log(vectorspace_2darray[selected_data_indices[i]]);
-                sum_vectors = math.add(sum_vectors, vectorspace_2darray[selected_data_indices[i]]);
-                console.log(sum_vectors);
-            }
-            var avg_vectors = sum_vectors.map(function(x) { return x / num_lasso_selected; });
-            var mul = math.multiply(avg_vectors, weights_2darray);
-            var add = math.add(mul, biases_1darray);
-            function findIndicesOfMax(inp, count) {
-                var outp = new Array();
-                for (var i = 0; i < inp.length; i++) {
-                    outp.push(i);
-                    if (outp.length > count) {
-                        outp.sort(function(a, b) { return inp[b] - inp[a]; });
-                        outp.pop();
-                    }
+                var sum_vectors = vectorspace_2darray[selected_data_indices[0]];
+                for (i=1; i < num_lasso_selected; i++) {
+                    // console.log("New vector:" vectorspace_2darray[selected_data_indices[i]]);
+                    sum_vectors = math.add(sum_vectors, vectorspace_2darray[selected_data_indices[i]]);
+                    // console.log("Current vector sum:" + sum_vectors);
                 }
-                return outp;
-            }
-            // get indices of 10 greatest elements
-            var indices = findIndicesOfMax(add, 10);
-            console.log("Top predicted vocab words:")
-            for (i=0; i<10; i++) {
-                console.log(vocab_1darray[indices[i]]);
+                var avg_vector = sum_vectors.map(function(x) { return x / num_lasso_selected; });
+                var mul = math.multiply(avg_vector, weights_2darray);
+                var add = math.add(mul, biases_1darray);
+                // Helper function copied from https://stackoverflow.com/a/11792230/7100714
+                function findIndicesOfMax(inp, count) {
+                    var outp = new Array();
+                    for (var i = 0; i < inp.length; i++) {
+                        outp.push(i);
+                        if (outp.length > count) {
+                            outp.sort(function(a, b) { return inp[b] - inp[a]; });
+                            outp.pop();
+                        }
+                    }
+                    return outp;
+                }
+                // get indices of 10 greatest elements
+                var indices = findIndicesOfMax(add, 10);
+                console.log("Top predicted vocab words:");
+                var strbuilder = "Predicted words:";
+                for (i=0; i<10; i++) {
+                    console.log((i+1) + ": " + vocab_1darray[indices[i]]);
+                    strbuilder += " " + (i+1) + ":" + vocab_1darray[indices[i]];
+                }
+                document.getElementById("predicted_words").innerHTML = strbuilder;
             }
         }
 
