@@ -310,10 +310,7 @@ if ("dataset" in dicts) {
 } else {
   dataset = "joined_data.csv";
 }
-var weights_2darray = [];
-var biases_1darray = [];
-var vocab_1darray = [];
-var vectorspace_2darray = [];
+var weights_2darray = [], biases_1darray = [], vocab_1darray = [], vectorspace_2darray = [];
 // Semantic model option set up
 if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     console.log('Using semantic model.\nGetting matrices...');
@@ -395,9 +392,7 @@ var print_array = function(arr, d) {
 var category;
 
 // column for the transparent value
-var transparent_column = "";
-var feature_column = "";
-var shaping_column = "";
+var transparent_column = "", feature_column = "", shaping_column = "";
 
 // coloring will be done according to the values determined by cValue
 var cValue = function(d) {return d[category];},
@@ -525,8 +520,7 @@ if ("color" in dicts) {
 var temp_cat = [];
 temp_cat.push(category);
 
-var columns = [];
-var temp = [];
+var columns = [], temp = [];
 var x_max, x_min, y_max, y_min;
 
 // getting header from csv file to make drowdown menus
@@ -648,7 +642,6 @@ function plotting(){
 // function to call for change event
 // Shaping
 function plotting5(){
-
     // dropDown.property( "value", "Select" );
     shaping_column = d3.event.target.value;
     // color = d3.scale.category20();
@@ -695,16 +688,16 @@ function handleCheck1(event) {
 // ?? I believe this function is unused, and draw also maps to handleClick4
 // it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
 function handleClick2(event){
-        shaping_column = "Select";
-        category = "Select";
-        myForm.myVal.value = 0;
-        myForm1.myVal1.value = 0;
-        myForm1.myVal2.value = 0;
-        myForm1.myVal3.value = 0;
-        dropDown4.property( "value", "Select" );
-        dropDown.property( "value", "Select" );
-        highlighting("", "", "");
-        return false;
+    shaping_column = "Select";
+    category = "Select";
+    myForm.myVal.value = 0;
+    myForm1.myVal1.value = 0;
+    myForm1.myVal2.value = 0;
+    myForm1.myVal3.value = 0;
+    dropDown4.property( "value", "Select" );
+    dropDown.property( "value", "Select" );
+    highlighting("", "", "");
+    return false;
 }
 
 // spectrum / log event
@@ -728,7 +721,6 @@ function handleClick4(){
     needZoom = true;
     highlighting(val, val1, val2);
 }
-
 
 
 // Checks the url query for name=value and extracts the value
@@ -774,12 +766,12 @@ function highlighting(val, val1, val2) {
     var temp1 = [], temp2 = [], temp3 = [];
     var dict1 = {};
 
-    // to remove the existing svg plot if any
-    // clear side table
+    // to remove the existing svg plot if any and clear side table
     document.getElementById("demo3").innerHTML = "";
+    document.getElementById("predicted_words").innerHTML = "";
     d3.select("svg").remove();
     d3.select("table").remove();
-    d3.select("svg").remove();
+    // d3.select("svg").remove();
 
     // function zoom() {
     //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -834,8 +826,7 @@ function highlighting(val, val1, val2) {
             x_values.push(((((zsx[0][i].getBBox().x+6.5) * (x_max - x_min))/width + x_min )));
             y_values.push(((((zsx[0][i].getBBox().y+6.5) * (y_min - y_max))/height + y_max)));
         }
-        var selected_data=[];
-        var selected_data_indices=[];
+        var selected_data=[], selected_data_indices=[];
         // Compare every selected point to all points (tempX)
         // in order to match coordinates with actual data
         for (var ii=0;ii<x_values.length;ii++) {
@@ -845,60 +836,28 @@ function highlighting(val, val1, val2) {
                 x_values[ii] = +(x_values[ii].toFixed(3));
                 y_values[ii] = +(y_values[ii].toFixed(5));
                 if ( (x_values[ii] === +(temp1[jj].toFixed(3))) && (y_values[ii] === +(temp2[jj].toFixed(5))) ) {
-                    selected_data_indices.push(jj);
                     all_values = {};
                     for (var k=1;k<categories.length;k++) {
                         all_values[categories[k]] = (dict1[categories[k]][jj]);
                     }
                     if(searchdic(selected_data,all_values)==true){
                         selected_data.push(all_values);
+                        selected_data_indices.push(jj);
                         break;
                     }
                 }
             }
         }
         // render the table for the points selected by lasso
-        num_lasso_selected = selected_data.length;
-        if (num_lasso_selected > 0) {
+        if (selected_data.length > 0) {
             console.log("Rendering table...");
             console.log(selected_data);
             console.log(columns);
             console.log(x_values);
             var peopleTable = tabulate(selected_data, columns, x_values);
             if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
-                console.log("Predicting words...")
-                console.log(selected_data_indices)
-
-                var sum_vectors = vectorspace_2darray[selected_data_indices[0]];
-                for (i=1; i < num_lasso_selected; i++) {
-                    // console.log("New vector:" vectorspace_2darray[selected_data_indices[i]]);
-                    sum_vectors = math.add(sum_vectors, vectorspace_2darray[selected_data_indices[i]]);
-                    // console.log("Current vector sum:" + sum_vectors);
-                }
-                var avg_vector = sum_vectors.map(function(x) { return x / num_lasso_selected; });
-                var mul = math.multiply(avg_vector, weights_2darray);
-                var add = math.add(mul, biases_1darray);
-                // Helper function copied from https://stackoverflow.com/a/11792230/7100714
-                function findIndicesOfMax(inp, count) {
-                    var outp = new Array();
-                    for (var i = 0; i < inp.length; i++) {
-                        outp.push(i);
-                        if (outp.length > count) {
-                            outp.sort(function(a, b) { return inp[b] - inp[a]; });
-                            outp.pop();
-                        }
-                    }
-                    return outp;
-                }
-                // get indices of 10 greatest elements
-                var indices = findIndicesOfMax(add, 10);
-                console.log("Top predicted vocab words:");
-                var strbuilder = "Predicted words:";
-                for (i=0; i<10; i++) {
-                    console.log((i+1) + ": " + vocab_1darray[indices[i]]);
-                    strbuilder += " " + (i+1) + ":" + vocab_1darray[indices[i]];
-                }
-                document.getElementById("predicted_words").innerHTML = strbuilder;
+                console.log("Predicting words...");
+                classify(selected_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
             }
         }
 
@@ -928,12 +887,44 @@ function highlighting(val, val1, val2) {
     // Init the lasso object on the svg:g that contains the dots
     svg.call(lasso);
 
+    var classify = function(indices, vs_source, weights_source, biases_source, vocab_source) {
+        var sum_vectors = vs_source[indices[0]];
+        for (i=1; i < indices.length; i++) {
+            sum_vectors = math.add(sum_vectors, vs_source[indices[i]]);
+        }
+        var avg_vector = sum_vectors.map(function(x) { return x / indices.length; });
+        var mul = math.multiply(avg_vector, weights_source);
+        var add = math.add(mul, biases_source);
+        // get indices of 10 greatest elements
+        var topIndices = findIndicesOfMax(add, 10);
+        console.log("Top predicted vocab words:");
+        var strbuilder = "Predicted words:";
+        for (i=0; i<10; i++) {
+            console.log((i+1) + ": " + vocab_source[topIndices[i]]);
+            strbuilder += " " + (i+1) + ":" + vocab_source[topIndices[i]];
+        }
+        document.getElementById("predicted_words").innerHTML = strbuilder;
+    }
+
+    // Utility function used for predicting words in semantic setting
+    // Source: https://stackoverflow.com/a/11792230/7100714
+    function findIndicesOfMax(inp, count) {
+        var outp = new Array();
+        for (var i = 0; i < inp.length; i++) {
+            outp.push(i);
+            if (outp.length > count) {
+                outp.sort(function(a, b) { return inp[b] - inp[a]; });
+                outp.pop();
+            }
+        }
+        return outp;
+    }
+
     // load data
     d3.tsv(dataset, function(error, data) {
 
         // change string (from CSV) into number format
-        var numerics = {};
-        var symbol = {};
+        var numerics = {}, symbol = {};
         //Omitting Select (0)
         for(var i=1;i<categories.length;i++) {
             // initialize the value for each category key to empty list
@@ -1037,7 +1028,7 @@ function highlighting(val, val1, val2) {
         yScale.domain([y_min, y_max]);
 
         // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-          // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+        // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
         // x-axis
         cx = 0;
@@ -1045,8 +1036,8 @@ function highlighting(val, val1, val2) {
         ans = 0;
 
         // check whether the circle checkbox is selected or not
-        // ?? may want to allow coordinatesx.length >= 1
-        if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
+        // allow coordinatesx.length >= 1
+        if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length >= 1) {
             console.log(document.getElementById("drawxy").value);
             draw = document.getElementById("drawxy").value;
             draw = draw.split(',');
@@ -1191,7 +1182,7 @@ function highlighting(val, val1, val2) {
             return noMatch ? 1 : 2;
         };
 
-        var searched_data = [], d_temp;
+        var searched_data = [], searched_data_indices = [], d_temp;
         /* temp3 holds the value of every point for the search column */
         for (var i=0;i<temp3.length;i++) {
             // 0 if found val in this point, 1 if not found
@@ -1204,12 +1195,17 @@ function highlighting(val, val1, val2) {
                 // only add to searched_data if not already in
                 if(searchdic(searched_data, d_temp) === true) {
                     searched_data.push(d_temp);
+                    searched_data_indices.push(i);
                 }
             }
         }
         // create the table
-        if ( val != "" && searched_data.length != 0) {
+        if ( val != "" && searched_data.length > 0) {
             var peopleTable1 = tabulate(searched_data, columns);
+            if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
+                console.log("Predicting words...");
+                classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
+            }
         };
 
         // determines the rotation of symbols that can be done
