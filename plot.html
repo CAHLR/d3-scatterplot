@@ -211,6 +211,13 @@ input{
     position: absolute;
     font-size: 200%;
 }
+/*Display top frequent words*/
+.p13 {
+    margin-left: 20px;
+    margin-top: 60px;
+    position: absolute;
+    font-size: 200%;
+}
 .bar rect {
   fill: steelblue;
 }
@@ -244,6 +251,7 @@ input{
 </style>
 <body>
 <p class="p12" id="predicted_words"></p>
+<p class="p13" id="frequent_words"></p>
 <p class="p9"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="fourth_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p>
 
 <p class="p8"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
@@ -292,9 +300,9 @@ input{
 <script>
 
 // The location of svg plot is determined by the following margins
-var margin = {top: 50, right: 40, bottom: 40, left: 40},
+var margin = {top: 90, right: 40, bottom: 40, left: 40},
     width = 700 - margin.left - margin.right,
-    height = 710 - margin.top - margin.bottom;
+    height = 750 - margin.top - margin.bottom;
 
 // This step is performed to parse the url to identify the dataset and the default coloring column
 var query = window.location.search.substring(1);
@@ -310,31 +318,40 @@ if ("dataset" in dicts) {
 } else {
   dataset = "joined_data.csv";
 }
-var weights_2darray = [], biases_1darray = [], vocab_1darray = [], vectorspace_2darray = [];
+var weights_2darray = [], biases_1darray = [], vocab_1darray = [], vectorspace_2darray = [], bow_2darray = [];
 // Semantic model option set up
 if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     console.log('Using semantic model.\nGetting matrices...');
-    var weightsfile = dataset.split(".")[0]+'_weights.tsv';
-    var biasesfile = dataset.split(".")[0]+'_biases.tsv';
-    var vocabfile = dataset.split(".")[0]+'_vocab.tsv';
-    var vectorfile = dataset.split(".")[0]+'_vectors.tsv';
+    var weightsfile = dataset.split(".")[0]+'_weights.txt';
+    var biasesfile = dataset.split(".")[0]+'_biases.txt';
+    var vocabfile = dataset.split(".")[0]+'_vocab.txt';
+    var vectorfile = 'VS-' + dataset.split("_semantic.")[0]+'.txt';
+    var bowfile = dataset.split(".")[0]+'_bow.txt';
 
+    console.log("Reading " + bowfile)
+    d3.tsv(bowfile, function(text){
+        bow_2darray = text.map( Object.values );
+        bow_2darray = bow_2darray.map(function(entry) {
+            return entry.map(function(elem) {
+                return parseInt(elem);
+            });
+        });
+    });
     console.log("Reading " + vectorfile)
     d3.tsv(vectorfile, function(text){
-        console.log(text)
         vectorspace_2darray = text.map( Object.values );
-        vectorspace_2darray = vectorspace_2darray.map(function(elem) {
-            return elem.map(function(elem2) {
-                return parseFloat(elem2);
+        vectorspace_2darray = vectorspace_2darray.map(function(arr) {
+            return arr.slice(1).map(function(elem) {
+                return parseFloat(elem);
             });
         });
     });
     console.log("Reading " + weightsfile)
     d3.tsv(weightsfile, function(text){
         weights_2darray = text.map( Object.values );
-        weights_2darray = weights_2darray.map(function(elem) {
-            return elem.map(function(elem2) {
-                return parseFloat(elem2);
+        weights_2darray = weights_2darray.map(function(entry) {
+            return entry.map(function(elem) {
+                return parseFloat(elem);
             });
         });
     });
@@ -522,7 +539,7 @@ temp_cat.push(category);
 
 var columns = [], temp = [];
 var x_max, x_min, y_max, y_min;
-
+console.log('Loading main data')
 // getting header from csv file to make drowdown menus
 d3.tsv(dataset, function(data) {
     console.log(data[0]);
@@ -769,6 +786,7 @@ function highlighting(val, val1, val2) {
     // to remove the existing svg plot if any and clear side table
     document.getElementById("demo3").innerHTML = "";
     document.getElementById("predicted_words").innerHTML = "";
+    document.getElementById("frequent_words").innerHTML = "";
     d3.select("svg").remove();
     d3.select("table").remove();
     // d3.select("svg").remove();
@@ -858,6 +876,7 @@ function highlighting(val, val1, val2) {
             if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
                 console.log("Predicting words...");
                 classify(selected_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
+                benchmark(selected_data_indices, bow_2darray, vocab_1darray);
             }
         }
 
@@ -905,6 +924,24 @@ function highlighting(val, val1, val2) {
         }
         document.getElementById("predicted_words").innerHTML = strbuilder;
     }
+    var benchmark = function(indices, bow_source, vocab_source) { // may need to adjust
+        var num_indices = indices.length;
+        var vocab_freq = bow_source[indices[0]];
+        for (i=1; i < num_indices; i++) {
+            vocab_freq = math.add(vocab_freq, bow_source[indices[i]]);
+        }
+        // get indices of 10 greatest elements
+        var topIndices = findIndicesOfMax(vocab_freq, 10);
+        console.log("Most frequent words:");
+        var strbuilder = "Most frequent words:";
+        for (i=0; i<10; i++) {
+            console.log((i+1) + ": " + vocab_source[topIndices[i]]);
+            strbuilder += " " + (i+1) + ":" + vocab_source[topIndices[i]];
+        }
+        document.getElementById("frequent_words").innerHTML = strbuilder;
+        console.log('most frequent in selection')
+        console.log(strbuilder);
+    }
 
     // Utility function used for predicting words in semantic setting
     // Source: https://stackoverflow.com/a/11792230/7100714
@@ -920,7 +957,7 @@ function highlighting(val, val1, val2) {
         return outp;
     }
 
-    // load data
+    console.log('Loading main data, again') // load data
     d3.tsv(dataset, function(error, data) {
 
         // change string (from CSV) into number format
@@ -935,8 +972,8 @@ function highlighting(val, val1, val2) {
         counter = 0;
         data.forEach(function(d) {
             // coerce the data to numbers
-            d.x = +d.x
-            d["y"] = +d["y"]
+            d.x = +d.x;
+            d["y"] = +d["y"];
 
             for(var i=1;i<categories.length;i++){
                 // add every attribute of point to the {category:[val1,val2,...]}
@@ -1036,8 +1073,8 @@ function highlighting(val, val1, val2) {
         ans = 0;
 
         // check whether the circle checkbox is selected or not
-        // allow coordinatesx.length >= 1
-        if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length >= 1) {
+        // ?? may want to allow coordinatesx.length >= 1
+        if (document.getElementById("cbox4").checked==true && zoomed==0 && coordinatesx.length == 1) {
             console.log(document.getElementById("drawxy").value);
             draw = document.getElementById("drawxy").value;
             draw = draw.split(',');
@@ -1205,6 +1242,7 @@ function highlighting(val, val1, val2) {
             if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
                 console.log("Predicting words...");
                 classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
+                benchmark(searched_data_indices, bow_2darray, vocab_1darray);
             }
         };
 
