@@ -328,7 +328,7 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     var vectorfile = 'VS-' + dataset.split("_semantic.")[0]+'.txt';
     var bowfile = dataset.split(".")[0]+'_bow.txt';
 
-    console.log("Reading " + bowfile)
+    console.log("Reading " + bowfile);
     d3.tsv(bowfile, function(text){
         bow_2darray = text.map( Object.values );
         bow_2darray = bow_2darray.map(function(entry) {
@@ -337,16 +337,17 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
             });
         });
     });
-    console.log("Reading " + vectorfile)
+    console.log("Reading " + vectorfile);
     d3.tsv(vectorfile, function(text){
         vectorspace_2darray = text.map( Object.values );
         vectorspace_2darray = vectorspace_2darray.map(function(arr) {
-            return arr.slice(1).map(function(elem) {
+            // username column ends up last in the dictionary, due to alphanumeric sort
+            return arr.slice(0,-1).map(function(elem) {
                 return parseFloat(elem);
             });
         });
     });
-    console.log("Reading " + weightsfile)
+    console.log("Reading " + weightsfile);
     d3.tsv(weightsfile, function(text){
         weights_2darray = text.map( Object.values );
         weights_2darray = weights_2darray.map(function(entry) {
@@ -355,12 +356,12 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
             });
         });
     });
-    console.log("Reading " + biasesfile)
+    console.log("Reading " + biasesfile);
     d3.tsv(biasesfile, function(text){
         biases_1darray = text.map( Object.values );
         biases_1darray = Object.values(biases_1darray.map(Number));
     });
-    console.log("Reading " + vocabfile)
+    console.log("Reading " + vocabfile);
     d3.tsv(vocabfile, function(text){
         vocab_1darray = text.map( Object.values );
         vocab_1darray = Object.values(vocab_1darray.map(String));
@@ -407,9 +408,6 @@ var print_array = function(arr, d) {
 
 // setup fill color
 var category;
-
-// column for the transparent value
-var transparent_column = "", feature_column = "", shaping_column = "";
 
 // coloring will be done according to the values determined by cValue
 var cValue = function(d) {return d[category];},
@@ -539,6 +537,10 @@ temp_cat.push(category);
 
 var columns = [], temp = [];
 var x_max, x_min, y_max, y_min;
+
+// column for the transparent value
+var transparent_column = "Select", feature_column = "", shaping_column = "Select";
+
 console.log('Loading main data')
 // getting header from csv file to make drowdown menus
 d3.tsv(dataset, function(data) {
@@ -920,9 +922,9 @@ function highlighting(val, val1, val2) {
         var strbuilder = "Predicted words:";
         for (i=0; i<10; i++) {
             console.log((i+1) + ": " + vocab_source[topIndices[i]]);
-            strbuilder += " " + (i+1) + ":" + vocab_source[topIndices[i]];
+            strbuilder += " " + vocab_source[topIndices[i]] + ",";
         }
-        document.getElementById("predicted_words").innerHTML = strbuilder;
+        document.getElementById("predicted_words").innerHTML = strbuilder.slice(0, -1);
     }
     var benchmark = function(indices, bow_source, vocab_source) { // may need to adjust
         var num_indices = indices.length;
@@ -936,11 +938,9 @@ function highlighting(val, val1, val2) {
         var strbuilder = "Most frequent words:";
         for (i=0; i<10; i++) {
             console.log((i+1) + ": " + vocab_source[topIndices[i]]);
-            strbuilder += " " + (i+1) + ":" + vocab_source[topIndices[i]];
+            strbuilder += " " + vocab_source[topIndices[i]] + ",";
         }
-        document.getElementById("frequent_words").innerHTML = strbuilder;
-        console.log('most frequent in selection')
-        console.log(strbuilder);
+        document.getElementById("frequent_words").innerHTML = strbuilder.slice(0, -1);
     }
 
     // Utility function used for predicting words in semantic setting
@@ -1210,7 +1210,6 @@ function highlighting(val, val1, val2) {
             // x true if not found
             var noMatch;
             if (document.getElementById('cbox5').checked) {
-                // console.log("Using exact match");
                 noMatch = d != val;
             } else {
                 noMatch = d.toLowerCase().indexOf(val.toLowerCase()) < 0
@@ -1333,7 +1332,6 @@ function highlighting(val, val1, val2) {
                           .attr("y", (d3.event.pageY-35));
               });
         } else {
-          // console.log(document.getElementById('cbox2').checked)
           // draw dots
           marked = {}
           var points = svg.selectAll(".dot")
@@ -1420,7 +1418,6 @@ function highlighting(val, val1, val2) {
             })
 
             .on("click", function(d) {
-                console.log("Hello");
                 if (!([d3.event.pageX, d3.event.pageY] in marked)){
                     marked[[d3.event.pageX, d3.event.pageY]] = true;
                     marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
@@ -1520,17 +1517,19 @@ function highlighting(val, val1, val2) {
                 .attr("transform", "translate(" + 600 + ", 0)")
                 .call(legendAxis);
         } else { // no spectrum
-            var keys = Object.keys(symbol)
+            console.log(Object);
+            var keys = Object.keys(symbol);
             leng = keys.length;
             if (leng<20 && shaping_column != "Select") {
               // draw legend
                 // ?? Not sure why, but this legend appears not to show
                 var legend = svg.selectAll(".legend")
                     .data(keys)
-                    .enter().append("g")
+                    .enter().append("g");
                     // .attr("class", "legend");
                     // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
                 console.log(keys);
+                console.log(shaping_column);
                 console.log(symbol);
                 console.log(symbols);
                 // draw legend colored rectangles
