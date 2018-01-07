@@ -58,13 +58,13 @@ body {
 /*Coloring*/
 .select1{
     margin-left: 122px;
-    margin-top: 800px;
+    margin-top: 810px;
     position: absolute;
 }
 /*Searching*/
 .select2{
     margin-left: 140px;
-    margin-top: 975px;
+    margin-top: 960px;
     position: absolute;
 }
 /*?? Used in table in tabulate*/
@@ -76,19 +76,19 @@ body {
 /*Transparent*/
 .select4{
     margin-left: 237px;
-    margin-top: 1075px;
+    margin-top: 1060px;
     position: absolute;
 }
 /*Click on feature*/
 .select5{
     margin-left: 190px;
-    margin-top: 875px;
+    margin-top: 870px;
     position: absolute;
 }
 /*Shaping*/
 .select6{
     margin-left: 135px;
-    margin-top: 925px;
+    margin-top: 910px;
     position: absolute;
 }
 /*?? Default input textbox*/
@@ -109,14 +109,14 @@ input{
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 1125px;
+    margin-top: 1110px;
 }
 /*Search*/
 .form2 {
     text-align: left;
     position: absolute;
     margin-left: 20px;
-    margin-top: 1025px;
+    margin-top: 1010px;
 }
 /*Unused*/
 .form3 {
@@ -129,14 +129,14 @@ input{
 /*Coloring column*/
 .p1 {
     margin-left: 20px;
-    margin-top: 800px;
+    margin-top: 810px;
     position: absolute;
     font-size: 150%;
 }
 /*Searching column*/
 .p2 {
     margin-left: 20px;
-    margin-top: 975px;
+    margin-top: 960px;
     position: absolute;
     font-size: 150%;
 }
@@ -151,56 +151,56 @@ input{
 /*Transparent column*/
 .p4 {
     margin-left: 20px;
-    margin-top: 1075px;
+    margin-top: 1060px;
     position: absolute;
     font-size: 150%;
 }
 /*Spectrum and log*/
 .p5 {
     margin-left: 20px;
-    margin-top: 825px;
+    margin-top: 835px;
     position: absolute;
     font-size: 150%;
 }
 /*Click on feature*/
 .p6 {
     margin-left: 20px;
-    margin-top: 875px;
+    margin-top: 870px;
     position: absolute;
     font-size: 150%;
 }
 /*Shaping column*/
 .p7 {
     margin-left: 20px;
-    margin-top: 925px;
+    margin-top: 910px;
     position: absolute;
     font-size: 150%;
 }
 /*Zoom*/
 .p8 {
     margin-left: 20px;
-    margin-top: 750px;
+    margin-top: 770px;
     position: absolute;
     font-size: 150%;
 }
 /*Circle*/
 .p9 {
     margin-left: 20px;
-    margin-top: 700px;
+    margin-top: 730px;
     position: absolute;
     font-size: 150%;
 }
 /*Exact match - search*/
 .p10 {
     margin-left: 20px;
-    margin-top: 1000px;
+    margin-top: 985px;
     position: absolute;
     font-size: 150%;
 }
 /*Exact match - transparent*/
 .p11 {
     margin-left: 20px;
-    margin-top: 1100px;
+    margin-top: 1085px;
     position: absolute;
     font-size: 150%;
 }
@@ -277,16 +277,16 @@ input{
 
 <!-- The handleClick() function will be executed when the search button is pressed  -->
 <form name="myform" class="form2" onSubmit="return handleClick()">
-      <input type="text" id="myVal" placeholder="Search text">
+      <input type="text" id="searchText" placeholder="Search text">
       <input name="Submit"  type="submit" value="Apply" >
 </form>
 
 <!-- The handleClick1() function will be executed when the transparent button is pressed  -->
 <form name="myform1" class="form1" onSubmit="return handleClick1()">
       <p>Enter attribute value, and opacity values b/w 0 and 1: <br>(Currently doesn't work simultaneously with search.)</p>
-      <input type="text" id="myVal1" placeholder="Match attri. val">
-      <input type="text" id="myVal2" placeholder="Opacity (match)">
-      <input type="text" id="myVal3" placeholder="Opacity (no match)">
+      <input type="text" id="transpText" placeholder="Match attri. val">
+      <input type="text" id="opacityMatch" placeholder="Opacity (match)">
+      <input type="text" id="opacityNoMatch" placeholder="Opacity (no match)">
       <input name="Submit"  type="submit" value="Apply">
 </form>
 
@@ -295,7 +295,7 @@ input{
 <script src="//d3js.org/d3-path.v0.1.min.js"></script>
 <script src="//d3js.org/d3-shape.v0.6.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
-<script src="crossfilter.min.js"></script>
+<script src="crossfilter.js"></script>
 <script src="math.min.js"></script>
 <script>
 
@@ -652,10 +652,11 @@ function plotting(){
     // shaping_column = "Select";
     // color = d3.scale.category20();
     cValue = function(d) { return d[category];};
-    val = document.getElementById("myVal1").value;
-    val1 = document.getElementById("myVal2").value;
-    val2 = document.getElementById("myVal3").value;
-    highlighting(val, val1, val2);
+    val_search = document.getElementById("searchText").value;
+    val_transp = document.getElementById("transpText").value;
+    val_opacityMatch = document.getElementById("opacityMatch").value;
+    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 // function to call for change event
@@ -665,25 +666,30 @@ function plotting5(){
     shaping_column = d3.event.target.value;
     // color = d3.scale.category20();
     cValue = function(d) { return d[category];};
-    val = document.getElementById("myVal1").value;
-    val1 = document.getElementById("myVal2").value;
-    val2 = document.getElementById("myVal3").value;
-    highlighting(val, val1, val2);
+    val_search = document.getElementById("searchText").value;
+    val_transp = document.getElementById("transpText").value;
+    val_opacityMatch = document.getElementById("opacityMatch").value;
+    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 var zoomed = 0;
 var needZoom = false;
 var needDrawCircle = false;
-/* ?? why do some of the following handlers have return false? */
+
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
 function handleClick(event) {
-    console.log(document.getElementById("myVal").value);
-    highlighting(document.getElementById("myVal").value, "", "");
+    console.log(document.getElementById("searchText").value);
+    val_search = document.getElementById("searchText").value;
+    val_transp = document.getElementById("transpText").value;
+    val_opacityMatch = document.getElementById("opacityMatch").value;
+    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
     return false;
 }
 function handleCheck(event) {
-    if (document.getElementById("myVal").value) {
+    if (document.getElementById("searchText").value) {
         handleClick();
     }
 }
@@ -691,15 +697,16 @@ function handleCheck(event) {
 // transparent event
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
 function handleClick1(event) {
-    console.log(document.getElementById("myVal1").value);
-    val = document.getElementById("myVal1").value;
-    val1 = document.getElementById("myVal2").value;
-    val2 = document.getElementById("myVal3").value;
-    highlighting(val, val1, val2);
+    console.log(document.getElementById("transpText").value);
+    val_search = document.getElementById("searchText").value;
+    val_transp = document.getElementById("transpText").value;
+    val_opacityMatch = document.getElementById("opacityMatch").value;
+    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
     return false;
 }
 function handleCheck1(event) {
-    if (document.getElementById("myVal1").value) {
+    if (document.getElementById("transpText").value) {
         handleClick1();
     }
 }
@@ -709,10 +716,10 @@ function handleCheck1(event) {
 function handleClick2(event){
     shaping_column = "Select";
     category = "Select";
-    myForm.myVal.value = 0;
-    myForm1.myVal1.value = 0;
-    myForm1.myVal2.value = 0;
-    myForm1.myVal3.value = 0;
+    myForm.searchText.value = 0;
+    myForm1.transpText.value = 0;
+    myForm1.opacityMatch.value = 0;
+    myForm1.opacityNoMatch.value = 0;
     dropDown4.property( "value", "Select" );
     dropDown.property( "value", "Select" );
     highlighting("", "", "");
@@ -723,10 +730,11 @@ function handleClick2(event){
 // it will be executed when spectrum/log is checked
 // ?? Can we collapse handleClick1,3,4?
 function handleClick3(event) {
-    val = document.getElementById("myVal1").value;
-    val1 = document.getElementById("myVal2").value;
-    val2 = document.getElementById("myVal3").value;
-    highlighting(val, val1, val2);
+    val_search = document.getElementById("searchText").value;
+    val_transp = document.getElementById("transpText").value;
+    val_opacityMatch = document.getElementById("opacityMatch").value;
+    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
@@ -734,11 +742,12 @@ function handleClick4(){
     if (!document.getElementById('cbox3').checked) {
       document.getElementById("zoomxy").value = ""; // clear the textbox
     }
-    val = document.getElementById("myVal1").value;
-    val1 = document.getElementById("myVal2").value;
-    val2 = document.getElementById("myVal3").value;
+    val_search = document.getElementById("searchText").value;
+    val_transp = document.getElementById("transpText").value;
+    val_opacityMatch = document.getElementById("opacityMatch").value;
+    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
     needZoom = true;
-    highlighting(val, val1, val2);
+    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 
@@ -779,7 +788,7 @@ var scale_d = {
 scale = scale_d['spectral8'];
 
 // function for plotting
-function highlighting(val, val1, val2) {
+function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
 
     var svg;
     var temp1 = [], temp2 = [], temp3 = [];
@@ -980,11 +989,6 @@ function highlighting(val, val1, val2) {
                 dict1[categories[i]].push(d[categories[i]]);
                 // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
                 numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
-                /* the following was causing problems */
-                // any non-empty non-numeric will forever set that category to false
-                // if (!numerics[categories[i]]) {
-                //     break;
-                // }
             }
             // fill the symbol dictionary with all possible values of the shaping column as keys
             // value is the order of points
@@ -1002,15 +1006,20 @@ function highlighting(val, val1, val2) {
         console.log(category);
         // set color according to spectrum
         if (numerics[category] && document.getElementById('cbox1').checked) {
+            console.log('using spectrum');
             // take log if log checkbox checked
             if (document.getElementById('cbox2').checked) {
+                console.log('using log');
                 m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
                 m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
             } else{
+                console.log('not using log');
                 m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
                 m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
             }
 
+            console.log(m1, m2);
+            m1 = Math.max(Number.MIN_VALUE, m1);
             console.log(m1, m2);
 
             color = d3.scale.linear()
@@ -1018,6 +1027,7 @@ function highlighting(val, val1, val2) {
               //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
               .range(scale);
         } else {
+            console.log('not using spectrum');
             color = d3.scale.category20();
         }
 
@@ -1157,29 +1167,29 @@ function highlighting(val, val1, val2) {
             .text("");
 
         // to identify the condition of transparent column values
-        if (transparent_column !== "Select" && val !== "" && val2 !== "") {
+        if (transparent_column !== "Select" && val_transp !== "" && val_opacityNoMatch !== "") {
             transparent_column = transparent_column.toString();
-            val = val.toString(); // ?? no to lower case here?
+            val_transp = val_transp.toString(); // ?? no to lower case here?
         }
         else {
-            val = val.toString();
+            val_transp = val_transp.toString();
         }
 
         var transpar = function(d) {
-            if (val !== "" && typeof d != 'undefined') {
-                // if point's transp column value is equal to the value specified, return val1, else val2
+            if (val_transp !== "" && typeof d != 'undefined') {
+                // if point's transp column value is equal to the value specified, return val_opacityMatch, else val_opacityNoMatch
                 var match;
                 if (document.getElementById('cbox6').checked) {
                     // console.log("Using exact match");
-                    match = d[transparent_column] == val;
+                    match = d[transparent_column] == val_transp;
                 } else {
-                    match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val.toLowerCase()) > -1);
+                    match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val_transp.toLowerCase()) > -1);
                 }
 
                 if (match){
-                  return parseFloat(val1);
+                  return parseFloat(val_opacityMatch);
                 } else{
-                  return parseFloat(val2);
+                  return parseFloat(val_opacityNoMatch);
                 }
             }
             else {
@@ -1195,10 +1205,10 @@ function highlighting(val, val1, val2) {
             // noMatch truthy if not found
             var noMatch;
             if (document.getElementById('cbox5').checked) {
-                noMatch = d[category_search] != val;
+                noMatch = d[category_search] != val_search;
             } else {
-                noMatch = d[category_search].toLowerCase().indexOf(val.toLowerCase()) < 0
-                || val.length === 0;
+                noMatch = d[category_search].toLowerCase().indexOf(val_search.toLowerCase()) < 0
+                || val_search.length === 0;
             }
             return noMatch ? 1 : 2;
         };
@@ -1207,13 +1217,13 @@ function highlighting(val, val1, val2) {
             if (typeof d == 'undefined' ) {
                 return 1;
             }
-            // x true if not found
+            // noMatch true if not found
             var noMatch;
             if (document.getElementById('cbox5').checked) {
-                noMatch = d != val;
+                noMatch = d != val_search;
             } else {
-                noMatch = d.toLowerCase().indexOf(val.toLowerCase()) < 0
-                || val.length === 0;
+                noMatch = d.toLowerCase().indexOf(val_search.toLowerCase()) < 0
+                || val_search.length === 0;
             }
             return noMatch ? 1 : 2;
         };
@@ -1236,7 +1246,7 @@ function highlighting(val, val1, val2) {
             }
         }
         // create the table
-        if ( val != "" && searched_data.length > 0) {
+        if ( val_search != "" && searched_data.length > 0) {
             var peopleTable1 = tabulate(searched_data, columns);
             if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
                 console.log("Predicting words...");
@@ -1468,6 +1478,9 @@ function highlighting(val, val1, val2) {
 
             }
             console.log(m1, m2);
+            m1 = Math.max(Number.MIN_VALUE, m1);
+            console.log(m1, m2);
+
             var legend = svg.selectAll(".legend")
               .data(color.domain())
               .enter().append("g")
