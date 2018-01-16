@@ -322,11 +322,11 @@ var weights_2darray = [], biases_1darray = [], vocab_1darray = [], vectorspace_2
 // Semantic model option set up
 if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     console.log('Using semantic model.\nGetting matrices...');
-    var weightsfile = dataset.split(".")[0]+'_weights.txt';
-    var biasesfile = dataset.split(".")[0]+'_biases.txt';
-    var vocabfile = dataset.split(".")[0]+'_vocab.txt';
-    var vectorfile = 'VS-' + dataset.split("_semantic.")[0]+'.txt';
-    var bowfile = dataset.split(".")[0]+'_bow.txt';
+    var weightsfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_weights.txt';
+    var biasesfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_biases.txt';
+    var vocabfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_vocab.txt';
+    var vectorfile = 'VS-' + dataset.split("_semantic")[0]+'.txt';
+    var bowfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_bow.txt';
 
     console.log("Reading " + bowfile);
     d3.tsv(bowfile, function(text){
