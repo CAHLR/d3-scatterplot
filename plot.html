@@ -409,10 +409,16 @@ var print_array = function(arr, d) {
 // setup fill color
 var category;
 
+// Can generate more with http://jnnnnn.github.io/category-colors-2L-inplace.html if want more
+var d3_category20_shuffled = [
+    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+    "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5"
+];
+
 // coloring will be done according to the values determined by cValue
 var cValue = function(d) {return d[category];},
     cValue2 = function(d) {return Math.log(parseFloat(d[category]));},
-    color = d3.scale.category20();
+    color = d3.scale.ordinal().range(d3_category20_shuffled);
 
 // used to search a particular substring in the list of requested feature column
 // used to determine whether we should add find to arri, hence the t/f -> f/t
@@ -568,7 +574,7 @@ d3.tsv(dataset, function(data) {
     if ("color" in dicts) {
       category = categories[1]; // since color would be first, start with next
     } else {
-      // "Select"
+      // category = "Select"
       category = categories[0];
     }
     category_search = category_search_data[0];
@@ -647,10 +653,7 @@ function plotting2(){
 // function to call for change event
 // Coloring
 function plotting(){
-    // dropDown4.property( "value", "Select" );
     category = d3.event.target.value;
-    // shaping_column = "Select";
-    // color = d3.scale.category20();
     cValue = function(d) { return d[category];};
     val_search = document.getElementById("searchText").value;
     val_transp = document.getElementById("transpText").value;
@@ -662,9 +665,7 @@ function plotting(){
 // function to call for change event
 // Shaping
 function plotting5(){
-    // dropDown.property( "value", "Select" );
     shaping_column = d3.event.target.value;
-    // color = d3.scale.category20();
     cValue = function(d) { return d[category];};
     val_search = document.getElementById("searchText").value;
     val_transp = document.getElementById("transpText").value;
@@ -800,7 +801,6 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
     document.getElementById("frequent_words").innerHTML = "";
     d3.select("svg").remove();
     d3.select("table").remove();
-    // d3.select("svg").remove();
 
     // function zoom() {
     //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -1028,7 +1028,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
               .range(scale);
         } else {
             console.log('not using spectrum');
-            color = d3.scale.category20();
+            color = d3.scale.ordinal().range(d3_category20_shuffled);
         }
 
         // don't want dots overlapping axis, so add in buffer to data domain
