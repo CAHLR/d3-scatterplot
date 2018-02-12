@@ -333,7 +333,7 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
         bow_2darray = text.map( Object.values );
         bow_2darray = bow_2darray.map(function(entry) {
             return entry.map(function(elem) {
-                return parseInt(elem);
+                return Math.round(parseFloat(elem));
             });
         });
     });
