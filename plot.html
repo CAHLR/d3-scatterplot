@@ -295,7 +295,7 @@ input{
 <script src="//d3js.org/d3-path.v0.1.min.js"></script>
 <script src="//d3js.org/d3-shape.v0.6.min.js"></script>
 <script src="http://axc.net/code_libraries/lasso/lasso.min.js"></script>
-<script src="crossfilter.js"></script>
+<script src="crossfilter.min.js"></script>
 <script src="math.min.js"></script>
 <script>
 
@@ -407,7 +407,7 @@ var print_array = function(arr, d) {
 };
 
 // setup fill color
-var category;
+var color_column;
 
 // Can generate more with http://jnnnnn.github.io/category-colors-2L-inplace.html if want more
 var d3_category20_shuffled = [
@@ -416,8 +416,8 @@ var d3_category20_shuffled = [
 ];
 
 // coloring will be done according to the values determined by cValue
-var cValue = function(d) {return d[category];},
-    cValue2 = function(d) {return Math.log(parseFloat(d[category]));},
+var cValue = function(d) {return d[color_column];},
+    cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
     color = d3.scale.ordinal().range(d3_category20_shuffled);
 
 // used to search a particular substring in the list of requested feature column
@@ -492,54 +492,54 @@ var tabulate = function(data_tab, columns) {
 // Coloring
 var dropDown = d3.select("body").append("select")
                  .attr("class", "select1")
-                 .attr("name", "category");
+                 .attr("name", "color_column");
 
 // Searching
 var dropDown1 = d3.select("body").append("select")
                  .attr("class", "select2")
-                 .attr("name", "category");
+                 .attr("name", "color_column");
 
 // Transparent
 var dropDown2 = d3.select("body").append("select")
                  .attr("class", "select4")
-                 .attr("name", "category");
+                 .attr("name", "color_column");
 
 // Click on feature
 var dropDown3 = d3.select("body").append("select")
                  .attr("class", "select5")
-                 .attr("name", "category");
+                 .attr("name", "color_column");
 
 // Shaping
 var dropDown4 = d3.select("body").append("select")
                  .attr("class", "select6")
-                 .attr("name", "category");
+                 .attr("name", "color_column");
 
-var category_search_data = [];
-// categories stores the name of all the columns
 var categories = [];
 // category_search stores the name of column according to which searching is to be done
+var category_search_data = [];
+// categories stores the name of all the columns
 var category_search;
 
-
+categories.push("Select");
 // check whether the searching column is provided in the url or not
 if ("search" in dicts) {
   category_search = dicts["search"];
   category_search_data.push(category_search);
 }
-categories.push("Select");
 
-// category stores the name of column according to which coloring is to be done
+
+// color_column stores the name of column according to which coloring is to be done
 // check whether the coloring column is provided in the url or not
 if ("color" in dicts) {
-  category = dicts["color"];
-  categories.push(category);
+  color_column = dicts["color"];
+  categories.push(color_column);
 } else {
-  category = "Select";
+  color_column = "Select";
 }
 
-// temp_cat is just the copy of categories
-var temp_cat = [];
-temp_cat.push(category);
+// categories_copy_color is just the copy of categories
+var categories_copy_color = [];
+categories_copy_color.push(color_column);
 
 var columns = [], temp = [];
 var x_max, x_min, y_max, y_min;
@@ -562,20 +562,20 @@ d3.tsv(dataset, function(data) {
         }
 
     for(var i=0;i<temp.length;i++) {
-        // category already pushed
-        if (temp[i] != category) {
+        // color_column already pushed
+        if (temp[i] != color_column) {
             categories.push(temp[i]);
-            temp_cat.push(temp[i]);
+            categories_copy_color.push(temp[i]);
         }
         columns.push(temp[i]);
     }
     // check whether the coloring column is provided in the url or not
-    // ?? is this necessary? category is already defined with the same procedure outside the function
+    // ?? is this necessary? color_column is already defined with the same procedure outside the function
     if ("color" in dicts) {
-      category = categories[1]; // since color would be first, start with next
+      color_column = categories[1]; // since color would be first, start with next
     } else {
-      // category = "Select"
-      category = categories[0];
+      // color_column = "Select"
+      color_column = categories[0];
     }
     category_search = category_search_data[0];
     // Searching
@@ -587,35 +587,35 @@ d3.tsv(dataset, function(data) {
           .text(function(d) {return d;});
     // Coloring
     dropDown.selectAll("option")
-          .data(temp_cat)
+          .data(categories_copy_color)
           .enter()
           .append("option")
           .text(function(d) { return d;})
           .text(function(d) {return d;});
     // Transparent
     dropDown2.selectAll("option")
-          .data(temp_cat)
+          .data(category_search_data)
           .enter()
           .append("option")
           .text(function(d) { return d;})
           .text(function(d) {return d;});
     // Click on feature
     dropDown3.selectAll("option")
-          .data(temp_cat)
+          .data(category_search_data)
           .enter()
           .append("option")
           .text(function(d) { return d;})
           .text(function(d) {return d;});
     // Shaping
     dropDown4.selectAll("option")
-          .data(temp_cat)
+          .data(categories)
           .enter()
           .append("option")
           .text(function(d) { return d;})
           .text(function(d) {return d;});
-    shaping_column = "Select";
+    shaping_column = categories[0];
     feature_column = category_search_data[0];
-    transparent_column = "Select";
+    transparent_column = category_search_data[0];
 });
 
 // whenever any one of the drowdown menu's selected column is changes the plot is generated according to the value of dropdown menu selected
@@ -653,8 +653,8 @@ function plotting2(){
 // function to call for change event
 // Coloring
 function plotting(){
-    category = d3.event.target.value;
-    cValue = function(d) { return d[category];};
+    color_column = d3.event.target.value;
+    cValue = function(d) { return d[color_column];};
     val_search = document.getElementById("searchText").value;
     val_transp = document.getElementById("transpText").value;
     val_opacityMatch = document.getElementById("opacityMatch").value;
@@ -666,7 +666,7 @@ function plotting(){
 // Shaping
 function plotting5(){
     shaping_column = d3.event.target.value;
-    cValue = function(d) { return d[category];};
+    cValue = function(d) { return d[color_column];};
     val_search = document.getElementById("searchText").value;
     val_transp = document.getElementById("transpText").value;
     val_opacityMatch = document.getElementById("opacityMatch").value;
@@ -716,7 +716,7 @@ function handleCheck1(event) {
 // it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
 function handleClick2(event){
     shaping_column = "Select";
-    category = "Select";
+    color_column = "Select";
     myForm.searchText.value = 0;
     myForm1.transpText.value = 0;
     myForm1.opacityMatch.value = 0;
@@ -839,7 +839,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
     var lasso_end = function() {
         // Reset the color of all dots
         lasso.items()
-             .style("fill", function(d) { return color(d[category]); });
+             .style("fill", function(d) { return color(d[color_column]); });
 
         // Style the selected dots
         lasso.items().filter(function(d) {return d.selected===true})
@@ -1003,19 +1003,19 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
           // console.log(d["z"] == parseInt(d["z"]));
         });
         console.log(numerics);
-        console.log(category);
+        console.log(color_column);
         // set color according to spectrum
-        if (numerics[category] && document.getElementById('cbox1').checked) {
+        if (numerics[color_column] && document.getElementById('cbox1').checked) {
             console.log('using spectrum');
             // take log if log checkbox checked
             if (document.getElementById('cbox2').checked) {
                 console.log('using log');
-                m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
-                m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+                m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+                m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
             } else{
                 console.log('not using log');
-                m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
-                m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
+                m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
+                m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
             }
 
             console.log(m1, m2);
@@ -1024,7 +1024,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
 
             color = d3.scale.linear()
                .domain(linspace(m1, m2,scale.length))
-              //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[category])})), d3.max(data.map(function(d) {return parseInt(d[category])})),scale.length))
+              //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[color_column])})), d3.max(data.map(function(d) {return parseInt(d[color_column])})),scale.length))
               .range(scale);
         } else {
             console.log('not using spectrum');
@@ -1269,7 +1269,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
 
         // shaping of symbols according to the shaping column
         if (shaping_column !== "Select" ) {
-          // category = shaping_column;
+          // color_column = shaping_column;
           var points = svg.selectAll(".dot")
               .data(data)
               .enter();
@@ -1467,14 +1467,14 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
 
         var len = color.domain().length;
         // if spectrum
-        if (numerics[category] && document.getElementById('cbox1').checked) {
+        if (numerics[color_column] && document.getElementById('cbox1').checked) {
 
             if (document.getElementById('cbox2').checked) {
-                m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
-                m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[category])); })));
+                m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+                m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
             } else {
-              m1 = (d3.min(data.map(function(d) {return parseFloat(d[category])})));
-              m2 = (d3.max(data.map(function(d) {return parseFloat(d[category])})));
+              m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
+              m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
 
             }
             console.log(m1, m2);
@@ -1564,7 +1564,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
                     .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
             }
 
-            if(len <= 30 && category != "Select") {
+            if(len <= 30 && color_column != "Select") {
 
                 // draw legend
                 var legend = svg.selectAll(".legend")
