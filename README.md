@@ -24,3 +24,9 @@ To use semantic model:
 1. run representation_presenter.py and semantic_model.py (instructions in respective repos)
 2. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv&semantic_model=true
 Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.
+
+
+## Dev notes
+Began to incorporate webpack in order to compile modules and maintain better code encapsulation for readability and maintainability. 
+Installation can be done by running `npm install -g webpack` (currently running v. 4.6.0). 
+To start the webpack bundler service, run `npm start`. This command will watch the repo and update the `bundle.js` file to match saved changes.
