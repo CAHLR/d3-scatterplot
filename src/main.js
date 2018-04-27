@@ -1,6 +1,7 @@
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import {
   getParameterByName,
+  linSpace,
   searchDic,
   xAxis,
   xMap,
@@ -53,6 +54,8 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
       });
     });
   });
+
+
   console.log("Reading " + vectorfile);
   d3.tsv(vectorfile, function(text){
     vectorspace_2darray = text.map( Object.values );
@@ -165,8 +168,6 @@ var categories_copy_color = [];
 categories_copy_color.push(color_column);
 
 var columns = [], temp = [];
-var x_max, x_min, y_max, y_min;
-
 // column for the transparent value
 var transparent_column = "Select", feature_column = "", shaping_column = "Select";
 
@@ -372,18 +373,6 @@ function zoomEventHandler(){
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
-function linspace(start, end, n) {
-  var out = [];
-  var delta = (end - start) / (n - 1);
-  var i = 0;
-  while(i < (n - 1)) {
-    out.push(start + (i * delta));
-    i++;
-  }
-  out.push(end);
-  return out;
-}
-
 (function setEventHandlers() {
   let zoomButton = document.getElementsByClassName('zoom-button')[0];
   zoomButton.onclick = zoomEventHandler;
@@ -415,7 +404,7 @@ let coordinatesy = [];
 // function for plotting
 function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
 
-  var svg, m1, m2;
+  var svg, m1, m2, x_max, x_min, y_max, y_min;
   var temp1 = [], temp2 = [], temp3 = [];
   var dict1 = {};
 
@@ -598,8 +587,8 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
             console.log(m1, m2);
 
             color = d3.scale.linear()
-            .domain(linspace(m1, m2,scale.length))
-              //.domain(linspace(d3.min(data.map(function(d) {return parseInt(d[color_column])})), d3.max(data.map(function(d) {return parseInt(d[color_column])})),scale.length))
+            .domain(linSpace(m1, m2,scale.length))
+              //.domain(linSpace(d3.min(data.map(function(d) {return parseInt(d[color_column])})), d3.max(data.map(function(d) {return parseInt(d[color_column])})),scale.length))
               .range(scale);
             } else {
               console.log('not using spectrum');
@@ -1010,7 +999,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
                     .attr('y2', '0%')
                     .attr('spreadMethod', 'pad');
 
-                    var pct = linspace(0, 100, scale.length).map(function(d) {
+                    var pct = linSpace(0, 100, scale.length).map(function(d) {
                       return Math.round(d) + '%';
                     });
 

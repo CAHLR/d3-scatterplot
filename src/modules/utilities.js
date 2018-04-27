@@ -11,6 +11,18 @@ export function searchDic(selectedData, allValues) {
   return true;
 }
 
+export function linSpace(start, end, n) {
+  var out = [];
+  var delta = (end - start) / (n - 1);
+  var i = 0;
+  while(i < (n - 1)) {
+    out.push(start + (i * delta));
+    i++;
+  }
+  out.push(end);
+  return out;
+}
+
 // Checks the url query for name=value and extracts the value
 // *************************************************************
 // TODO: This can likely be accomplished using newer browser APIS, e.g.:
