@@ -1,5 +1,16 @@
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
-import { searchDic, getParameterByName } from './modules/utilities.js';
+import {
+  getParameterByName,
+  searchDic,
+  xAxis,
+  xMap,
+  xScale,
+  xValue,
+  yAxis,
+  yMap,
+  yScale,
+  yValue
+} from './modules/utilities.js';
 import {
   d3_category20_shuffled,
   height,
@@ -72,25 +83,6 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     vocab_1darray = Object.values(vocab_1darray.map(String));
   });
 }
-
-/*
- * value accessor - returns the value to encode for a given data object.
- * scale - maps value to a visual display encoding, such as a pixel position.
- * map function - maps from data value to display value
- * axis - sets up axis
- */
-
-// setup x
-var xValue = function(d) { return d.x;}, // data -> value
-    xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) {return xScale(xValue(d));}, // data -> display
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-// setup y
-var yValue = function(d) { return d["y"];}, // data -> value
-    yScale = d3.scale.linear().range([height, 0]), // value -> display
-    yMap = function(d) { return yScale(yValue(d));}, // data -> display
-    yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 // add the tooltip area to the webpage
 var tooltip = d3.select("body").append("div")
