@@ -1,4 +1,5 @@
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
+import { tooltip, tooltip1 } from './modules/tooltips.js';
 import {
   getParameterByName,
   linSpace,
@@ -56,7 +57,6 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     });
   });
 
-
   console.log("Reading " + vectorfile);
   d3.tsv(vectorfile, function(text){
     vectorspace_2darray = text.map( Object.values );
@@ -87,15 +87,6 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
     vocab_1darray = Object.values(vocab_1darray.map(String));
   });
 }
-
-// add the tooltip area to the webpage
-var tooltip = d3.select("body").append("div")
-.attr("class", "tooltip")
-.style("opacity", 0);
-
-var tooltip1 = d3.select("body").append("div")
-.attr("class", "tooltip1")
-.style("opacity", 0);
 
 // setup fill color
 var color_column;
