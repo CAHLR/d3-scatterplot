@@ -1,5 +1,12 @@
-import { margin, width, height } from './modules/utilities.js';
 import { classify, benchmark, tabulate } from './modules/table_creator.js'
+import {
+  d3_category20_shuffled,
+  height,
+  margin,
+  scale,
+  scale_d,
+  width
+} from './modules/constants.js';
 
 // This step is performed to parse the url to identify the dataset and the default coloring column
 var query = window.location.search.substring(1);
@@ -105,12 +112,6 @@ var print_array = function(arr, d) {
 
 // setup fill color
 var color_column;
-
-// Can generate more with http://jnnnnn.github.io/category-colors-2L-inplace.html if want more
-var d3_category20_shuffled = [
-"#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
-"#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5"
-];
 
 // coloring will be done according to the values determined by cValue
 var cValue = function(d) {return d[color_column];},
@@ -440,14 +441,6 @@ function linspace(start, end, n) {
 
 let coordinatesx = [];
 let coordinatesy = [];
-
-// provides different colored spectrum
-var scale_d = {
-  'puOr11': ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'],
-  'spectral8': ['#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd'],
-  'redBlackGreen': ['#ff0000', '#AA0000', '#550000', '#005500', '#00AA00', '#00ff00'],
-};
-let scale = scale_d['spectral8'];
 
 // function for plotting
 function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
