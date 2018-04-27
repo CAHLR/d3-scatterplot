@@ -1,5 +1,5 @@
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
-import { searchDic } from './modules/utilities.js';
+import { searchDic, getParameterByName } from './modules/utilities.js';
 import {
   d3_category20_shuffled,
   height,
@@ -378,18 +378,6 @@ function zoomEventHandler(){
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   needZoom = true;
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
-}
-
-
-// Checks the url query for name=value and extracts the value
-function getParameterByName(name, url) {
-  if (!url) url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-  results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 function linspace(start, end, n) {
