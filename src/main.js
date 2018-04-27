@@ -1,4 +1,5 @@
-import { classify, benchmark, tabulate } from './modules/table_creator.js'
+import { classify, benchmark, tabulate } from './modules/table_creator.js';
+import { searchDic } from './modules/utilities.js';
 import {
   d3_category20_shuffled,
   height,
@@ -117,17 +118,6 @@ var color_column;
 var cValue = function(d) {return d[color_column];},
 cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
 color = d3.scale.ordinal().range(d3_category20_shuffled);
-
-// used to search a particular substring in the list of requested feature column
-// used to determine whether we should add find to arri, hence the t/f -> f/t
-var searchdic = function(arri, find) {
-  for(var i=0;i<arri.length;i++) {
-    if(JSON.stringify(find) === JSON.stringify(arri[i])){
-      return false;
-    }
-  }
-  return true;
-}
 
 // create the dropdown menu
 // Coloring
@@ -523,7 +513,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
               for (var k=1;k<categories.length;k++) {
                 all_values[categories[k]] = (dict1[categories[k]][jj]);
               }
-              if(searchdic(selected_data,all_values)==true){
+              if(searchDic(selected_data,all_values)==true){
                 selected_data.push(all_values);
                 selected_data_indices.push(jj);
                 break;
@@ -784,7 +774,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
                   d_temp[categories[j]] = dict1[categories[j]][i];
                 }
                 // only add to searched_data if not already in
-                if(searchdic(searched_data, d_temp) === true) {
+                if(searchDic(searched_data, d_temp) === true) {
                   searched_data.push(d_temp);
                   searched_data_indices.push(i);
                 }
