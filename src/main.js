@@ -1,6 +1,5 @@
 import { margin, width, height } from './modules/utilities.js';
 
-console.log(margin, width, height)
 // This step is performed to parse the url to identify the dataset and the default coloring column
 var query = window.location.search.substring(1);
 var temp_query = query.split("&");
@@ -352,10 +351,10 @@ function plotting2(){
 function plotting(){
   color_column = d3.event.target.value;
   cValue = function(d) { return d[color_column];};
-  val_search = document.getElementById("searchText").value;
-  val_transp = document.getElementById("transpText").value;
-  val_opacityMatch = document.getElementById("opacityMatch").value;
-  val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+  let val_search = document.getElementById("searchText").value;
+  let val_transp = document.getElementById("transpText").value;
+  let val_opacityMatch = document.getElementById("opacityMatch").value;
+  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
@@ -364,10 +363,10 @@ function plotting(){
 function plotting5(){
   shaping_column = d3.event.target.value;
   cValue = function(d) { return d[color_column];};
-  val_search = document.getElementById("searchText").value;
-  val_transp = document.getElementById("transpText").value;
-  val_opacityMatch = document.getElementById("opacityMatch").value;
-  val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+  let val_search = document.getElementById("searchText").value;
+  let val_transp = document.getElementById("transpText").value;
+  let val_opacityMatch = document.getElementById("opacityMatch").value;
+  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
@@ -377,39 +376,37 @@ var needDrawCircle = false;
 
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
-function handleClick(event) {
+function searchEventHandler(event) {
   console.log(document.getElementById("searchText").value);
-  val_search = document.getElementById("searchText").value;
-  val_transp = document.getElementById("transpText").value;
-  val_opacityMatch = document.getElementById("opacityMatch").value;
-  val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+  let val_search = document.getElementById("searchText").value;
+  let val_transp = document.getElementById("transpText").value;
+  let val_opacityMatch = document.getElementById("opacityMatch").value;
+  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
   return false;
 }
-function handleCheck(event) {
-  if (document.getElementById("searchText").value) {
-    handleClick();
-  }
+function searchExactMatchEventHandler(event) {
+  if (document.getElementById("searchText").value) searchEventHandler();
 }
 
 // transparent event
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
-function handleClick1(event) {
+function transparentSearchEventHandler(event) {
   console.log(document.getElementById("transpText").value);
-  val_search = document.getElementById("searchText").value;
-  val_transp = document.getElementById("transpText").value;
-  val_opacityMatch = document.getElementById("opacityMatch").value;
-  val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+  let val_search = document.getElementById("searchText").value;
+  let val_transp = document.getElementById("transpText").value;
+  let val_opacityMatch = document.getElementById("opacityMatch").value;
+  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
   return false;
 }
 function handleCheck1(event) {
   if (document.getElementById("transpText").value) {
-    handleClick1();
+    transparentSearchEventHandler();
   }
 }
 
-// ?? I believe this function is unused, and draw also maps to handleClick4
+// ?? I believe this function is unused, and draw also maps to zoomEventHandler
 // it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
 function handleClick2(event){
   shaping_column = "Select";
@@ -426,34 +423,32 @@ function handleClick2(event){
 
 // spectrum / log event
 // it will be executed when spectrum/log is checked
-// ?? Can we collapse handleClick1,3,4?
-function handleClick3(event) {
-  val_search = document.getElementById("searchText").value;
-  val_transp = document.getElementById("transpText").value;
-  val_opacityMatch = document.getElementById("opacityMatch").value;
-  val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+// ?? Can we collapse transparentSearchEventHandler,3,4?
+function spectrumAndLogColoringEventHandler(event) {
+  let val_search = document.getElementById("searchText").value;
+  let val_transp = document.getElementById("transpText").value;
+  let val_opacityMatch = document.getElementById("opacityMatch").value;
+  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
-function handleClick4(){
+function zoomEventHandler(){
   if (!document.getElementById('cbox3').checked) {
-      document.getElementById("zoomxy").value = ""; // clear the textbox
-    }
-    val_search = document.getElementById("searchText").value;
-    val_transp = document.getElementById("transpText").value;
-    val_opacityMatch = document.getElementById("opacityMatch").value;
-    val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-    needZoom = true;
-    highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+    document.getElementById("zoomxy").value = ""; // clear the textbox
   }
+  let val_search = document.getElementById("searchText").value;
+  let val_transp = document.getElementById("transpText").value;
+  let val_opacityMatch = document.getElementById("opacityMatch").value;
+  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
+  needZoom = true;
+  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+}
 
 
 // Checks the url query for name=value and extracts the value
 function getParameterByName(name, url) {
-  if (!url) {
-    url = window.location.href;
-  }
+  if (!url) url = window.location.href;
   name = name.replace(/[\[\]]/g, "\\$&");
   var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
   results = regex.exec(url);
@@ -474,6 +469,31 @@ function linspace(start, end, n) {
   return out;
 }
 
+(function setEventHandlers() {
+  let zoomButton = document.getElementsByClassName('zoom-button')[0];
+  zoomButton.onclick = zoomEventHandler;
+
+  let colorOptions = document.getElementsByClassName('color-option');
+  for (i = 0; i < 2; i++) {
+    colorOptions[i].onclick = spectrumAndLogColoringEventHandler;
+  };
+
+  let searchExactMatchCheckbox = document.getElementsByClassName('search-exact-match')[0];
+  searchExactMatchCheckbox.onclick = searchExactMatchEventHandler;
+
+  let searchFormButton = document.getElementsByClassName('search-button')[0];
+  searchFormButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    searchEventHandler();
+  });
+
+  let transparentSearchButton = document.getElementsByClassName('transparent-search-button')[0];
+  transparentSearchButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    transparentSearchEventHandler();
+  });
+})()
+
 let coordinatesx = [];
 let coordinatesy = [];
 
@@ -488,7 +508,7 @@ let scale = scale_d['spectral8'];
 // function for plotting
 function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
 
-  var svg;
+  var svg, m1, m2;
   var temp1 = [], temp2 = [], temp3 = [];
   var dict1 = {};
 
@@ -506,7 +526,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
     // the location of svg image will be determined
     svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("heigh.t", height + margin.top + margin.bottom)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
@@ -598,7 +618,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
     // Create the area where the lasso event can be triggered
     var lasso_area = svg.append("rect")
     .attr("width",width)
-    .attr("heigh.t",height)
+    .attr("height",height)
     .style("opacity",0);
 
     // Define the lasso
@@ -1148,7 +1168,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
                     .attr('x1', 0)
                     .attr('y1', 0)
                     .attr('width', 18)
-                    .attr('heigh.t', 150)
+                    .attr('height', 150)
                     .attr("transform", "translate(" + 582 + ", 0)")
                     .style('fill', 'url(#gradient)');
 
@@ -1188,7 +1208,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
                     .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
                     .attr("x", width + 0)
                     .attr("width", 18)
-                    .attr("heigh.t", 18)
+                    .attr("height", 18)
                     // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
                     .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
                 // draw legend text
@@ -1214,7 +1234,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
                 legend.append("rect")
                 .attr("x", width + 6)
                 .attr("width", 18)
-                .attr("heigh.t", 18)
+                .attr("height", 18)
                 .style("fill", color);
 
                 // draw legend text

@@ -254,19 +254,41 @@ input{
 <p class="p13" id="frequent_words"></p>
 <!-- <p class="p9"><b>Circle</b><input class="input1" type="checkbox" id="cbox4" value="fourth_checkbox"></input><input class = "input2" type="text" id="drawxy" placeholder="Select 1 pt after check"> </input> <button class = "input2" onclick="handleClick4()" value="Draw" >Draw</button></p> -->
 
-<p class="p8"><b>Zoom</b><input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input><input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"> </input> <button class = "input2" onclick="handleClick4()" value="Zoom" >Zoom</button></p>
+<p class="p8">
+  <b>Zoom</b>
+  <input class="input1" type="checkbox" id="cbox3" value="third_checkbox"></input>
+  <input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"></input>
+  <button class = "input2 zoom-button" value="Zoom" >Zoom</button>
+</p>
 
-<p class="p1" id="demo" ><b>Color by: </b></p>
-<p class="p5">Options: spectrum<input class="input1" type="checkbox" id="cbox1" value="first_checkbox" onclick="handleClick3()">log<input class="input1" type="checkbox" id="cbox2" value="second_checkbox" onclick="handleClick3()"></p>
+<p class="p1" id="demo" >
+  <b>Color by: </b>
+</p>
+<p class="p5">
+  Options: 
+  <label>Spectrum</label>
+  <input class="input1 color-option" type="checkbox" id="cbox1" value="first_checkbox">
+  <label>Log</label>
+  <input class="input1 color-option" type="checkbox" id="cbox2" value="second_checkbox">
+</p>
 
 
-<p class="p6"><b>Click on feature: </b></p>
+<p class="p6">
+  <b>Click on feature: </b>
+</p>
 
-<p class="p7"><b>Shape by: </b></p>
+<p class="p7">
+  <b>Shape by: </b>
+</p>
 
 
-<p class="p2" id="demo2" ><b>Search by: </b></p>
-<p class="p10">Exact match: <input class="input1" type="checkbox" id="cbox5" value="fifth_checkbox" onclick="handleCheck()"></p>
+<p class="p2" id="demo2">
+  <b>Search by: </b>
+</p>
+<p class="p10">
+  Exact match: 
+  <input class="input1 search-exact-match" type="checkbox" id="cbox5" value="fifth_checkbox">
+</p>
 
 <p class="p4" id="demo4" ><b>Transparent attribute: </b></p>
 <p class="p11">Exact match: <input class="input1" type="checkbox" id="cbox6" value="sixth_checkbox" onclick="handleCheck1()"></p>
@@ -276,18 +298,18 @@ input{
 
 
 <!-- The handleClick() function will be executed when the search button is pressed  -->
-<form name="myform" class="form2" onSubmit="return handleClick()">
+<form name="myform" class="form2 search-form">
       <input type="text" id="searchText" placeholder="Search text">
-      <input name="Submit"  type="submit" value="Apply" >
+      <input class='search-button' name="Submit"  type="submit" value="Apply" >
 </form>
 
 <!-- The handleClick1() function will be executed when the transparent button is pressed  -->
-<form name="myform1" class="form1" onSubmit="return handleClick1()">
+<form name="myform1" class="form1">
       <p>Enter attribute value, and opacity values b/w 0 and 1:</p>
       <input type="text" id="transpText" placeholder="Match attri. val">
       <input type="text" id="opacityMatch" placeholder="Opacity (match)">
       <input type="text" id="opacityNoMatch" placeholder="Opacity (no match)">
-      <input name="Submit"  type="submit" value="Apply">
+      <input class='transparent-search-button' name="Submit"  type="submit" value="Apply">
 </form>
 
 <!-- These javascript modules are used to draw the interactive plot  -->
