@@ -2,6 +2,7 @@ import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import {
   getParameterByName,
   linSpace,
+  printArray,
   searchDic,
   xAxis,
   xMap,
@@ -95,16 +96,6 @@ var tooltip = d3.select("body").append("div")
 var tooltip1 = d3.select("body").append("div")
 .attr("class", "tooltip1")
 .style("opacity", 0);
-
-// to print all the key values pairs of a point (used to display the summary on the webpage)
-var print_array = function(arr, d) {
-  var x = "";
-  for (var i=0; i<arr.length; i++) {
-    x = x + "<b>" + arr[i] + "</b>: " + d[arr[i]] + "<br>"
-  }
-  x = x + d.x + "<br>" + d["y"];
-  return x;
-};
 
 // setup fill color
 var color_column;
@@ -794,7 +785,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
             .duration(200)
             .style("opacity", 1);
             tooltip.html(
-              print_array(category_search_data, d))
+              printArray(category_search_data, d))
             .style("left", 60 + "px")
             .style("top", 30 + "px");
           })
@@ -828,7 +819,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
             .duration(200)
             .style("opacity", 1);
             tooltip.html(
-              print_array(category_search_data, d))
+              printArray(category_search_data, d))
             .style("left", 60 + "px")
             .style("top", 30 + "px");
           })
@@ -867,7 +858,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
             tooltip.transition()
             .duration(200)
             .style("opacity", 1);
-            tooltip.html(print_array(category_search_data, d))
+            tooltip.html(printArray(category_search_data, d))
             .style("left", 60 + "px")
             .style("top", 30 + "px");
           })
@@ -920,7 +911,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
               .duration(200)
               .style("opacity", 1);
               tooltip.html(
-                print_array(category_search_data, d))
+                printArray(category_search_data, d))
               .style("left", 60 + "px")
               .style("top", 30 + "px");
             })

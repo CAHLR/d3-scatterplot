@@ -21,7 +21,20 @@ export function linSpace(start, end, n) {
   }
   out.push(end);
   return out;
-}
+};
+
+
+
+// VIEW HELPER: used to display the summary on the webpage
+// print all the key values pairs of a point
+export function printArray(arr, d) {
+  var x = "";
+  for (var i=0; i < arr.length; i++) {
+    x = x + "<b>" + arr[i] + "</b>: " + d[arr[i]] + "<br>"
+  }
+  x = x + d.x + "<br>" + d["y"];
+  return x;
+};
 
 // Checks the url query for name=value and extracts the value
 // *************************************************************
