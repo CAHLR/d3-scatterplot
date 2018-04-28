@@ -23,23 +23,23 @@ import {
   width
 } from './modules/constants.js';
 
+import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
+
 // This step is performed to parse the url to identify the dataset and the default coloring column
-var query = window.location.search.substring(1);
-var temp_query = query.split("&");
-var dicts = {};
-var tvars, dataset;
-for(var i=0;i<temp_query.length;i++) {
-  tvars = temp_query[i].split("=");
-  dicts[tvars[0]]=tvars[1].replace(/%20/g, " ");
-}
-if ("dataset" in dicts) {
-  dataset = dicts["dataset"];
-} else {
-  dataset = "joined_data.csv";
-}
+const queryParams = (() => {
+  // Polyfill for older browsers that don't support URLSearchParams API
+  if ('URLSearchParams' in window) {
+    return new URLSearchParams(location.search)
+  } else {
+    return new URLSearchParamsPolyfill(location.search)
+  };
+})()
+export const dataset = queryParams.get("dataset") || "joined_data.csv";
+
+
 var weights_2darray = [], biases_1darray = [], vocab_1darray = [], vectorspace_2darray = [], bow_2darray = [];
 // Semantic model option set up
-if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
+if (queryParams.get("semantic_model") === "true") {
   console.log('Using semantic model.\nGetting matrices...');
   var weightsfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_weights.txt';
   var biasesfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_biases.txt';
@@ -88,9 +88,6 @@ if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
   });
 }
 
-// setup fill color
-var color_column;
-
 // coloring will be done according to the values determined by cValue
 var cValue = function(d) {return d[color_column];},
 cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
@@ -126,24 +123,17 @@ var categories = [];
 // category_search stores the name of column according to which searching is to be done
 var category_search_data = [];
 // categories stores the name of all the columns
-var category_search;
 
 categories.push("Select");
 // check whether the searching column is provided in the url or not
-if ("search" in dicts) {
-  category_search = dicts["search"];
-  category_search_data.push(category_search);
-}
+let category_search = queryParams.get("search")
+if (category_search) category_search_data.push(category_search);
 
-
+// setup fill color
 // color_column stores the name of column according to which coloring is to be done
 // check whether the coloring column is provided in the url or not
-if ("color" in dicts) {
-  color_column = dicts["color"];
-  categories.push(color_column);
-} else {
-  color_column = "Select";
-}
+let color_column = queryParams.get("color") || "Select";
+if (queryParams.get("color")) categories.push(queryParams.get("color"));
 
 // categories_copy_color is just the copy of categories
 var categories_copy_color = [];
@@ -175,14 +165,6 @@ d3.tsv(dataset, function(data) {
         }
         columns.push(temp[i]);
       }
-    // check whether the coloring column is provided in the url or not
-    // ?? is this necessary? color_column is already defined with the same procedure outside the function
-    if ("color" in dicts) {
-      color_column = categories[1]; // since color would be first, start with next
-    } else {
-      // color_column = "Select"
-      color_column = categories[0];
-    }
     category_search = category_search_data[0];
     // Searching
     dropDown1.selectAll("option")
@@ -236,11 +218,9 @@ dropDown3.on("change", plotting4);
 // Shaping
 dropDown4.on("change", plotting5);
 
-if ("q" in dicts) {
-  highlighting(dicts["q"], "", "");
-} else {
-  highlighting("", "", "");
-}
+
+// Initial plot draw happens here:
+highlighting(queryParams.get("q") || "", "", "")
 
 // the functions to call when the value of dropdown menu is changes
 // Click on feature
@@ -360,7 +340,7 @@ function zoomEventHandler(){
   zoomButton.onclick = zoomEventHandler;
 
   let colorOptions = document.getElementsByClassName('color-option');
-  for (i = 0; i < 2; i++) {
+  for (let i = 0; i < 2; i++) {
     colorOptions[i].onclick = spectrumAndLogColoringEventHandler;
   };
 
@@ -479,7 +459,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
           console.log(columns);
           console.log(x_values);
           var peopleTable = tabulate(selected_data, columns, x_values);
-          if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
+          if (queryParams.get('semantic_model') === "true") {
             console.log("Predicting words...");
             classify(selected_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
             benchmark(selected_data_indices, bow_2darray, vocab_1darray);
@@ -734,7 +714,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
         // create the table
         if ( val_search != "" && searched_data.length > 0) {
           var peopleTable1 = tabulate(searched_data, columns);
-          if ("semantic_model" in dicts && dicts["semantic_model"] == "true") {
+          if (queryParams.get('semantic_model') === "true") {
             console.log("Predicting words...");
             classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
             benchmark(searched_data_indices, bow_2darray, vocab_1darray);
