@@ -1,3 +1,6 @@
+// *******************************************
+// Imports
+// *******************************************
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip, tooltip1 } from './modules/tooltips.js';
 import {
@@ -22,8 +25,11 @@ import {
   scale_d,
   width
 } from './modules/constants.js';
-
 import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
+
+// *******************************************
+// Begin Script
+// *******************************************
 
 // This step is performed to parse the url to identify the dataset and the default coloring column
 const queryParams = (() => {
@@ -94,30 +100,39 @@ cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
 color = d3.scale.ordinal().range(d3_category20_shuffled);
 
 // create the dropdown menu
+function createDowndownMenu(classAttribute, nameAttribute) {
+  return d3.select("body")
+           .append("select")
+           .attr("class", classAttribute)
+           .attr("name", nameAttribute);
+}
+
+function populateDropdownOptions(dropdown, data) {
+  return dropdown.selectAll('option')
+                 .data(data)
+                 .enter()
+                 .append('option')
+                 .text((featureName) => (featureName));
+}
 // Coloring
-var dropDown = d3.select("body").append("select")
-.attr("class", "select1")
-.attr("name", "color_column");
+let coloringDropdown = createDowndownMenu("select1", "color_column");
+coloringDropdown.on("change", plotting);
 
 // Searching
-var dropDown1 = d3.select("body").append("select")
-.attr("class", "select2")
-.attr("name", "color_column");
+let searchDropdown = createDowndownMenu("select2", "color_column");
+searchDropdown.on("change", plotting2);
 
 // Transparent
-var dropDown2 = d3.select("body").append("select")
-.attr("class", "select4")
-.attr("name", "color_column");
+let transparentDropdown = createDowndownMenu("select4", "color_column");
+transparentDropdown.on("change", plotting3);
 
 // Click on feature
-var dropDown3 = d3.select("body").append("select")
-.attr("class", "select5")
-.attr("name", "color_column");
+let clickOnFeatureDropdown = createDowndownMenu("select5", "color_column");
+clickOnFeatureDropdown.on("change", plotting4);
 
 // Shaping
-var dropDown4 = d3.select("body").append("select")
-.attr("class", "select6")
-.attr("name", "color_column");
+let shapingDropdown = createDowndownMenu("select6", "color_column");
+shapingDropdown.on("change", plotting5);
 
 var categories = [];
 // category_search stores the name of column according to which searching is to be done
@@ -166,58 +181,22 @@ d3.tsv(dataset, function(data) {
         columns.push(temp[i]);
       }
     category_search = category_search_data[0];
+    
     // Searching
-    dropDown1.selectAll("option")
-    .data(category_search_data)
-    .enter()
-    .append("option")
-    .text(function(d) { return d;})
-    .text(function(d) {return d;});
+    populateDropdownOptions(searchDropdown, category_search_data)
     // Coloring
-    dropDown.selectAll("option")
-    .data(categories_copy_color)
-    .enter()
-    .append("option")
-    .text(function(d) { return d;})
-    .text(function(d) {return d;});
+    populateDropdownOptions(coloringDropdown, categories_copy_color)
     // Transparent
-    dropDown2.selectAll("option")
-    .data(category_search_data)
-    .enter()
-    .append("option")
-    .text(function(d) { return d;})
-    .text(function(d) {return d;});
+    populateDropdownOptions(transparentDropdown, category_search_data)
     // Click on feature
-    dropDown3.selectAll("option")
-    .data(category_search_data)
-    .enter()
-    .append("option")
-    .text(function(d) { return d;})
-    .text(function(d) {return d;});
+    populateDropdownOptions(clickOnFeatureDropdown, category_search_data)
     // Shaping
-    dropDown4.selectAll("option")
-    .data(categories)
-    .enter()
-    .append("option")
-    .text(function(d) { return d;})
-    .text(function(d) {return d;});
+    populateDropdownOptions(shapingDropdown, categories)
+
     shaping_column = categories[0];
     feature_column = category_search_data[0];
     transparent_column = category_search_data[0];
   });
-
-// whenever any one of the drowdown menu's selected column is changes the plot is generated according to the value of dropdown menu selected
-// Coloring
-dropDown.on("change", plotting);
-// Searching
-dropDown1.on("change", plotting2);
-// Transparent
-dropDown2.on("change", plotting3);
-// Click on feature
-dropDown3.on("change", plotting4);
-// Shaping
-dropDown4.on("change", plotting5);
-
 
 // Initial plot draw happens here:
 highlighting(queryParams.get("q") || "", "", "")
@@ -305,7 +284,7 @@ function handleClick2(event){
   myForm1.transpText.value = 0;
   myForm1.opacityMatch.value = 0;
   myForm1.opacityNoMatch.value = 0;
-  dropDown4.property( "value", "Select" );
+  shapingDropdown.property( "value", "Select" );
   dropDown.property( "value", "Select" );
   highlighting("", "", "");
   return false;
