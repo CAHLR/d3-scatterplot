@@ -100,10 +100,10 @@ cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
 color = d3.scale.ordinal().range(d3_category20_shuffled);
 
 // create the dropdown menu
-function createDowndownMenu(classAttribute, nameAttribute) {
+function createDowndownMenu(nameAttribute, containerClass) {
   return d3.select("body")
+           .select(`div.${containerClass}`)
            .append("select")
-           .attr("class", classAttribute)
            .attr("name", nameAttribute);
 }
 
@@ -115,23 +115,38 @@ function populateDropdownOptions(dropdown, data) {
                  .text((featureName) => (featureName));
 }
 // Coloring
-let coloringDropdown = createDowndownMenu("select1", "color_column");
+let coloringDropdown = createDowndownMenu(
+  "color_column",
+  'color-by-feature-container'
+);
 coloringDropdown.on("change", plotting);
 
 // Searching
-let searchDropdown = createDowndownMenu("select2", "color_column");
+let searchDropdown = createDowndownMenu(
+  "color_column",
+  'search-by-feature-container'
+);
 searchDropdown.on("change", plotting2);
 
 // Transparent
-let transparentDropdown = createDowndownMenu("select4", "color_column");
+let transparentDropdown = createDowndownMenu(
+  "color_column",
+  'transparency-by-feature-dropdown-container'
+);
 transparentDropdown.on("change", plotting3);
 
 // Click on feature
-let clickOnFeatureDropdown = createDowndownMenu("select5", "color_column");
+let clickOnFeatureDropdown = createDowndownMenu(
+  "color_column",
+  'click-on-feature-container'
+);
 clickOnFeatureDropdown.on("change", plotting4);
 
 // Shaping
-let shapingDropdown = createDowndownMenu("select6", "color_column");
+let shapingDropdown = createDowndownMenu(
+  "color_column",
+  'shape-by-feature-container'
+);
 shapingDropdown.on("change", plotting5);
 
 var categories = [];
@@ -361,7 +376,7 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
     //    }
 
     // the location of svg image will be determined
-    svg = d3.select("body").append("svg")
+    svg = d3.select("body").select('div.plot-container').append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
