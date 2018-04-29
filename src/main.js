@@ -13,6 +13,7 @@ import {
   linSpace,
   printArray,
   searchDic,
+  queryParams,
   xAxis,
   xMap,
   xScale,
@@ -37,15 +38,6 @@ import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js
 // Begin Script
 // *******************************************
 
-// This step is performed to parse the url to identify the dataset and the default coloring column
-const queryParams = (() => {
-  // Polyfill for older browsers that don't support URLSearchParams API
-  if ('URLSearchParams' in window) {
-    return new URLSearchParams(location.search)
-  } else {
-    return new URLSearchParamsPolyfill(location.search)
-  };
-})()
 export const dataset = queryParams.get("dataset") || "joined_data.csv";
 
 

@@ -1,4 +1,14 @@
 import { height, margin, width } from './constants.js';
+import { URLSearchParamsPolyfill } from '../vendors/url_search_params_polyfill.js';
+
+// Use native API or Polyfill for older browsers that don't support URLSearchParams API
+export const queryParams = (() => {
+  if ('URLSearchParams' in window) {
+    return new URLSearchParams(location.search)
+  } else {
+    return new URLSearchParamsPolyfill(location.search)
+  };
+})()
 
 // used to search a particular substring in the list of requested feature column
 // used to determine whether we should add allValues to selectedData, hence the t/f -> f/t

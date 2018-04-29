@@ -18,15 +18,20 @@ Plot tool expects a tsv file as input which has columns labeled 'x' and 'y' and 
 Command line example to get the viz running:
 1. clone the repo
 2. inside the repo run: python3 -m http.server
-3. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv
+3. open your web browser to http://localhost:8000/index.html?dataset=example.tsv
 
 To use semantic model:
 1. run representation_presenter.py and semantic_model.py (instructions in respective repos)
-2. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv&semantic_model=true
-Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.
+2. open your web browser to http://localhost:8000/index.html?dataset=example.tsv&semantic_model=true
+Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/index.html?dataset=example.txt&semantic_model=true for a faster experience.
 
 
 ## Dev notes
 Began to incorporate webpack in order to compile modules and maintain better code encapsulation for readability and maintainability. 
 Installation can be done by running `npm install -g webpack` (currently running v. 4.6.0). 
 To start the webpack bundler service, run `npm start`. This command will watch the repo and update the `bundle.js` file to match saved changes.
+
+
+- TODO next: test extracting highlight function, see what needs to be injected and see whether it's possible at this state
+- TODO: investigate lasso functionality with shapes, seems like they might failing silently;
+- TODO: investigate why legend for shapes isn't always popping up
