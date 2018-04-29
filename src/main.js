@@ -1,6 +1,11 @@
 // *******************************************
 // Imports
 // *******************************************
+
+// TODO: Currently, we're importing everything into global scope. YUCK.
+// But as we disentangle scope violations and figure out better ways of incorporating
+// dependency injection, we can start to implement stronger encapsulation and message passing
+
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip, tooltip1 } from './modules/tooltips.js';
 import {
@@ -100,118 +105,151 @@ cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
 color = d3.scale.ordinal().range(d3_category20_shuffled);
 
 // create the dropdown menu
-function createDowndownMenu(nameAttribute, containerClass) {
+function DropdownBuilder() {
+  let createDowndownMenu = (nameAttribute, containerClass) => {
   return d3.select("body")
            .select(`div.${containerClass}`)
            .append("select")
            .attr("name", nameAttribute);
 }
 
-function populateDropdownOptions(dropdown, data) {
-  return dropdown.selectAll('option')
-                 .data(data)
-                 .enter()
-                 .append('option')
-                 .text((featureName) => (featureName));
-}
+  let populateDropdownOptions = (dropdown, data) => {
+    return dropdown.selectAll('option')
+                   .data(data)
+                   .enter()
+                   .append('option')
+                   .text((featureName) => (featureName));
+  };
+  let createAllDropdowns = () => {
+    this.clickOnFeatureDropdown = createDowndownMenu(
+      'color_column',
+      'click-on-feature-container'
+    );
+    this.coloringDropdown = createDowndownMenu(
+      'color_column',
+      'color-by-feature-container'
+    );
+    this.searchDropdown = createDowndownMenu(
+      'color_column',
+      'search-by-feature-container'
+    );
+    this.shapingDropdown = createDowndownMenu(
+      'color_column',
+      'shape-by-feature-container'
+    );
+    this.transparentDropdown = createDowndownMenu(
+      'color_column',
+      'transparency-by-feature-dropdown-container'
+    );
+  };
+  this.build = (categorySearchData, categoriesCopyColor, categories) => {
+    createAllDropdowns();
+    // Searching
+    populateDropdownOptions(this.searchDropdown, categorySearchData)
+    // Coloring
+    populateDropdownOptions(this.coloringDropdown, categoriesCopyColor)
+    // Transparent
+    populateDropdownOptions(this.transparentDropdown, categorySearchData)
+    // Click on feature
+    populateDropdownOptions(this.clickOnFeatureDropdown, categorySearchData)
+    // Shaping
+    populateDropdownOptions(this.shapingDropdown, categories)
+  }
+  this.setDropdownEventHandlers = (plotting, plotting2, plotting3, plotting4, plotting5) => {
+    this.coloringDropdown.on("change", plotting);
+
+    // Searching
+    this.searchDropdown.on("change", plotting2);
+
+    // Transparent
+    this.transparentDropdown.on("change", plotting3);
+
+    // Click on feature
+    this.clickOnFeatureDropdown.on("change", plotting4);
+
+    // Shaping
+    this.shapingDropdown.on("change", plotting5);
+  }
+};
 // Coloring
-let coloringDropdown = createDowndownMenu(
-  "color_column",
-  'color-by-feature-container'
-);
-coloringDropdown.on("change", plotting);
 
-// Searching
-let searchDropdown = createDowndownMenu(
-  "color_column",
-  'search-by-feature-container'
-);
-searchDropdown.on("change", plotting2);
-
-// Transparent
-let transparentDropdown = createDowndownMenu(
-  "color_column",
-  'transparency-by-feature-dropdown-container'
-);
-transparentDropdown.on("change", plotting3);
-
-// Click on feature
-let clickOnFeatureDropdown = createDowndownMenu(
-  "color_column",
-  'click-on-feature-container'
-);
-clickOnFeatureDropdown.on("change", plotting4);
-
-// Shaping
-let shapingDropdown = createDowndownMenu(
-  "color_column",
-  'shape-by-feature-container'
-);
-shapingDropdown.on("change", plotting5);
-
+// categories stores the name of all the columns
 var categories = [];
+let defaultValue = 'Select';
+categories.push(defaultValue);
+// Not sure this is really what we want -- if you enter the wrong parameter value,
+// it may make things screwy...we can probably make it a bit more fault tolerant
+if (queryParams.get("color")) categories.push(queryParams.get("color"));
+
 // category_search stores the name of column according to which searching is to be done
 var category_search_data = [];
-// categories stores the name of all the columns
 
-categories.push("Select");
 // check whether the searching column is provided in the url or not
-let category_search = queryParams.get("search")
+let category_search = queryParams.get("search");
 if (category_search) category_search_data.push(category_search);
 
 // setup fill color
 // color_column stores the name of column according to which coloring is to be done
 // check whether the coloring column is provided in the url or not
 let color_column = queryParams.get("color") || "Select";
-if (queryParams.get("color")) categories.push(queryParams.get("color"));
 
 // categories_copy_color is just the copy of categories
 var categories_copy_color = [];
 categories_copy_color.push(color_column);
 
-var columns = [], temp = [];
+var columns = [];
 // column for the transparent value
 var transparent_column = "Select", feature_column = "", shaping_column = "Select";
 
+function extractCategoryLabelsFromData(data) {
+  function extractCategoryHeaders(data) {
+    let categoryHeadersFromFirstRowOfData = [];
+    categoryHeadersFromFirstRowOfData = Object.keys(data[0]);
+    // remove x and y
+    categoryHeadersFromFirstRowOfData.splice(
+      categoryHeadersFromFirstRowOfData.indexOf('x'), 1
+    );
+    categoryHeadersFromFirstRowOfData.splice(
+      categoryHeadersFromFirstRowOfData.indexOf('y'), 1
+    );
+    return categoryHeadersFromFirstRowOfData;
+  }
+  let categoryHeaders = extractCategoryHeaders(data);
+
+  for(var i=0;i<categoryHeaders.length;i++) {
+    if (categoryHeaders[i] != category_search) {
+      category_search_data.push(categoryHeaders[i]);
+    }
+  }
+
+  for(var i=0;i<categoryHeaders.length;i++) {
+    // color_column already pushed
+    if (categoryHeaders[i] != color_column) {
+      categories.push(categoryHeaders[i]);
+      categories_copy_color.push(categoryHeaders[i]);
+    }
+    columns.push(categoryHeaders[i]);
+  }
+  let dropdownBuilder = new DropdownBuilder()
+  dropdownBuilder.build(category_search_data, categories_copy_color, categories);
+  dropdownBuilder.setDropdownEventHandlers(
+                   plotting,
+                   plotting2,
+                   plotting3,
+                   plotting4,
+                   plotting5
+                 );
+
+  category_search = category_search_data[0];
+  shaping_column = categories[0];
+  feature_column = category_search_data[0];
+  transparent_column = category_search_data[0];
+}
+
 console.log('Loading main data')
 // getting header from csv file to make drowdown menus
-d3.tsv(dataset, function(data) {
-  console.log(data[0]);
-  temp = Object.keys(data[0]);
-    // remove x and y
-    temp.splice(temp.indexOf('x'), 1);
-    temp.splice(temp.indexOf('y'), 1);
-
-    for(var i=0;i<temp.length;i++)
-      if (temp[i] != category_search) {
-        category_search_data.push(temp[i]);
-      }
-
-      for(var i=0;i<temp.length;i++) {
-        // color_column already pushed
-        if (temp[i] != color_column) {
-          categories.push(temp[i]);
-          categories_copy_color.push(temp[i]);
-        }
-        columns.push(temp[i]);
-      }
-    category_search = category_search_data[0];
-    
-    // Searching
-    populateDropdownOptions(searchDropdown, category_search_data)
-    // Coloring
-    populateDropdownOptions(coloringDropdown, categories_copy_color)
-    // Transparent
-    populateDropdownOptions(transparentDropdown, category_search_data)
-    // Click on feature
-    populateDropdownOptions(clickOnFeatureDropdown, category_search_data)
-    // Shaping
-    populateDropdownOptions(shapingDropdown, categories)
-
-    shaping_column = categories[0];
-    feature_column = category_search_data[0];
-    transparent_column = category_search_data[0];
-  });
+// NOTE: tsv() is an async function
+d3.tsv(dataset, extractCategoryLabelsFromData);
 
 // Initial plot draw happens here:
 highlighting(queryParams.get("q") || "", "", "")
