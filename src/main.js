@@ -30,6 +30,7 @@ import {
   scale_d,
   width
 } from './modules/constants.js';
+import { DropdownBuilder } from './modules/dropdown_builder.js';
 import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
 
 // *******************************************
@@ -104,75 +105,6 @@ var cValue = function(d) {return d[color_column];},
 cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
 color = d3.scale.ordinal().range(d3_category20_shuffled);
 
-// create the dropdown menu
-function DropdownBuilder() {
-  let createDowndownMenu = (nameAttribute, containerClass) => {
-  return d3.select("body")
-           .select(`div.${containerClass}`)
-           .append("select")
-           .attr("name", nameAttribute);
-}
-
-  let populateDropdownOptions = (dropdown, data) => {
-    return dropdown.selectAll('option')
-                   .data(data)
-                   .enter()
-                   .append('option')
-                   .text((featureName) => (featureName));
-  };
-  let createAllDropdowns = () => {
-    this.clickOnFeatureDropdown = createDowndownMenu(
-      'color_column',
-      'click-on-feature-container'
-    );
-    this.coloringDropdown = createDowndownMenu(
-      'color_column',
-      'color-by-feature-container'
-    );
-    this.searchDropdown = createDowndownMenu(
-      'color_column',
-      'search-by-feature-container'
-    );
-    this.shapingDropdown = createDowndownMenu(
-      'color_column',
-      'shape-by-feature-container'
-    );
-    this.transparentDropdown = createDowndownMenu(
-      'color_column',
-      'transparency-by-feature-dropdown-container'
-    );
-  };
-  this.build = (categorySearchData, categoriesCopyColor, categories) => {
-    createAllDropdowns();
-    // Searching
-    populateDropdownOptions(this.searchDropdown, categorySearchData)
-    // Coloring
-    populateDropdownOptions(this.coloringDropdown, categoriesCopyColor)
-    // Transparent
-    populateDropdownOptions(this.transparentDropdown, categorySearchData)
-    // Click on feature
-    populateDropdownOptions(this.clickOnFeatureDropdown, categorySearchData)
-    // Shaping
-    populateDropdownOptions(this.shapingDropdown, categories)
-  }
-  this.setDropdownEventHandlers = (plotting, plotting2, plotting3, plotting4, plotting5) => {
-    this.coloringDropdown.on("change", plotting);
-
-    // Searching
-    this.searchDropdown.on("change", plotting2);
-
-    // Transparent
-    this.transparentDropdown.on("change", plotting3);
-
-    // Click on feature
-    this.clickOnFeatureDropdown.on("change", plotting4);
-
-    // Shaping
-    this.shapingDropdown.on("change", plotting5);
-  }
-};
-// Coloring
-
 // categories stores the name of all the columns
 var categories = [];
 let defaultValue = 'Select';
@@ -202,6 +134,7 @@ var columns = [];
 var transparent_column = "Select", feature_column = "", shaping_column = "Select";
 
 function extractCategoryLabelsFromData(data) {
+  console.log('Loading main data')
   function extractCategoryHeaders(data) {
     let categoryHeadersFromFirstRowOfData = [];
     categoryHeadersFromFirstRowOfData = Object.keys(data[0]);
@@ -246,7 +179,6 @@ function extractCategoryLabelsFromData(data) {
   transparent_column = category_search_data[0];
 }
 
-console.log('Loading main data')
 // getting header from csv file to make drowdown menus
 // NOTE: tsv() is an async function
 d3.tsv(dataset, extractCategoryLabelsFromData);
@@ -284,7 +216,7 @@ function plotting(){
 // Shaping
 function plotting5(){
   shaping_column = d3.event.target.value;
-  cValue = function(d) { return d[color_column];};
+  cValue = function(d) { return d[shaping_column];};
   let val_search = document.getElementById("searchText").value;
   let val_transp = document.getElementById("transpText").value;
   let val_opacityMatch = document.getElementById("opacityMatch").value;
@@ -524,9 +456,8 @@ function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMat
     // Init the lasso object on the svg:g that contains the dots
     svg.call(lasso);
 
-    console.log('Loading main data, again') // load data
     d3.tsv(dataset, function(error, data) {
-
+      console.log('Loading main data, again') // load data
         // change string (from CSV) into number format
         var numerics = {}, symbol = {};
         //Omitting Select (0)
