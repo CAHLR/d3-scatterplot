@@ -92,11 +92,6 @@ if (queryParams.get("semantic_model") === "true") {
   });
 }
 
-// coloring will be done according to the values determined by cValue
-var cValue = function(d) {return d[color_column];},
-cValue2 = function(d) {return Math.log(parseFloat(d[color_column]));},
-color = d3.scale.ordinal().range(d3_category20_shuffled);
-
 // categories stores the name of all the columns
 var categories = [];
 let defaultValue = 'Select';
@@ -175,8 +170,22 @@ function extractCategoryLabelsFromData(data) {
 // NOTE: tsv() is an async function
 d3.tsv(dataset, extractCategoryLabelsFromData);
 
+let createColorValue = (targetColumn) => {
+  return (data) => {
+    return data[targetColumn];
+  };
+};
+// need to rename this function to be more descriptive
+let createColorValue2 = (targetColumn) => {
+  return (data) => {
+    return Math.log(parseFloat(data[targetColumn]));
+  };
+};
+let color = d3.scale.ordinal().range(d3_category20_shuffled);
+let colorValueFunction = createColorValue(color_column);
+let colorValueFunction2 = createColorValue2(color_column);
 // Initial plot draw happens here:
-highlighting(queryParams.get("q") || "", "", "")
+highlighting(colorValueFunction, colorValueFunction2, queryParams.get("q") || "", "", "")
 
 // the functions to call when the value of dropdown menu is changes
 // Click on feature
@@ -196,24 +205,26 @@ function plotting2(){
 // Coloring
 function plotting(){
   color_column = d3.event.target.value;
-  cValue = function(d) { return d[color_column];};
+  colorValueFunction = createColorValue(color_column);
+  colorValueFunction2 = createColorValue2(color_column);
   let val_search = document.getElementById("searchText").value;
   let val_transp = document.getElementById("transpText").value;
   let val_opacityMatch = document.getElementById("opacityMatch").value;
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 // function to call for change event
 // Shaping
 function plotting5(){
   shaping_column = d3.event.target.value;
-  cValue = function(d) { return d[shaping_column];};
+  colorValueFunction = createColorValue(color_column);
+  colorValueFunction2 = createColorValue2(color_column);
   let val_search = document.getElementById("searchText").value;
   let val_transp = document.getElementById("transpText").value;
   let val_opacityMatch = document.getElementById("opacityMatch").value;
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 var zoomed = 0;
@@ -228,7 +239,7 @@ function searchEventHandler(event) {
   let val_transp = document.getElementById("transpText").value;
   let val_opacityMatch = document.getElementById("opacityMatch").value;
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
   return false;
 }
 function searchExactMatchEventHandler(event) {
@@ -243,7 +254,7 @@ function transparentSearchEventHandler(event) {
   let val_transp = document.getElementById("transpText").value;
   let val_opacityMatch = document.getElementById("opacityMatch").value;
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
   return false;
 }
 function handleCheck1(event) {
@@ -263,7 +274,7 @@ function handleClick2(event){
   myForm1.opacityNoMatch.value = 0;
   shapingDropdown.property( "value", "Select" );
   dropDown.property( "value", "Select" );
-  highlighting("", "", "");
+  highlighting(colorValueFunction, colorValueFunction2, "", "", "");
   return false;
 }
 
@@ -275,7 +286,7 @@ function spectrumAndLogColoringEventHandler(event) {
   let val_transp = document.getElementById("transpText").value;
   let val_opacityMatch = document.getElementById("opacityMatch").value;
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
@@ -288,7 +299,7 @@ function zoomEventHandler(){
   let val_opacityMatch = document.getElementById("opacityMatch").value;
   let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   needZoom = true;
-  highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
 }
 
 (function setEventHandlers() {
@@ -320,7 +331,7 @@ let coordinatesx = [];
 let coordinatesy = [];
 
 // function for plotting
-function highlighting(val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
+function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
 
   var svg, m1, m2, x_max, x_min, y_max, y_min;
   var temp1 = [], temp2 = [], temp3 = [];
