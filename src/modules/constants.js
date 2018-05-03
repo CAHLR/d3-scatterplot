@@ -33,3 +33,12 @@ export const scale_d = {
   'redBlackGreen': ['#ff0000', '#AA0000', '#550000', '#005500', '#00AA00', '#00ff00'],
 };
 export const scale = scale_d['spectral8'];
+
+export const sizes = {};
+sizes[0] = ["0", "90", "0", "0"];
+sizes[1] = ["0", "45", "0", "0"];
+sizes[2] = ["0", "90", "0", "0"];
+sizes[3] = ["0", "45", "0", "0"];
+sizes[4] = ["0", "90", "0", "0"];
+sizes[5] = ["0", "0", "0", "0"];
+export const symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
