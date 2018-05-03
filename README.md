@@ -35,3 +35,4 @@ To start the webpack bundler service, run `npm start`. This command will watch t
 - TODO next: test extracting highlight function, see what needs to be injected and see whether it's possible at this state
 - TODO: investigate lasso functionality with shapes, seems like they might failing silently;
 - TODO: investigate why legend for shapes isn't always popping up
+- TODO: fix shape by feature functionality once graph is already zoomed

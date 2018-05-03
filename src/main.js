@@ -31,6 +31,7 @@ import {
   scale_d,
   width
 } from './modules/constants.js';
+import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
 import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
 
@@ -333,7 +334,7 @@ let coordinatesy = [];
 // function for plotting
 function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
 
-  var svg, m1, m2, x_max, x_min, y_max, y_min;
+  let m1, m2, x_max, x_min, y_max, y_min;
   var temp1 = [], temp2 = [], temp3 = [];
   var dict1 = {};
 
@@ -344,184 +345,69 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     d3.select("svg").remove();
     d3.select("table").remove();
 
-    // function zoom() {
-    //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    //    }
-
-    // the location of svg image will be determined
-    svg = d3.select("body").select('div.plot-container').append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
-    /* https://github.com/skokenes/D3-Lasso-Plugin
-    plugin also handles selected and possible settings */
-    // Lasso starts
-    var lasso_start = function() {
-      d3.select("table").remove();
-      document.getElementById("demo3").innerHTML = "";
-      lasso.items()
-            .attr("r",3.5) // reset size
-            .style("fill",null) // clear all of the fills (greys out)
-            .classed({"not_possible":true,"selected":false}); // style as not possible
-          };
-
-          var lasso_draw = function() {
-        // Style the possible dots
-        lasso.items().filter(function(d) {return d.possible===true})
-        .classed({"not_possible":false,"possible":true});
-
-        // Style the not possible dot
-        lasso.items().filter(function(d) {return d.possible===false})
-        .classed({"not_possible":true,"possible":false})
-        .style("stroke", "#000");
-      };
-
-      var lasso_end = function() {
-        // Reset the color of all dots
-        lasso.items()
-        .style("fill", function(d) { return color(d[color_column]); });
-
-        // Style the selected dots
-        lasso.items().filter(function(d) {return d.selected===true})
-        .classed({"not_possible":false,"possible":false})
-        .attr("r",6.5);
-
-        // get values for table -> array inside a list
-        var zsx = lasso.items().filter(function(d) {return d.selected===true});
-        let x_values = [];
-        let y_values = [];
-        // adjust the x and y values
-        for (var i=0; i<zsx[0].length; i++) {
-          x_values.push(((((zsx[0][i].getBBox().x+6.5) * (x_max - x_min))/width + x_min )));
-          y_values.push(((((zsx[0][i].getBBox().y+6.5) * (y_min - y_max))/height + y_max)));
-        }
-        var selected_data=[], selected_data_indices=[];
-        // Compare every selected point to all points (tempX)
-        // in order to match coordinates with actual data
-        for (var ii=0;ii<x_values.length;ii++) {
-          console.log("lasso_end gathering selected data");
-          console.log(temp1.length);
-          for (var jj=0;jj<temp1.length;jj++) {
-            x_values[ii] = +(x_values[ii].toFixed(3));
-            y_values[ii] = +(y_values[ii].toFixed(5));
-            if ( (x_values[ii] === +(temp1[jj].toFixed(3))) && (y_values[ii] === +(temp2[jj].toFixed(5))) ) {
-              let all_values = {};
-              for (var k=1;k<categories.length;k++) {
-                all_values[categories[k]] = (dict1[categories[k]][jj]);
-              }
-              if(searchDic(selected_data,all_values)==true){
-                selected_data.push(all_values);
-                selected_data_indices.push(jj);
-                break;
-              }
-            }
-          }
-        }
-        // render the table for the points selected by lasso
-        if (selected_data.length > 0) {
-          console.log("Rendering table...");
-          console.log(selected_data);
-          console.log(columns);
-          console.log(x_values);
-          var peopleTable = tabulate(selected_data, columns, x_values);
-          if (queryParams.get('semantic_model') === "true") {
-            console.log("Predicting words...");
-            classify(selected_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
-            benchmark(selected_data_indices, bow_2darray, vocab_1darray);
-          }
-        }
-
-        // Reset the style of the not selected dots (we made them 0.5 smaller)
-        lasso.items().filter(function(d) {return d.selected===false})
-        .classed({"not_possible":false,"possible":false})
-        .attr("r",3)
-        .style("stroke", "#000");
-      };
-
-    // Create the area where the lasso event can be triggered
-    var lasso_area = svg.append("rect")
-    .attr("width",width)
-    .attr("height",height)
-    .style("opacity",0);
-
-    // Define the lasso
-    var lasso = d3.lasso()
-        .closePathDistance(75) // max distance for the lasso loop to be closed
-        .closePathSelect(true) // can items be selected by closing the path?
-        .hoverSelect(true) // can items by selected by hovering over them?
-        .area(lasso_area) // area where the lasso can be started
-        .on("start",lasso_start) // lasso start function
-        .on("draw",lasso_draw) // lasso draw function
-        .on("end",lasso_end); // lasso end function
-
-    // Init the lasso object on the svg:g that contains the dots
-    svg.call(lasso);
-
     d3.tsv(dataset, function(error, data) {
       console.log('Loading main data, again') // load data
-        // change string (from CSV) into number format
-        var numerics = {}, symbol = {};
-        //Omitting Select (0)
-        for(var i=1;i<categories.length;i++) {
-            // initialize the value for each category key to empty list
-            dict1[categories[i]] = [];
-            // initialize all categories as numeric
-            numerics[categories[i]] = 1;
-          }
-          let counter = 0;
-          data.forEach(function(d) {
-            // coerce the data to numbers
-            d.x = +d.x;
-            d["y"] = +d["y"];
+      // change string (from CSV) into number format
+      var numerics = {}, symbol = {};
+      //Omitting Select (0)
+      for(var i=1;i<categories.length;i++) {
+        // initialize the value for each category key to empty list
+        dict1[categories[i]] = [];
+        // initialize all categories as numeric
+        numerics[categories[i]] = 1;
+      }
+      let counter = 0;
+      data.forEach(function(d) {
+      // coerce the data to numbers
+      d.x = +d.x;
+      d["y"] = +d["y"];
 
-            for(var i=1;i<categories.length;i++){
-                // add every attribute of point to the {category:[val1,val2,...]}
-                dict1[categories[i]].push(d[categories[i]]);
-                // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
-                numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
-              }
-            // fill the symbol dictionary with all possible values of the shaping column as keys
-            // value is the order of points
-            if (!(d[shaping_column] in symbol)) {
-              symbol[d[shaping_column]] = counter;
-              counter = counter + 1;
-            }
-            // push all x values, y values, and all category search values into temp1/2/3
-            temp1.push(d.x);
-            temp2.push(d["y"]);
-            temp3.push(d[category_search]);
-          // console.log(d["z"] == parseInt(d["z"]));
-        });
-          console.log(numerics);
-          console.log(color_column);
-        // set color according to spectrum
-        if (numerics[color_column] && document.getElementById('cbox1').checked) {
-          console.log('using spectrum');
-            // take log if log checkbox checked
-            if (document.getElementById('cbox2').checked) {
-              console.log('using log');
-              m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-              m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-            } else{
-              console.log('not using log');
-              m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
-              m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
-            }
+      for(var i=1;i<categories.length;i++){
+        // add every attribute of point to the {category:[val1,val2,...]}
+        dict1[categories[i]].push(d[categories[i]]);
+        // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
+        numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
+      }
+      // fill the symbol dictionary with all possible values of the shaping column as keys
+      // value is the order of points
+      if (!(d[shaping_column] in symbol)) {
+        symbol[d[shaping_column]] = counter;
+        counter = counter + 1;
+      }
+      // push all x values, y values, and all category search values into temp1/2/3
+      temp1.push(d.x);
+      temp2.push(d["y"]);
+      temp3.push(d[category_search]);
+      // console.log(d["z"] == parseInt(d["z"]));
+    });
+        console.log("Numerics: ", numerics);
+        console.log("Color Column: ",color_column);
+      // set color according to spectrum
+      if (numerics[color_column] && document.getElementById('cbox1').checked) {
+        console.log('using spectrum');
+        // take log if log checkbox checked
+        if (document.getElementById('cbox2').checked) {
+          console.log('using log');
+          m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+          m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+        } else{
+          console.log('not using log');
+          m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
+          m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
+        }
 
-            console.log(m1, m2);
-            m1 = Math.max(Number.MIN_VALUE, m1);
-            console.log(m1, m2);
+        console.log(m1, m2);
+        m1 = Math.max(Number.MIN_VALUE, m1);
+        console.log(m1, m2);
 
-            color = d3.scale.linear()
-            .domain(linSpace(m1, m2,scale.length))
-              //.domain(linSpace(d3.min(data.map(function(d) {return parseInt(d[color_column])})), d3.max(data.map(function(d) {return parseInt(d[color_column])})),scale.length))
-              .range(scale);
-            } else {
-              console.log('not using spectrum');
-              color = d3.scale.ordinal().range(d3_category20_shuffled);
-            }
+        color = d3.scale.linear()
+        .domain(linSpace(m1, m2,scale.length))
+          //.domain(linSpace(d3.min(data.map(function(d) {return parseInt(d[color_column])})), d3.max(data.map(function(d) {return parseInt(d[color_column])})),scale.length))
+          .range(scale);
+      } else {
+        console.log('not using spectrum');
+        color = d3.scale.ordinal().range(d3_category20_shuffled);
+      }
 
         // don't want dots overlapping axis, so add in buffer to data domain
         var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
@@ -535,6 +421,13 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
           y_max = d3.max(data, yValue)+1;
           y_min = d3.min(data, yValue)-1;
         }
+
+        // I know it looks ugly injecting so many arguments into the initializer right now,
+        // but at least we're being explicit about dependencies as opposed to
+        // implicit/throwing everything into global state
+        let svgInitializer = new SvgInitializer(color, color_column, x_max, x_min, y_max, y_min, temp1, temp2, categories, dict1, columns);
+        let svg = svgInitializer.initializeWithLasso();
+        let lasso = svgInitializer.lasso;
 
         // if zoom is checked and conditions are satisfied
         if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
