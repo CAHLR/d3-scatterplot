@@ -422,13 +422,6 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
           y_min = d3.min(data, yValue)-1;
         }
 
-        // I know it looks ugly injecting so many arguments into the initializer right now,
-        // but at least we're being explicit about dependencies as opposed to
-        // implicit/throwing everything into global state
-        let svgInitializer = new SvgInitializer(color, color_column, x_max, x_min, y_max, y_min, temp1, temp2, categories, dict1, columns);
-        let svg = svgInitializer.initializeWithLasso();
-        let lasso = svgInitializer.lasso;
-
         // if zoom is checked and conditions are satisfied
         if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
 
@@ -461,6 +454,14 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
 
         // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
         // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+
+
+        // I know it looks ugly injecting so many arguments into the initializer right now,
+        // but at least we're being explicit about dependencies as opposed to
+        // implicit/throwing everything into global state
+        let svgInitializer = new SvgInitializer(color, color_column, x_max, x_min, y_max, y_min, temp1, temp2, categories, dict1, columns);
+        let svg = svgInitializer.initializeWithLasso();
+        let lasso = svgInitializer.lasso;
 
         // x-axis
         let cx = 0;
