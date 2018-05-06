@@ -60,8 +60,27 @@ export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, va
     return (dot[transparentColumn] && caseInsensitiveMatch);
   })(dot, transparentColumn, valTransp);
 
-  if (isMatch) { return parseFloat(valOpacityMatch) };
-  return parseFloat(valOpacityNoMatch);
+  return isMatch ? parseFloat(valOpacityMatch) : parseFloat(valOpacityNoMatch);
+};
+
+export function dotSearchFilter (dot, categorySearch, valSearch) {
+  // return value 1 means ??? -- will decode magic numbers soon
+  // return value 2 means ??? -- will decode magic numbers soon
+  if (typeof dot[categorySearch] == 'undefined' ) {
+    return 1;
+  }
+  // noMatch truthy if not found
+  let noMatch = ((dot, categorySearch, valSearch) => {
+    let exactMatchEnabled = document.getElementsByClassName(
+      'search-exact-match'
+    )[0].checked;
+    if (exactMatchEnabled) { return dot[categorySearch] !== valSearch; }
+
+    let caseInsensitiveMatch = dot[categorySearch].toLowerCase().indexOf(valSearch.toLowerCase()) < 0;
+    return caseInsensitiveMatch || valSearch.length === 0
+  })(dot, categorySearch, valSearch);
+
+  return noMatch ? 1 : 2;
 };
 
 // Checks the url query for name=value and extracts the value

@@ -14,6 +14,7 @@ import {
   printArray,
   queryParams,
   searchDic,
+  dotSearchFilter,
   transpar,
   xAxis,
   xMap,
@@ -510,20 +511,6 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
   }
 
   // searching according to the substring given and searching column
-  var searchFunc = function(d) {
-    if (typeof d[category_search] == 'undefined' ) {
-      return 1;
-    }
-      // noMatch truthy if not found
-    var noMatch;
-    if (document.getElementById('cbox5').checked) {
-      noMatch = d[category_search] != val_search;
-    } else {
-      noMatch = d[category_search].toLowerCase().indexOf(val_search.toLowerCase()) < 0
-      || val_search.length === 0;
-    }
-    return noMatch ? 1 : 2;
-  };
 
   var searchFunc1 = function(d) {
     if (typeof d == 'undefined' ) {
@@ -580,12 +567,12 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .enter();
 
     points.append("path")
-    .filter(function(d){ return (searchFunc(d) == 1); })
+    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 1); })
     .attr("class", "point")
     .style("stroke", "#000")
     .style("stroke-width", 1)
     // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return searchFunc(d)-1 ? 180:30;}))
+    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
     .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
     .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
     .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
@@ -600,7 +587,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       .style("top", 30 + "px");
     })
     .on("mouseout", function(d) {
-      d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+      d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
       .style("fill", function(d) { return color(cValue(d));});
       tooltip.transition()
       .duration(500)
@@ -614,12 +601,12 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     });
 
     points.append("path")
-    .filter(function(d){ return (searchFunc(d) == 2); })
+    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 2); })
     .attr("class", "point")
     .style("stroke", "yellow")
     .style("stroke-width", 2)
     // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return searchFunc(d)-1 ? 180:30;}))
+    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
     .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
     .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
     .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
@@ -634,7 +621,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       .style("top", 30 + "px");
     })
     .on("mouseout", function(d) {
-      d3.select(this).attr("r", function(d){ return searchFunc(d)-1 ? 7:3 ; })
+      d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
       .style("fill", function(d) { return color(cValue(d));});
       tooltip.transition()
       .duration(500)
@@ -654,7 +641,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .enter();
 
     points.append("circle")
-    .filter(function(d){ return (searchFunc(d) == 1); })
+    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 1); })
     .attr("class", "dot")
     .attr("r", 3)
     .style("stroke", "#000")
@@ -694,19 +681,19 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
         .text(d[feature_column])
         .attr("x", (d3.event.pageX-50))
         .attr("y", (d3.event.pageY-35));
-                /*
-                tooltip1.transition()
-                   .attr("class", "tooltip1")
-                         .style("opacity", 1);
+        /*
+        tooltip1.transition()
+           .attr("class", "tooltip1")
+                 .style("opacity", 1);
 
-                tooltip1.html("<b>"+d[feature_column]+"</b>")
-                         .style("left", (d3.event.pageX + 10) + "px")
-                         .style("top", (d3.event.pageY - 10) + "px");
-                         */
-                       }
-                     });
+        tooltip1.html("<b>"+d[feature_column]+"</b>")
+                 .style("left", (d3.event.pageX + 10) + "px")
+                 .style("top", (d3.event.pageY - 10) + "px");
+                 */
+     }
+   });
     points.append("circle")
-    .filter(function(d){ return (searchFunc(d) == 2); })
+    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 2); })
     .attr("class", "dot")
     .attr("r", 7)
     .style("stroke", "yellow")
