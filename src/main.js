@@ -12,8 +12,9 @@ import {
   getParameterByName,
   linSpace,
   printArray,
-  searchDic,
   queryParams,
+  searchDic,
+  transpar,
   xAxis,
   xMap,
   xScale,
@@ -153,7 +154,7 @@ function extractCategoryLabelsFromData(data) {
     }
     columns.push(categoryHeaders[i]);
   }
-  let dropdownBuilder = new DropdownBuilder()
+  let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
   dropdownBuilder.setDropdownEventHandlers(
                    plotting,
@@ -167,7 +168,7 @@ function extractCategoryLabelsFromData(data) {
   shaping_column = categories[0];
   feature_column = category_search_data[0];
   transparent_column = category_search_data[0];
-}
+};
 
 // getting header from csv file to make drowdown menus
 // NOTE: tsv() is an async function
@@ -328,6 +329,12 @@ function zoomEventHandler(){
     event.preventDefault();
     transparentSearchEventHandler();
   });
+
+  // let transparencyExactMatch = document.getElementsByClassName('transparency-exact-match')[0];
+  // transparencyExactMatch.addEventListener('change', (event) => {
+  //   event.preventDefault();
+  //   transparentSearchEventHandler();
+  // });
 })()
 
 let coordinatesx = [];
@@ -502,27 +509,6 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     val_transp = val_transp.toString();
   }
 
-  var transpar = function(d) {
-    if (val_transp !== "" && typeof d != 'undefined') {
-      // if point's transp column value is equal to the value specified, return val_opacityMatch, else val_opacityNoMatch
-      var match;
-      if (document.getElementById('cbox6').checked) {
-        // console.log("Using exact match");
-        match = d[transparent_column] == val_transp;
-      } else {
-        match = d[transparent_column] && (d[transparent_column].toLowerCase().indexOf(val_transp.toLowerCase()) > -1);
-      }
-
-      if (match){
-        return parseFloat(val_opacityMatch);
-      } else{
-        return parseFloat(val_opacityNoMatch);
-      }
-    } else {
-      return 1;
-    }
-  };
-
   // searching according to the substring given and searching column
   var searchFunc = function(d) {
     if (typeof d[category_search] == 'undefined' ) {
@@ -602,7 +588,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return searchFunc(d)-1 ? 180:30;}))
     .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
     .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d);})
+    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
 
     .on("mouseover", function(d) {
       tooltip.transition()
@@ -636,7 +622,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return searchFunc(d)-1 ? 180:30;}))
     .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
     .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d);})
+    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
 
     .on("mouseover", function(d) {
       tooltip.transition()
@@ -676,7 +662,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .attr("cx", xMap)
     .attr("cy", yMap)
     .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d);})
+    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
 
     .on("mouseover", function(d) {
       tooltip.transition()
@@ -728,7 +714,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .attr("cx", xMap)
     .attr("cy", yMap)
     .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d);})
+    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
     // jann: here is the mouseover display
     .on("mouseover", function(d) {
       tooltip.transition()

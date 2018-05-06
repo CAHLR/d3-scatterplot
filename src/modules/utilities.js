@@ -8,7 +8,7 @@ export const queryParams = (() => {
   } else {
     return new URLSearchParamsPolyfill(location.search)
   };
-})()
+})();
 
 // used to search a particular substring in the list of requested feature column
 // used to determine whether we should add allValues to selectedData, hence the t/f -> f/t
@@ -19,7 +19,7 @@ export function searchDic(selectedData, allValues) {
     }
   }
   return true;
-}
+};
 
 export function linSpace(start, end, n) {
   var out = [];
@@ -34,7 +34,6 @@ export function linSpace(start, end, n) {
 };
 
 
-
 // VIEW HELPER: used to display the summary on the webpage
 // print all the key values pairs of a point
 export function printArray(arr, d) {
@@ -44,6 +43,25 @@ export function printArray(arr, d) {
   }
   x = x + d.x + "<br>" + d["y"];
   return x;
+};
+
+export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch) {
+  let transparencyDisabled = valTransp === "" || typeof dot === 'undefined';
+  // the return value 1 means full opacity
+  if (transparencyDisabled) { return 1 };
+
+  let isMatch = ((dot, transparentColumn, valTransp) => {
+    let exactMatchEnabled = document.getElementsByClassName(
+      'transparency-exact-match'
+    )[0].checked;
+    if (exactMatchEnabled) { return dot[transparentColumn] === valTransp; }
+
+    let caseInsensitiveMatch = dot[transparentColumn].toLowerCase().indexOf(valTransp.toLowerCase()) > -1;
+    return (dot[transparentColumn] && caseInsensitiveMatch);
+  })(dot, transparentColumn, valTransp);
+
+  if (isMatch) { return parseFloat(valOpacityMatch) };
+  return parseFloat(valOpacityNoMatch);
 };
 
 // Checks the url query for name=value and extracts the value
