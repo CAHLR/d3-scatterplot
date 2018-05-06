@@ -317,8 +317,6 @@ function zoomEventHandler(){
     colorOptions[i].onclick = spectrumAndLogColoringEventHandler;
   };
 
-  let searchExactMatchCheckbox = document.getElementsByClassName('search-exact-match')[0];
-  searchExactMatchCheckbox.onclick = searchExactMatchEventHandler;
 
   let searchFormButton = document.getElementsByClassName('search-button')[0];
   searchFormButton.addEventListener('click', (event) => {
@@ -331,6 +329,12 @@ function zoomEventHandler(){
     event.preventDefault();
     transparentSearchEventHandler();
   });
+
+  // AJF note: currently, I'm disabling the checkbox event handlers as I think
+  // they are disruptive to the UX of working with the tool
+
+  // let searchExactMatchCheckbox = document.getElementsByClassName('search-exact-match')[0];
+  // searchExactMatchCheckbox.onclick = searchExactMatchEventHandler;
 
   // let transparencyExactMatch = document.getElementsByClassName('transparency-exact-match')[0];
   // transparencyExactMatch.addEventListener('change', (event) => {

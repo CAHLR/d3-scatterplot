@@ -31,8 +31,8 @@ export function DotsArtist (svg, data, categorySearch, categorySearchData, valSe
              .duration(200)
              .style("opacity", 1);
       tooltip.html(printArray(categorySearchData, dot))
-             .style("left", "60 px")
-             .style("top", "30 px");
+             .style("left", "60px")
+             .style("top", "30px");
     };
   };
 
@@ -53,8 +53,8 @@ export function DotsArtist (svg, data, categorySearch, categorySearchData, valSe
       }
     };
 
-    let featureColumn = document.getElementsByClassName('click-on-feature')[0].value;
     return (dot) => {
+      let featureColumn = document.getElementsByClassName('click-on-feature')[0].value;
       if (!([d3.event.pageX, d3.event.pageY] in this.marked)) {
         desensitizeClickArea();
         svg.append("text")
