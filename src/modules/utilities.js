@@ -64,8 +64,8 @@ export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, va
 };
 
 export function dotSearchFilter (dot, categorySearch, valSearch) {
-  // return value 1 means ??? -- will decode magic numbers soon
-  // return value 2 means ??? -- will decode magic numbers soon
+  // return value 1 means unmatched dots
+  // return value 2 means matched dots
   if (typeof dot[categorySearch] == 'undefined' ) {
     return 1;
   }

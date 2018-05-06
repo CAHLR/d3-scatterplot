@@ -35,6 +35,7 @@ import {
   symbols,
   width
 } from './modules/constants.js';
+import { DotsArtist } from './modules/dots_artist.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
 import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
@@ -634,251 +635,164 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       .attr("y", (d3.event.pageY-35));
     });
   } else {
-    // draw dots
-    let marked = {}
-    var points = svg.selectAll(".dot")
-    .data(data)
-    .enter();
+    let dotsArtist = new DotsArtist(
+      svg,
+      data,
+      category_search,
+      category_search_data,
+      val_search,
+      color,
+      cValue2,
+      cValue,
+      val_transp,
+      transparent_column,
+      val_opacityMatch,
+      val_opacityNoMatch
+    )
+    dotsArtist.drawUnmatchedDots();
+    dotsArtist.drawMatchedDots();
 
-    points.append("circle")
-    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 1); })
-    .attr("class", "dot")
-    .attr("r", 3)
-    .style("stroke", "#000")
-    .style("stroke-width", 1)
-    .attr("cx", xMap)
-    .attr("cy", yMap)
-    .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
+    // the event to call on click event
+    svg.on("click",function() {
+      // svg.select("#myText").remove();
 
-    .on("mouseover", function(d) {
-      tooltip.transition()
-      .duration(200)
-      .style("opacity", 1);
-      tooltip.html(printArray(category_search_data, d))
-      .style("left", 60 + "px")
-      .style("top", 30 + "px");
+      tooltip1.style("opacity", 0);
+      var coordinates1 = d3.mouse(this);
+      coordinatesx.unshift(coordinates1[0]);
+      coordinatesy.unshift(coordinates1[1]);
+      console.log(coordinatesx, coordinatesy);
     })
 
-    .on("mouseout", function(d) {
-      tooltip.transition()
-      .duration(500)
-      .style("opacity", 0);
-    })
-
-    .on("click", function(d) {
-      if (!([d3.event.pageX, d3.event.pageY] in marked)) {
-        marked[[d3.event.pageX, d3.event.pageY]] = true;
-        marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
-        marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
-        marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
-        marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
-        marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
-        marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
-        marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
-        marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
-        svg.append("text")
-        .text(d[feature_column])
-        .attr("x", (d3.event.pageX-50))
-        .attr("y", (d3.event.pageY-35));
-        /*
-        tooltip1.transition()
-           .attr("class", "tooltip1")
-                 .style("opacity", 1);
-
-        tooltip1.html("<b>"+d[feature_column]+"</b>")
-                 .style("left", (d3.event.pageX + 10) + "px")
-                 .style("top", (d3.event.pageY - 10) + "px");
-                 */
-     }
-   });
-    points.append("circle")
-    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 2); })
-    .attr("class", "dot")
-    .attr("r", 7)
-    .style("stroke", "yellow")
-    .style("stroke-width", 2)
-    .attr("cx", xMap)
-    .attr("cy", yMap)
-    .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
-    // jann: here is the mouseover display
-    .on("mouseover", function(d) {
-      tooltip.transition()
-      .duration(200)
-      .style("opacity", 1);
-      tooltip.html(
-        printArray(category_search_data, d))
-      .style("left", 60 + "px")
-      .style("top", 30 + "px");
-    })
-
-    .on("mouseout", function(d) {
-      tooltip.transition()
-      .duration(500)
-      .style("opacity", 0);
-    })
-
-    .on("click", function(d) {
-      if (!([d3.event.pageX, d3.event.pageY] in marked)){
-        marked[[d3.event.pageX, d3.event.pageY]] = true;
-        marked[[d3.event.pageX-1, d3.event.pageY-1]] = true;
-        marked[[d3.event.pageX+1, d3.event.pageY+1]] = true;
-        marked[[d3.event.pageX-1, d3.event.pageY+1]] = true;
-        marked[[d3.event.pageX+1, d3.event.pageY-1]] = true;
-        marked[[d3.event.pageX+2, d3.event.pageY-2]] = true;
-        marked[[d3.event.pageX-2, d3.event.pageY-2]] = true;
-        marked[[d3.event.pageX-2, d3.event.pageY+2]] = true;
-        marked[[d3.event.pageX+2, d3.event.pageY+2]] = true;
-        svg.append("text")
-        .text(d[feature_column])
-        .attr("x", (d3.event.pageX-50))
-        .attr("y", (d3.event.pageY-35));
-      }
-    });
-  }
-  /*** END drawing dots ***/
-
-  // the event to call on click event
-  svg.on("click",function() {
-    // svg.select("#myText").remove();
-
-    tooltip1.style("opacity", 0);
-    var coordinates1 = d3.mouse(this);
-    coordinatesx.unshift(coordinates1[0]);
-    coordinatesy.unshift(coordinates1[1]);
-    console.log(coordinatesx, coordinatesy);
-  })
-
-  /* can move up into the if/else, but more clear to separate functionality */
-  if (shaping_column !== "Select" ) {
-    lasso.items(d3.selectAll(".dot"));
-  } else {
-    lasso.items(d3.selectAll(".dot"));
-  }
-
-  var len = color.domain().length;
-  // if spectrum
-  if (numerics[color_column] && document.getElementById('cbox1').checked) {
-
-    if (document.getElementById('cbox2').checked) {
-      m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-      m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+    /* can move up into the if/else, but more clear to separate functionality */
+    if (shaping_column !== "Select" ) {
+      lasso.items(d3.selectAll(".dot"));
     } else {
-      m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
-      m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
-    }
-    console.log(m1, m2);
-    m1 = Math.max(Number.MIN_VALUE, m1);
-    console.log(m1, m2);
-
-    var legend = svg.selectAll(".legend")
-    .data(color.domain())
-    .enter().append("g")
-    .attr("class", "legend");
-
-    var gradient = legend.append('defs')
-    .append('linearGradient')
-    .attr('id', 'gradient')
-    .attr('x1', '0%') // bottom
-    .attr('y1', '100%')
-    .attr('x2', '0%') // to top
-    .attr('y2', '0%')
-    .attr('spreadMethod', 'pad');
-
-    var pct = linSpace(0, 100, scale.length).map(function(d) {
-      return Math.round(d) + '%';
-    });
-
-    var colourPct = d3.zip(pct, scale);
-    colourPct.forEach(function(d) {
-      gradient.append('stop')
-      .attr('offset', d[0])
-      .attr('stop-color', d[1])
-      .attr('stop-opacity', 1);
-    });
-
-    legend.append('rect')
-    .attr('x1', 0)
-    .attr('y1', 0)
-    .attr('width', 18)
-    .attr('height', 150)
-    .attr("transform", "translate(" + 582 + ", 0)")
-    .style('fill', 'url(#gradient)');
-
-    var legendScale = d3.scale.linear()
-    .domain([m1, m2])
-    .range([150, 0]);
-
-    var legendAxis = d3.svg.axis()
-    .scale(legendScale)
-    .orient("right")
-    // .tickValues([m1, m2])
-    .ticks(10);
-
-    legend.append("g")
-    .attr("class", "legend axis")
-    .attr("transform", "translate(" + 600 + ", 0)")
-    .call(legendAxis);
-  } else { // no spectrum
-    console.log(Object);
-    var keys = Object.keys(symbol);
-    let leng = keys.length;
-    if (leng<20 && shaping_column != "Select") {
-      // draw legend
-      // ?? Not sure why, but this legend appears not to show
-      var legend = svg.selectAll(".legend")
-      .data(keys)
-      .enter().append("g");
-      // .attr("class", "legend");
-      // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-      console.log(keys);
-      console.log(shaping_column);
-      console.log(symbol);
-      console.log(symbols);
-      // draw legend colored rectangles
-      legend.append("path")
-          // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-          .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-          .attr("x", width + 0)
-          .attr("width", 18)
-          .attr("height", 18)
-          // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-          .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-      // draw legend text
-      legend.append("text")
-          // .attr("x", 100 + 0)
-          // .attr("y", 4)
-          .attr("dy", ".35em")
-          .style("text-anchor", "begin")
-          .text(function(d) { return d;})
-          .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+      lasso.items(d3.selectAll(".dot"));
     }
 
-    if(len <= 30 && color_column != "Select") {
+    var len = color.domain().length;
+    // if spectrum
+    if (numerics[color_column] && document.getElementById('cbox1').checked) {
 
-      // draw legend
+      if (document.getElementById('cbox2').checked) {
+        m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+        m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
+      } else {
+        m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
+        m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
+      }
+      console.log(m1, m2);
+      m1 = Math.max(Number.MIN_VALUE, m1);
+      console.log(m1, m2);
+
       var legend = svg.selectAll(".legend")
       .data(color.domain())
       .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      .attr("class", "legend");
 
-      // draw legend colored rectangles
-      legend.append("rect")
-      .attr("x", width + 6)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
+      var gradient = legend.append('defs')
+      .append('linearGradient')
+      .attr('id', 'gradient')
+      .attr('x1', '0%') // bottom
+      .attr('y1', '100%')
+      .attr('x2', '0%') // to top
+      .attr('y2', '0%')
+      .attr('spreadMethod', 'pad');
 
-      // draw legend text
-      legend.append("text")
-      .attr("x", width + 0)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d;});
-    }
+      var pct = linSpace(0, 100, scale.length).map(function(d) {
+        return Math.round(d) + '%';
+      });
+
+      var colourPct = d3.zip(pct, scale);
+      colourPct.forEach(function(d) {
+        gradient.append('stop')
+        .attr('offset', d[0])
+        .attr('stop-color', d[1])
+        .attr('stop-opacity', 1);
+      });
+
+      legend.append('rect')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('width', 18)
+      .attr('height', 150)
+      .attr("transform", "translate(" + 582 + ", 0)")
+      .style('fill', 'url(#gradient)');
+
+      var legendScale = d3.scale.linear()
+      .domain([m1, m2])
+      .range([150, 0]);
+
+      var legendAxis = d3.svg.axis()
+      .scale(legendScale)
+      .orient("right")
+      // .tickValues([m1, m2])
+      .ticks(10);
+
+      legend.append("g")
+      .attr("class", "legend axis")
+      .attr("transform", "translate(" + 600 + ", 0)")
+      .call(legendAxis);
+    } else { // no spectrum
+      console.log(Object);
+      var keys = Object.keys(symbol);
+      let leng = keys.length;
+      if (leng<20 && shaping_column != "Select") {
+        // draw legend
+        // ?? Not sure why, but this legend appears not to show
+        var legend = svg.selectAll(".legend")
+        .data(keys)
+        .enter().append("g");
+        // .attr("class", "legend");
+        // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+        console.log(keys);
+        console.log(shaping_column);
+        console.log(symbol);
+        console.log(symbols);
+        // draw legend colored rectangles
+        legend.append("path")
+            // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
+            .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
+            .attr("x", width + 0)
+            .attr("width", 18)
+            .attr("height", 18)
+            // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+            .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
+        // draw legend text
+        legend.append("text")
+            // .attr("x", 100 + 0)
+            // .attr("y", 4)
+            .attr("dy", ".35em")
+            .style("text-anchor", "begin")
+            .text(function(d) { return d;})
+            .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+      }
+
+      if(len <= 30 && color_column != "Select") {
+
+        // draw legend
+        var legend = svg.selectAll(".legend")
+        .data(color.domain())
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+        // draw legend colored rectangles
+        legend.append("rect")
+        .attr("x", width + 6)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
+
+        // draw legend text
+        legend.append("text")
+        .attr("x", width + 0)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { return d;});
+      }
+    };
   };
   }); // end load data
 } // end highlighting
