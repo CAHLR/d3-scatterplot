@@ -37,6 +37,7 @@ import {
 } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
 import { LegendGenerator } from './modules/legend_generator.js';
+import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
 import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
@@ -350,7 +351,7 @@ let coordinatesy = [];
 // function for plotting
 function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
 
-  let m1, m2, x_max, x_min, y_max, y_min;
+  let x_max, x_min, y_max, y_min, spectrumGenerator;
   var temp1 = [], temp2 = [], temp3 = [];
   var dict1 = {};
 
@@ -401,25 +402,8 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
   // set color according to spectrum
   if (numerics[color_column] && document.getElementById('cbox1').checked) {
     console.log('using spectrum');
-    // take log if log checkbox checked
-    if (document.getElementById('cbox2').checked) {
-      console.log('using log');
-      m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-      m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-    } else{
-      console.log('not using log');
-      m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
-      m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
-    }
-
-    console.log(m1, m2);
-    m1 = Math.max(Number.MIN_VALUE, m1);
-    console.log(m1, m2);
-
-    color = d3.scale.linear()
-    .domain(linSpace(m1, m2,scale.length))
-      //.domain(linSpace(d3.min(data.map(function(d) {return parseInt(d[color_column])})), d3.max(data.map(function(d) {return parseInt(d[color_column])})),scale.length))
-      .range(scale);
+    spectrumGenerator = new SpectrumGenerator(data);
+    color = spectrumGenerator.color;
   } else {
     console.log('not using spectrum');
     color = d3.scale.ordinal().range(d3_category20_shuffled);
@@ -679,19 +663,8 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     // if spectrum
     if (numerics[color_column] && document.getElementById('cbox1').checked) {
 
-      if (document.getElementById('cbox2').checked) {
-        m1 = (d3.min(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-        m2 = (d3.max(data.map(function(d) {return Math.log(parseFloat(d[color_column])); })));
-      } else {
-        m1 = (d3.min(data.map(function(d) {return parseFloat(d[color_column])})));
-        m2 = (d3.max(data.map(function(d) {return parseFloat(d[color_column])})));
-      }
-      console.log(m1, m2);
-      m1 = Math.max(Number.MIN_VALUE, m1);
-      console.log(m1, m2);
-
       var legend = svg.selectAll(".legend")
-      .data(color.domain())
+      .data(spectrumGenerator.color.domain())
       .enter().append("g")
       .attr("class", "legend");
 
@@ -725,7 +698,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       .style('fill', 'url(#gradient)');
 
       var legendScale = d3.scale.linear()
-      .domain([m1, m2])
+      .domain([spectrumGenerator.spectrumMin, spectrumGenerator.spectrumMax])
       .range([150, 0]);
 
       var legendAxis = d3.svg.axis()

@@ -32,14 +32,15 @@ Installation can be done by running `npm install -g webpack` (currently running 
 To start the webpack bundler service, run `npm start`. This command will watch the repo and update the `bundle.js` file to match saved changes.
 
 - Upcoming work:
-[] extract color function from highlight, see whether encapulation of colorValue functions also possible
-[] extract legend drawing functionality from highlight
-[] extract shape drawing from highlight
+	- [] extract color function from highlight, see whether encapulation of colorValue functions also possible
+	- [] extract legend drawing functionality from highlight
+	- [] extract shape drawing from highlight
 
 - TODO next: test extracting highlight function, see what needs to be injected and see whether it's possible at this state
 - TODO: investigate lasso functionality with shapes, seems like they might failing silently;
 - TODO: investigate why legend for shapes isn't always popping up
+- TODO: investigate why lasso with spectrum and Log enabled changes dot fill to dark blue
 - TODO: fix shape by feature functionality once graph is already zoomed
 
-- TODO: write up regression test plan since currently, QA is necessary to test since tool has no tests
+- TODO: write up regression test plan since, currently, QA is necessary to test
 	- Addendum: investigate further writing [automated tests for d3](https://busypeoples.github.io/post/testing-d3-with-jasmine/)
