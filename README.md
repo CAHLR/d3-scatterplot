@@ -41,6 +41,7 @@ To start the webpack bundler service, run `npm start`. This command will watch t
 - TODO: investigate why legend for shapes isn't always popping up
 - TODO: investigate why lasso with spectrum and Log enabled changes dot fill to dark blue
 - TODO: fix shape by feature functionality once graph is already zoomed
+- TODO (maybe): create a service object to act as intermediary (perhaps a "Communicator"? Naming is hard) between options embedded in the DOM and the drawing business logic?
 
 - TODO: write up regression test plan since, currently, QA is necessary to test
 	- Addendum: investigate further writing [automated tests for d3](https://busypeoples.github.io/post/testing-d3-with-jasmine/)
