@@ -36,6 +36,7 @@ import {
   width
 } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
+import { LegendGenerator } from './modules/legend_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
 import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
@@ -773,28 +774,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       }
 
       if(len <= 30 && color_column != "Select") {
-
-        // draw legend
-        var legend = svg.selectAll(".legend")
-        .data(color.domain())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-        // draw legend colored rectangles
-        legend.append("rect")
-        .attr("x", width + 6)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
-
-        // draw legend text
-        legend.append("text")
-        .attr("x", width + 0)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(function(d) { return d;});
+        new LegendGenerator(svg, color).generateDefaultLegend();
       }
     };
   };
