@@ -36,7 +36,7 @@ import {
   width
 } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
-import { LegendGenerator } from './modules/legend_generator.js';
+import { DefaultLegendGenerator, SpectrumLegendGenerator } from './modules/legend_generators.js';
 import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
@@ -363,6 +363,8 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
   d3.select("table").remove();
 
   d3.tsv(dataset, function(error, data) {
+    // AJF Note: it'd be nice to load the data once and then pass the data into the 
+    // highlighting function
     console.log('Loading main data, again') // load data
     // change string (from CSV) into number format
     var numerics = {}, symbol = {};
@@ -375,381 +377,334 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     }
     let counter = 0;
     data.forEach(function(d) {
-    // coerce the data to numbers
-    d.x = +d.x;
-    d["y"] = +d["y"];
+      // coerce the data to numbers
+      d.x = +d.x;
+      d["y"] = +d["y"];
 
-    for(var i=1;i<categories.length;i++){
-      // add every attribute of point to the {category:[val1,val2,...]}
-      dict1[categories[i]].push(d[categories[i]]);
-      // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
-      numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
-    }
-    // fill the symbol dictionary with all possible values of the shaping column as keys
-    // value is the order of points
-    if (!(d[shaping_column] in symbol)) {
-      symbol[d[shaping_column]] = counter;
-      counter = counter + 1;
-    }
-    // push all x values, y values, and all category search values into temp1/2/3
-    temp1.push(d.x);
-    temp2.push(d["y"]);
-    temp3.push(d[category_search]);
-    // console.log(d["z"] == parseInt(d["z"]));
-  });
-  console.log("Numerics: ", numerics);
-  console.log("Color Column: ",color_column);
-  // set color according to spectrum
-  if (numerics[color_column] && document.getElementById('cbox1').checked) {
-    console.log('using spectrum');
-    spectrumGenerator = new SpectrumGenerator(data);
-    color = spectrumGenerator.color;
-  } else {
-    console.log('not using spectrum');
-    color = d3.scale.ordinal().range(d3_category20_shuffled);
-  }
-
-  // don't want dots overlapping axis, so add in buffer to data domain
-  var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
-
-  if (document.getElementById("cbox3").checked==false) {
-    document.getElementById("zoomxy").value = "";
-    zoomed = 0;
-    needZoom = false;
-    x_max = d3.max(data, xValue)+1;
-    x_min = d3.min(data, xValue)-1;
-    y_max = d3.max(data, yValue)+1;
-    y_min = d3.min(data, yValue)-1;
-  }
-
-  // if zoom is checked and conditions are satisfied
-  if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
-
-    x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
-    x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
-    y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
-    y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
-
-    console.log(x_max, x_min, y_max, y_min);
-    document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
-
-    zoomed = 1;
-    needZoom = false;
-          // document.getElementById("cbox3").checked = false;
-          /*
-                    zoom = zoom.substr(1, zoom.length-2);
-                    commaIndex = zoom.indexOf(',');
-                    x_min = parseFloat(zoom.substr(0, commaIndex));
-                    zoom = zoom.substr(commaIndex+1);
-                    commaIndex = zoom.indexOf(',');
-                    x_max = parseFloat(zoom.substr(0, commaIndex));
-                    zoom = zoom.substr(commaIndex+1);
-                    commaIndex = zoom.indexOf(',');
-                    y_min = parseFloat(zoom.substr(0, commaIndex));
-                    y_max = parseFloat(zoom.substr(commaIndex+1));
-                    */
-  }
-  xScale.domain([x_min, x_max]);
-  yScale.domain([y_min, y_max]);
-
-  // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-  // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
-
-
-  // I know it looks ugly injecting so many arguments into the initializer right now,
-  // but at least we're being explicit about dependencies as opposed to
-  // implicit/throwing everything into global state
-  let svgInitializer = new SvgInitializer(color, color_column, x_max, x_min, y_max, y_min, temp1, temp2, categories, dict1, columns);
-  let svg = svgInitializer.initializeWithLasso();
-  let lasso = svgInitializer.lasso;
-
-  // x-axis
-  let cx = 0;
-  let cy = 0;
-  let ans = 0;
-
-  // draw the x-axis of plot
-  svg.append("g")
-  .attr("class", "x axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(xAxis)
-  .append("text")
-  .attr("class", "label")
-  .attr("x", width)
-  .attr("y", -6)
-  .style("text-anchor", "end")
-  .text("");
-
-  // draw the y-axis of plot
-  svg.append("g")
-  .attr("class", "y axis")
-  .call(yAxis)
-  .append("text")
-  .attr("class", "label")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 6)
-  .attr("dy", ".71em")
-  .style("text-anchor", "end")
-  .text("");
-
-  // to identify the condition of transparent column values
-  if (transparent_column !== "Select" && val_transp !== "" && val_opacityNoMatch !== "") {
-    transparent_column = transparent_column.toString();
-    val_transp = val_transp.toString(); // ?? no to lower case here?
-  } else {
-    val_transp = val_transp.toString();
-  }
-
-  // searching according to the substring given and searching column
-
-  var searchFunc1 = function(d) {
-    if (typeof d == 'undefined' ) {
-      return 1;
-    }
-    // noMatch true if not found
-    var noMatch;
-    if (document.getElementById('cbox5').checked) {
-      noMatch = d != val_search;
-    } else {
-      noMatch = d.toLowerCase().indexOf(val_search.toLowerCase()) < 0
-      || val_search.length === 0;
-    }
-    return noMatch ? 1 : 2;
-  };
-
-  var searched_data = [], searched_data_indices = [], d_temp;
-  /* temp3 holds the value of every point for the search column */
-  for (var i=0;i<temp3.length;i++) {
-    // 0 if found val in this point, 1 if not found
-    if ( searchFunc1(temp3[i])-1 ) {
-      d_temp = {};
-      // enter all data into dictionary
-      for(var j=1;j<categories.length;j++) {
-        d_temp[categories[j]] = dict1[categories[j]][i];
+      for(var i=1;i<categories.length;i++){
+        // add every attribute of point to the {category:[val1,val2,...]}
+        dict1[categories[i]].push(d[categories[i]]);
+        // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
+        numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
       }
-      // only add to searched_data if not already in
-      if(searchDic(searched_data, d_temp) === true) {
-        searched_data.push(d_temp);
-        searched_data_indices.push(i);
+      // fill the symbol dictionary with all possible values of the shaping column as keys
+      // value is the order of points
+      if (!(d[shaping_column] in symbol)) {
+        symbol[d[shaping_column]] = counter;
+        counter = counter + 1;
       }
-    }
-  }
-  // create the table
-  if ( val_search != "" && searched_data.length > 0) {
-    var peopleTable1 = tabulate(searched_data, columns);
-    if (queryParams.get('semantic_model') === "true") {
-      console.log("Predicting words...");
-      classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
-      benchmark(searched_data_indices, bow_2darray, vocab_1darray);
-    }
-  };
-
-  // determines the rotation of symbols that can be done
-  
-
-  /*** BEGIN drawing dots ***/
-
-  // shaping of symbols according to the shaping column
-  if (shaping_column !== "Select" ) {
-    // color_column = shaping_column;
-    var points = svg.selectAll(".dot")
-    .data(data)
-    .enter();
-
-    points.append("path")
-    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 1); })
-    .attr("class", "point")
-    .style("stroke", "#000")
-    .style("stroke-width", 1)
-    // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
-    .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
-    .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
-
-    .on("mouseover", function(d) {
-      tooltip.transition()
-      .duration(200)
-      .style("opacity", 1);
-      tooltip.html(
-        printArray(category_search_data, d))
-      .style("left", 60 + "px")
-      .style("top", 30 + "px");
-    })
-    .on("mouseout", function(d) {
-      d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
-      .style("fill", function(d) { return color(cValue(d));});
-      tooltip.transition()
-      .duration(500)
-      .style("opacity", 0);
-    })
-    .on("click", function(d) {
-      svg.append("text")
-      .text(d[feature_column])
-      .attr("x", (d3.event.pageX-50))
-      .attr("y", (d3.event.pageY-35));
+      // push all x values, y values, and all category search values into temp1/2/3
+      temp1.push(d.x);
+      temp2.push(d["y"]);
+      temp3.push(d[category_search]);
+      // console.log(d["z"] == parseInt(d["z"]));
     });
-
-    points.append("path")
-    .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 2); })
-    .attr("class", "point")
-    .style("stroke", "yellow")
-    .style("stroke-width", 2)
-    // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-    .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
-    .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
-    .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-    .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
-
-    .on("mouseover", function(d) {
-      tooltip.transition()
-      .duration(200)
-      .style("opacity", 1);
-      tooltip.html(
-        printArray(category_search_data, d))
-      .style("left", 60 + "px")
-      .style("top", 30 + "px");
-    })
-    .on("mouseout", function(d) {
-      d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
-      .style("fill", function(d) { return color(cValue(d));});
-      tooltip.transition()
-      .duration(500)
-      .style("opacity", 0);
-    })
-    .on("click", function(d) {
-      svg.append("text")
-      .text(d[feature_column])
-      .attr("x", (d3.event.pageX-50))
-      .attr("y", (d3.event.pageY-35));
-    });
-  } else {
-    let dotsArtist = new DotsArtist(
-      svg,
-      data,
-      category_search,
-      category_search_data,
-      val_search,
-      color,
-      cValue2,
-      cValue,
-      val_transp,
-      transparent_column,
-      val_opacityMatch,
-      val_opacityNoMatch
-    )
-    dotsArtist.drawUnmatchedDots();
-    dotsArtist.drawMatchedDots();
-
-    // the event to call on click event
-    svg.on("click",function() {
-      // svg.select("#myText").remove();
-
-      tooltip1.style("opacity", 0);
-      var coordinates1 = d3.mouse(this);
-      coordinatesx.unshift(coordinates1[0]);
-      coordinatesy.unshift(coordinates1[1]);
-      console.log(coordinatesx, coordinatesy);
-    })
-
-    /* can move up into the if/else, but more clear to separate functionality */
-    if (shaping_column !== "Select" ) {
-      lasso.items(d3.selectAll(".dot"));
-    } else {
-      lasso.items(d3.selectAll(".dot"));
-    }
-
-    var len = color.domain().length;
-    // if spectrum
+    console.log("Numerics: ", numerics);
+    console.log("Color Column: ",color_column);
+    // set color according to spectrum
     if (numerics[color_column] && document.getElementById('cbox1').checked) {
+      console.log('using spectrum');
+      spectrumGenerator = new SpectrumGenerator(data);
+      color = spectrumGenerator.color;
+    } else {
+      console.log('not using spectrum');
+      color = d3.scale.ordinal().range(d3_category20_shuffled);
+    }
 
-      var legend = svg.selectAll(".legend")
-      .data(spectrumGenerator.color.domain())
-      .enter().append("g")
-      .attr("class", "legend");
+    // don't want dots overlapping axis, so add in buffer to data domain
+    var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
 
-      var gradient = legend.append('defs')
-      .append('linearGradient')
-      .attr('id', 'gradient')
-      .attr('x1', '0%') // bottom
-      .attr('y1', '100%')
-      .attr('x2', '0%') // to top
-      .attr('y2', '0%')
-      .attr('spreadMethod', 'pad');
+    if (document.getElementById("cbox3").checked==false) {
+      document.getElementById("zoomxy").value = "";
+      zoomed = 0;
+      needZoom = false;
+      x_max = d3.max(data, xValue)+1;
+      x_min = d3.min(data, xValue)-1;
+      y_max = d3.max(data, yValue)+1;
+      y_min = d3.min(data, yValue)-1;
+    }
 
-      var pct = linSpace(0, 100, scale.length).map(function(d) {
-        return Math.round(d) + '%';
-      });
+    // if zoom is checked and conditions are satisfied
+    if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
 
-      var colourPct = d3.zip(pct, scale);
-      colourPct.forEach(function(d) {
-        gradient.append('stop')
-        .attr('offset', d[0])
-        .attr('stop-color', d[1])
-        .attr('stop-opacity', 1);
-      });
+      x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
+      x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
+      y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
+      y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
 
-      legend.append('rect')
-      .attr('x1', 0)
-      .attr('y1', 0)
-      .attr('width', 18)
-      .attr('height', 150)
-      .attr("transform", "translate(" + 582 + ", 0)")
-      .style('fill', 'url(#gradient)');
+      console.log(x_max, x_min, y_max, y_min);
+      document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
 
-      var legendScale = d3.scale.linear()
-      .domain([spectrumGenerator.spectrumMin, spectrumGenerator.spectrumMax])
-      .range([150, 0]);
+      zoomed = 1;
+      needZoom = false;
+            // document.getElementById("cbox3").checked = false;
+            /*
+                      zoom = zoom.substr(1, zoom.length-2);
+                      commaIndex = zoom.indexOf(',');
+                      x_min = parseFloat(zoom.substr(0, commaIndex));
+                      zoom = zoom.substr(commaIndex+1);
+                      commaIndex = zoom.indexOf(',');
+                      x_max = parseFloat(zoom.substr(0, commaIndex));
+                      zoom = zoom.substr(commaIndex+1);
+                      commaIndex = zoom.indexOf(',');
+                      y_min = parseFloat(zoom.substr(0, commaIndex));
+                      y_max = parseFloat(zoom.substr(commaIndex+1));
+                      */
+    }
+    xScale.domain([x_min, x_max]);
+    yScale.domain([y_min, y_max]);
 
-      var legendAxis = d3.svg.axis()
-      .scale(legendScale)
-      .orient("right")
-      // .tickValues([m1, m2])
-      .ticks(10);
+    // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+    // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
 
-      legend.append("g")
-      .attr("class", "legend axis")
-      .attr("transform", "translate(" + 600 + ", 0)")
-      .call(legendAxis);
-    } else { // no spectrum
-      console.log(Object);
-      var keys = Object.keys(symbol);
-      let leng = keys.length;
-      if (leng<20 && shaping_column != "Select") {
-        // draw legend
-        // ?? Not sure why, but this legend appears not to show
-        var legend = svg.selectAll(".legend")
-        .data(keys)
-        .enter().append("g");
-        // .attr("class", "legend");
-        // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-        console.log(keys);
-        console.log(shaping_column);
-        console.log(symbol);
-        console.log(symbols);
-        // draw legend colored rectangles
-        legend.append("path")
-            // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-            .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-            .attr("x", width + 0)
-            .attr("width", 18)
-            .attr("height", 18)
-            // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-            .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-        // draw legend text
-        legend.append("text")
-            // .attr("x", 100 + 0)
-            // .attr("y", 4)
-            .attr("dy", ".35em")
-            .style("text-anchor", "begin")
-            .text(function(d) { return d;})
-            .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+
+    // I know it looks ugly injecting so many arguments into the initializer right now,
+    // but at least we're being explicit about dependencies as opposed to
+    // implicit/throwing everything into global state
+    let svgInitializer = new SvgInitializer(color, color_column, x_max, x_min, y_max, y_min, temp1, temp2, categories, dict1, columns);
+    let svg = svgInitializer.initializeWithLasso();
+    let lasso = svgInitializer.lasso;
+
+    // x-axis
+    let cx = 0;
+    let cy = 0;
+    let ans = 0;
+
+    // draw the x-axis of plot
+    svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+    .append("text")
+    .attr("class", "label")
+    .attr("x", width)
+    .attr("y", -6)
+    .style("text-anchor", "end")
+    .text("");
+
+    // draw the y-axis of plot
+    svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+    .append("text")
+    .attr("class", "label")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("");
+
+    // to identify the condition of transparent column values
+    if (transparent_column !== "Select" && val_transp !== "" && val_opacityNoMatch !== "") {
+      transparent_column = transparent_column.toString();
+      val_transp = val_transp.toString(); // ?? no to lower case here?
+    } else {
+      val_transp = val_transp.toString();
+    }
+
+    // searching according to the substring given and searching column
+
+    var searchFunc1 = function(d) {
+      if (typeof d == 'undefined' ) {
+        return 1;
       }
+      // noMatch true if not found
+      var noMatch;
+      if (document.getElementById('cbox5').checked) {
+        noMatch = d != val_search;
+      } else {
+        noMatch = d.toLowerCase().indexOf(val_search.toLowerCase()) < 0
+        || val_search.length === 0;
+      }
+      return noMatch ? 1 : 2;
+    };
 
-      if(len <= 30 && color_column != "Select") {
-        new LegendGenerator(svg, color).generateDefaultLegend();
+    var searched_data = [], searched_data_indices = [], d_temp;
+    /* temp3 holds the value of every point for the search column */
+    for (var i=0;i<temp3.length;i++) {
+      // 0 if found val in this point, 1 if not found
+      if ( searchFunc1(temp3[i])-1 ) {
+        d_temp = {};
+        // enter all data into dictionary
+        for(var j=1;j<categories.length;j++) {
+          d_temp[categories[j]] = dict1[categories[j]][i];
+        }
+        // only add to searched_data if not already in
+        if(searchDic(searched_data, d_temp) === true) {
+          searched_data.push(d_temp);
+          searched_data_indices.push(i);
+        }
+      }
+    }
+    // create the table
+    if ( val_search != "" && searched_data.length > 0) {
+      var peopleTable1 = tabulate(searched_data, columns);
+      if (queryParams.get('semantic_model') === "true") {
+        console.log("Predicting words...");
+        classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
+        benchmark(searched_data_indices, bow_2darray, vocab_1darray);
       }
     };
-  };
+
+    // determines the rotation of symbols that can be done
+    
+
+    /*** BEGIN drawing dots ***/
+
+    // shaping of symbols according to the shaping column
+    if (shaping_column !== "Select" ) {
+      // color_column = shaping_column;
+      var points = svg.selectAll(".dot")
+      .data(data)
+      .enter();
+
+      points.append("path")
+      .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 1); })
+      .attr("class", "point")
+      .style("stroke", "#000")
+      .style("stroke-width", 1)
+      // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
+      .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
+      .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
+      .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+      .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
+
+      .on("mouseover", function(d) {
+        tooltip.transition()
+        .duration(200)
+        .style("opacity", 1);
+        tooltip.html(
+          printArray(category_search_data, d))
+        .style("left", 60 + "px")
+        .style("top", 30 + "px");
+      })
+      .on("mouseout", function(d) {
+        d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
+        .style("fill", function(d) { return color(cValue(d));});
+        tooltip.transition()
+        .duration(500)
+        .style("opacity", 0);
+      })
+      .on("click", function(d) {
+        svg.append("text")
+        .text(d[feature_column])
+        .attr("x", (d3.event.pageX-50))
+        .attr("y", (d3.event.pageY-35));
+      });
+
+      points.append("path")
+      .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 2); })
+      .attr("class", "point")
+      .style("stroke", "yellow")
+      .style("stroke-width", 2)
+      // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
+      .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
+      .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
+      .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
+      .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
+
+      .on("mouseover", function(d) {
+        tooltip.transition()
+        .duration(200)
+        .style("opacity", 1);
+        tooltip.html(
+          printArray(category_search_data, d))
+        .style("left", 60 + "px")
+        .style("top", 30 + "px");
+      })
+      .on("mouseout", function(d) {
+        d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
+        .style("fill", function(d) { return color(cValue(d));});
+        tooltip.transition()
+        .duration(500)
+        .style("opacity", 0);
+      })
+      .on("click", function(d) {
+        svg.append("text")
+        .text(d[feature_column])
+        .attr("x", (d3.event.pageX-50))
+        .attr("y", (d3.event.pageY-35));
+      });
+    } else {
+      let dotsArtist = new DotsArtist(
+        svg,
+        data,
+        category_search,
+        category_search_data,
+        val_search,
+        color,
+        cValue2,
+        cValue,
+        val_transp,
+        transparent_column,
+        val_opacityMatch,
+        val_opacityNoMatch
+      )
+      dotsArtist.drawUnmatchedDots();
+      dotsArtist.drawMatchedDots();
+
+      // the event to call on click event
+      svg.on("click",function() {
+        // svg.select("#myText").remove();
+
+        tooltip1.style("opacity", 0);
+        var coordinates1 = d3.mouse(this);
+        coordinatesx.unshift(coordinates1[0]);
+        coordinatesy.unshift(coordinates1[1]);
+        console.log(coordinatesx, coordinatesy);
+      })
+
+      /* can move up into the if/else, but more clear to separate functionality */
+      if (shaping_column !== "Select" ) {
+        lasso.items(d3.selectAll(".dot"));
+      } else {
+        lasso.items(d3.selectAll(".dot"));
+      }
+
+      var len = color.domain().length;
+      // if spectrum
+      if (numerics[color_column] && document.getElementById('cbox1').checked) {
+        new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
+      } else { // no spectrum
+        // Shaping legend
+        console.log(Object);
+        var keys = Object.keys(symbol);
+        let leng = keys.length;
+        if (leng<20 && shaping_column != "Select") {
+          // draw legend
+          // ?? Not sure why, but this legend appears not to show
+          var legend = svg.selectAll(".legend")
+          .data(keys)
+          .enter().append("g");
+          // .attr("class", "legend");
+          // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+          console.log(keys);
+          console.log(shaping_column);
+          console.log(symbol);
+          console.log(symbols);
+          // draw legend colored rectangles
+          legend.append("path")
+              // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
+              .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
+              .attr("x", width + 0)
+              .attr("width", 18)
+              .attr("height", 18)
+              // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+              .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
+          // draw legend text
+          legend.append("text")
+              // .attr("x", 100 + 0)
+              // .attr("y", 4)
+              .attr("dy", ".35em")
+              .style("text-anchor", "begin")
+              .text(function(d) { return d;})
+              .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+        }
+
+        if(len <= 30 && color_column != "Select") {
+          new LegendGenerator(svg, color).generate();
+        }
+      };
+    };
   }); // end load data
 } // end highlighting
