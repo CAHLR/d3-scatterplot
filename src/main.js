@@ -668,7 +668,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       } else { // no spectrum
         // Shaping legend
         console.log(Object);
-        var keys = Object.keys(symbol);
+        var keys = Object.keys(symbols);
         let leng = keys.length;
         if (leng<20 && shaping_column != "Select") {
           // draw legend
@@ -702,7 +702,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
         }
 
         if(len <= 30 && color_column != "Select") {
-          new LegendGenerator(svg, color).generate();
+          new DefaultLegendGenerator(svg, color).generate();
         }
       };
     };
