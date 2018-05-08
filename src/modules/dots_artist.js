@@ -7,82 +7,87 @@ import {
 } from './utilities';
 import { tooltip } from './tooltips';
 
-export function DotsArtist (svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch) {
-  this.marked = {}; // store X,Y coordinates of data points that have been clicked;
-  this.points = svg.selectAll(".dot").data(data).enter();
-
-  // ******************************************
-  // Utility Functions
-  // ******************************************
-  this.matchedDots = (categorySearch, valSearch, match) => {
-    if (match) {
-      return (dot) => {
-        return dotSearchFilter(dot, categorySearch, valSearch) === 2;
-      }
+// ******************************************
+// Utility Functions (probably will want to extract soon, maybe to utilities)
+// ******************************************
+let matchedData = (categorySearch, valSearch, match) => {
+  if (match) {
+    return (dataPoint) => {
+      return dotSearchFilter(dataPoint, categorySearch, valSearch) === 2;
     }
-    return (dot) => {
-      return dotSearchFilter(dot, categorySearch, valSearch) === 1;
+  }
+  return (dataPoint) => {
+    return dotSearchFilter(dataPoint, categorySearch, valSearch) === 1;
+  }
+};
+
+function PlotCallbackHelper(svg) {
+  this.marked = {}; // store X,Y coordinates of data points that have been clicked;
+
+  let desensitizeClickArea = () => {
+    this.marked[[d3.event.pageX, d3.event.pageY]] = true;
+    for (let i = 1; i < 4; i++) {
+      this.marked[[d3.event.pageX - i, d3.event.pageY - i]] = true;
+      this.marked[[d3.event.pageX + i, d3.event.pageY + i]] = true;
+      this.marked[[d3.event.pageX - i, d3.event.pageY + i]] = true;
+      this.marked[[d3.event.pageX + i, d3.event.pageY - i]] = true;
     }
   };
 
-  let mouseoverCallback = (categorySearchData) => {
-    return (dot) => {
+  this.clickCallback = (categorySearchData) => {
+    return (dataPoint) => {
+      let featureColumn = document.getElementsByClassName('click-on-feature')[0].value;
+      if (!([d3.event.pageX, d3.event.pageY] in this.marked)) {
+        desensitizeClickArea();
+        svg.append("text")
+           .text(dataPoint[featureColumn])
+           .attr("x", (d3.event.pageX - 50))
+           .attr("y", (d3.event.pageY - 35));
+      }
+    }
+  };
+
+  this.mouseoverCallback = (categorySearchData) => {
+    return (dataPoint) => {
       tooltip.transition()
              .duration(200)
              .style("opacity", 1);
-      tooltip.html(printArray(categorySearchData, dot))
+      tooltip.html(printArray(categorySearchData, dataPoint))
              .style("left", "60px")
              .style("top", "30px");
     };
   };
 
-  let mouseoutCallback = (dot) => {
+  this.mouseoutCallback = (dataPoint) => {
     tooltip.transition()
            .duration(500)
            .style("opacity", 0);
   };
+};
 
-  let clickCallback = () => {
-    let desensitizeClickArea = () => {
-      this.marked[[d3.event.pageX, d3.event.pageY]] = true;
-      for (let i = 1; i < 4; i++) {
-        this.marked[[d3.event.pageX - i, d3.event.pageY - i]] = true;
-        this.marked[[d3.event.pageX + i, d3.event.pageY + i]] = true;
-        this.marked[[d3.event.pageX - i, d3.event.pageY + i]] = true;
-        this.marked[[d3.event.pageX + i, d3.event.pageY - i]] = true;
-      }
-    };
+export function DotsArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
+  this.points = svg.selectAll(".dot").data(data).enter();
 
-    return (dot) => {
-      let featureColumn = document.getElementsByClassName('click-on-feature')[0].value;
-      if (!([d3.event.pageX, d3.event.pageY] in this.marked)) {
-        desensitizeClickArea();
-        svg.append("text")
-           .text(dot[featureColumn])
-           .attr("x", (d3.event.pageX - 50))
-           .attr("y", (d3.event.pageY - 35))
-           .on("mouseover", mouseoverCallback(categorySearchData))
-           .on("mouseout", mouseoutCallback)
-           .on("click", clickCallback)
-      }
+  let fill = (dot) => {
+    if (document.getElementsByClassName('log-spectrum-checkbox')[0].checked) {
+      return color(cValue2(dot));
     }
+    return color(cValue(dot));
+  };
+
+  let opacity = (dot) => {
+    return transpar(dot, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch)
   };
 
   let drawDots = (dots, attributes) => {
-    let fill = (dot) => {
-      if (document.getElementById('cbox2').checked) return color(cValue2(dot));
-      return color(cValue(dot));
-    };
-    let opacity = (dot) => {
-      return transpar(dot, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch)
-    };
+    let callbackHelper = new PlotCallbackHelper(svg);
     // consistent attributes
     dots.attr('class', 'dot')
         .attr("cx", xMap)
         .attr("cy", yMap)
-        .on("mouseover", mouseoverCallback(categorySearchData))
-        .on("mouseout", mouseoutCallback)
-        .on("click", clickCallback())
+        .on("mouseover", callbackHelper.mouseoverCallback(categorySearchData))
+        .on("mouseout", callbackHelper.mouseoutCallback)
+        .on("click", callbackHelper.clickCallback(categorySearchData))
         .style('fill', fill)
         .style('opacity', opacity)
 
@@ -114,14 +119,14 @@ export function DotsArtist (svg, data, categorySearch, categorySearchData, valSe
   this.drawUnmatchedDots = () => {
     let unmatchedDots = this.points
                             .append("circle")
-                            .filter(this.matchedDots(categorySearch, valSearch, false));
+                            .filter(matchedData(categorySearch, valSearch, false));
     drawDots(unmatchedDots, unmatchedDotsAttributes);
   };
 
   this.drawMatchedDots = () => {
     let matchedDots = this.points
                           .append('circle')
-                          .filter(this.matchedDots(categorySearch, valSearch, true));
+                          .filter(matchedData(categorySearch, valSearch, true));
    drawDots(matchedDots, matchedDotsAttributes);
   };
 };

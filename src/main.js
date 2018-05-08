@@ -9,12 +9,12 @@
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip, tooltip1 } from './modules/tooltips.js';
 import {
+  dotSearchFilter,
   getParameterByName,
   linSpace,
   printArray,
   queryParams,
   searchDic,
-  dotSearchFilter,
   transpar,
   xAxis,
   xMap,
@@ -627,18 +627,20 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       });
     } else {
       let dotsArtist = new DotsArtist(
-        svg,
-        data,
-        category_search,
-        category_search_data,
-        val_search,
-        color,
-        cValue2,
-        cValue,
-        val_transp,
-        transparent_column,
-        val_opacityMatch,
-        val_opacityNoMatch
+        {
+          svg: svg,
+          data: data,
+          categorySearch: category_search,
+          categorySearchData: category_search_data,
+          valSearch: val_search,
+          color: color,
+          cValue2: cValue2,
+          cValue: cValue,
+          valTransp: val_transp,
+          transparentColumn: transparent_column,
+          valOpacityMatch: val_opacityMatch,
+          valOpacityNoMatch: val_opacityNoMatch
+        }
       )
       dotsArtist.drawUnmatchedDots();
       dotsArtist.drawMatchedDots();
