@@ -32,6 +32,7 @@ export function DefaultLegendGenerator(svg, color) {
   };
 
   this.generate = () => {
+    if (color.domain().length > 30) { return }
     let legendRows = createLegendRows();
     drawLegendText(legendRows);
     drawColoredRectangles(legendRows);

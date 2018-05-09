@@ -597,11 +597,11 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     })
 
 
-    // if spectrum
-    if (numerics[color_column] && document.getElementById('cbox1').checked) {
-      new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
-    } else { // no spectrum
-      if(color.domain().length <= 30 && color_column != "Select") {
+    // if coloring
+    if (color_column !== "Select") {
+      if (numerics[color_column] && document.getElementById('cbox1').checked) {
+        new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
+      } else {
         new DefaultLegendGenerator(svg, color).generate();
       }
     };
