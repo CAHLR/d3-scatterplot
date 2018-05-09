@@ -7,18 +7,9 @@ import {
   yMap
 } from './utilities';
 
-export function ShapesArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, symbol, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
+export function ShapesArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, uniqueDataValuesToShape, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
   this.points = svg.selectAll(".dot").data(data).enter();
-  let featureToShape = document.getElementsByClassName('shape-by-feature')[0].value;
-
-  // what really is symbol? an Object containing unique values for which to create shapes
-  // keys of the Object are unique values of the feature to be shaped and the 
-  // values of the Object are the count of the unique elements
-  // 
-  // same thing could probably be accomplished with an array -->
-  // keys would be the elements, values would be the index position
-  const uniqueDataValuesToShape = symbol; // local rename before global rename
-  this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape, featureToShape)
+  this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
 
   // ******************************************
   // Static Shape Attributes

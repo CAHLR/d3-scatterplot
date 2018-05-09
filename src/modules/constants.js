@@ -41,4 +41,4 @@ sizes[2] = ["0", "90", "0", "0"];
 sizes[3] = ["0", "45", "0", "0"];
 sizes[4] = ["0", "90", "0", "0"];
 sizes[5] = ["0", "0", "0", "0"];
-export const symbols = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
+export const availableShapes = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];

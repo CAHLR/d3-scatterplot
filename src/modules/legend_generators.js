@@ -1,5 +1,6 @@
 import { scale, width } from './constants.js';
 import { linSpace } from './utilities';
+import { ShapeGenerator } from './shape_generator.js';
 
 export function DefaultLegendGenerator(svg, color) {
   this.uniqueElements = color.domain();
@@ -110,5 +111,46 @@ export function SpectrumLegendGenerator(svg, spectrumGenerator) {
     setGradientColorTransitions(gradient);
     drawGradientBox(legend);
     drawLegendAxis(legend);
+  };
+};
+
+export function ShapeLegendGenerator(uniqueDataValuesToShape) {
+  this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
+
+  let generateLegendRows = (svg) => {
+    return svg.selectAll(".shape-legend")
+              .data(uniqueDataValuesToShape)
+              .enter()
+              .append("g")
+              .attr('class', 'shape-legend');
+  };
+
+  let generateLegendLabels = (legendRows) => {
+    legendRows.append("text")
+              .attr("dy", ".35em")
+              .attr('transform', (el, index) => (`translate(30,${index * 20})`))
+              .style("text-anchor", "begin")
+              .text((element) => (element))
+              .attr('class', 'shape-label');
+  };
+
+  let generateLegendSymbols = (legendRows) => {
+    legendRows.append('path')
+              .attr('d', d3.svg.symbol().type(this.shapeGenerator.shapeType))
+              .attr('x', width)
+              .attr('width', 18)
+              .attr('height', 18)
+              .attr('class', 'shape-symbol')
+              .attr('transform', (el, index) => {
+                return `translate(20,${index * 20}) rotate(${this.shapeGenerator.shapeRotation(el)})`
+              });
+  };
+
+  this.generate = (svg) => {
+    let uniqueShapeCount = uniqueDataValuesToShape.length;
+    if (uniqueShapeCount >= 20) { return };
+    let legend = generateLegendRows(svg);
+    generateLegendSymbols(legend);
+    generateLegendLabels(legend);
   };
 };

@@ -7,41 +7,33 @@
 // dependency injection, we can start to implement stronger encapsulation and message passing
 
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
-import { tooltip, tooltip1 } from './modules/tooltips.js';
+import { tooltip1 } from './modules/tooltips.js';
 import {
-  dotSearchFilter,
   getParameterByName,
-  linSpace,
-  printArray,
   queryParams,
   searchDic,
-  transpar,
   xAxis,
-  xMap,
   xScale,
   xValue,
   yAxis,
-  yMap,
   yScale,
   yValue
 } from './modules/utilities.js';
 import {
   d3_category20_shuffled,
   height,
-  margin,
-  scale,
-  scale_d,
-  sizes,
-  symbols,
   width
 } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
 import { ShapesArtist } from './modules/shapes_artist.js';
-import { DefaultLegendGenerator, SpectrumLegendGenerator } from './modules/legend_generators.js';
+import {
+  DefaultLegendGenerator,
+  SpectrumLegendGenerator,
+  ShapeLegendGenerator
+} from './modules/legend_generators.js';
 import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
-import { URLSearchParamsPolyfill } from './vendors/url_search_params_polyfill.js';
 
 // *******************************************
 // Begin Script
@@ -351,6 +343,7 @@ let coordinatesy = [];
 
 // function for plotting
 function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
+  let uniqueDataValuesToShape = [];
 
   let x_max, x_min, y_max, y_min, spectrumGenerator;
   var temp1 = [], temp2 = [], temp3 = [];
@@ -368,7 +361,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     // highlighting function
     console.log('Loading main data, again') // load data
     // change string (from CSV) into number format
-    var numerics = {}, symbol = {};
+    var numerics = {};
     //Omitting Select (0)
     for(var i=1;i<categories.length;i++) {
       // initialize the value for each category key to empty list
@@ -390,9 +383,8 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       }
       // fill the symbol dictionary with all possible values of the shaping column as keys
       // value is the order of points
-      if (!(d[shaping_column] in symbol)) {
-        symbol[d[shaping_column]] = counter;
-        counter = counter + 1;
+      if (uniqueDataValuesToShape.indexOf(d[shaping_column]) === -1) {
+        uniqueDataValuesToShape.push(d[shaping_column]);
       }
       // push all x values, y values, and all category search values into temp1/2/3
       temp1.push(d.x);
@@ -548,7 +540,6 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     };
 
     /*** BEGIN drawing dots ***/
-
     // shaping of symbols according to the shaping column
     if (shaping_column !== "Select" ) {
       let shapesArtist = new ShapesArtist(
@@ -557,7 +548,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
           data: data,
           categorySearch: category_search,
           categorySearchData: category_search_data,
-          symbol: symbol,
+          uniqueDataValuesToShape: uniqueDataValuesToShape,
           valSearch: val_search,
           color: color,
           cValue2: cValue2,
@@ -571,6 +562,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       shapesArtist.drawUnmatchedShapes();
       shapesArtist.drawMatchedShapes();
       lasso.items(d3.selectAll(".dot"));
+      new ShapeLegendGenerator(uniqueDataValuesToShape).generate(svg);
     } else {
       let dotsArtist = new DotsArtist(
         {
@@ -605,47 +597,11 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     })
 
 
-    var len = color.domain().length;
     // if spectrum
     if (numerics[color_column] && document.getElementById('cbox1').checked) {
       new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
     } else { // no spectrum
-      // Shaping legend
-      console.log(Object);
-      var keys = Object.keys(symbols);
-      let leng = keys.length;
-      if (leng<20 && shaping_column != "Select") {
-        // draw legend
-        // ?? Not sure why, but this legend appears not to show
-        var legend = svg.selectAll(".legend")
-        .data(keys)
-        .enter().append("g");
-        // .attr("class", "legend");
-        // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-        console.log(keys);
-        console.log(shaping_column);
-        console.log(symbol);
-        console.log(symbols);
-        // draw legend colored rectangles
-        legend.append("path")
-            // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-            .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-            .attr("x", width + 0)
-            .attr("width", 18)
-            .attr("height", 18)
-            // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-            .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-        // draw legend text
-        legend.append("text")
-            // .attr("x", 100 + 0)
-            // .attr("y", 4)
-            .attr("dy", ".35em")
-            .style("text-anchor", "begin")
-            .text(function(d) { return d;})
-            .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-      }
-
-      if(len <= 30 && color_column != "Select") {
+      if(color.domain().length <= 30 && color_column != "Select") {
         new DefaultLegendGenerator(svg, color).generate();
       }
     };
