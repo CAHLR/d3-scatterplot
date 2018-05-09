@@ -36,6 +36,7 @@ import {
   width
 } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
+import { ShapesArtist } from './modules/shapes_artist.js';
 import { DefaultLegendGenerator, SpectrumLegendGenerator } from './modules/legend_generators.js';
 import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
@@ -546,85 +547,30 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       }
     };
 
-    // determines the rotation of symbols that can be done
-    
-
     /*** BEGIN drawing dots ***/
 
     // shaping of symbols according to the shaping column
     if (shaping_column !== "Select" ) {
-      // color_column = shaping_column;
-      var points = svg.selectAll(".dot")
-      .data(data)
-      .enter();
-
-      points.append("path")
-      .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 1); })
-      .attr("class", "point")
-      .style("stroke", "#000")
-      .style("stroke-width", 1)
-      // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-      .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
-      .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
-      .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-      .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
-
-      .on("mouseover", function(d) {
-        tooltip.transition()
-        .duration(200)
-        .style("opacity", 1);
-        tooltip.html(
-          printArray(category_search_data, d))
-        .style("left", 60 + "px")
-        .style("top", 30 + "px");
-      })
-      .on("mouseout", function(d) {
-        d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
-        .style("fill", function(d) { return color(cValue(d));});
-        tooltip.transition()
-        .duration(500)
-        .style("opacity", 0);
-      })
-      .on("click", function(d) {
-        svg.append("text")
-        .text(d[feature_column])
-        .attr("x", (d3.event.pageX-50))
-        .attr("y", (d3.event.pageY-35));
-      });
-
-      points.append("path")
-      .filter(function(d){ return (dotSearchFilter(d, category_search, val_search) == 2); })
-      .attr("class", "point")
-      .style("stroke", "yellow")
-      .style("stroke-width", 2)
-      // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size( function(d) {return sizes[parseInt(symbol[d[shaping_column]]/6)%4];}))
-      .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d[shaping_column]]%6];}).size(function(d) {return dotSearchFilter(d, category_search, val_search)-1 ? 180:30;}))
-      .attr("transform", function(d) { return "translate(" + xMap(d) + "," + yMap(d) + ") rotate(" + sizes[parseInt(symbol[d[shaping_column]]%6)][parseInt(symbol[d[shaping_column]]/6)%4] + ")"; })
-      .style("fill", function(d) { return document.getElementById('cbox2').checked ? color(cValue2(d)) : color(cValue(d));})
-      .style("opacity",function(d) { return transpar(d, val_transp, transparent_column, val_opacityMatch, val_opacityNoMatch);})
-
-      .on("mouseover", function(d) {
-        tooltip.transition()
-        .duration(200)
-        .style("opacity", 1);
-        tooltip.html(
-          printArray(category_search_data, d))
-        .style("left", 60 + "px")
-        .style("top", 30 + "px");
-      })
-      .on("mouseout", function(d) {
-        d3.select(this).attr("r", function(d){ return dotSearchFilter(d, category_search, val_search)-1 ? 7:3 ; })
-        .style("fill", function(d) { return color(cValue(d));});
-        tooltip.transition()
-        .duration(500)
-        .style("opacity", 0);
-      })
-      .on("click", function(d) {
-        svg.append("text")
-        .text(d[feature_column])
-        .attr("x", (d3.event.pageX-50))
-        .attr("y", (d3.event.pageY-35));
-      });
+      let shapesArtist = new ShapesArtist(
+        {
+          svg: svg,
+          data: data,
+          categorySearch: category_search,
+          categorySearchData: category_search_data,
+          symbol: symbol,
+          valSearch: val_search,
+          color: color,
+          cValue2: cValue2,
+          cValue: cValue,
+          valTransp: val_transp,
+          transparentColumn: transparent_column,
+          valOpacityMatch: val_opacityMatch,
+          valOpacityNoMatch: val_opacityNoMatch
+        }
+      )
+      shapesArtist.drawUnmatchedShapes();
+      shapesArtist.drawMatchedShapes();
+      lasso.items(d3.selectAll(".dot"));
     } else {
       let dotsArtist = new DotsArtist(
         {
@@ -644,69 +590,64 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       )
       dotsArtist.drawUnmatchedDots();
       dotsArtist.drawMatchedDots();
+      lasso.items(d3.selectAll(".dot"));
+    }
 
-      // the event to call on click event
-      svg.on("click",function() {
-        // svg.select("#myText").remove();
+    // the event to call on click event
+    svg.on("click",function() {
+      // svg.select("#myText").remove();
 
-        tooltip1.style("opacity", 0);
-        var coordinates1 = d3.mouse(this);
-        coordinatesx.unshift(coordinates1[0]);
-        coordinatesy.unshift(coordinates1[1]);
-        console.log(coordinatesx, coordinatesy);
-      })
+      tooltip1.style("opacity", 0);
+      var coordinates1 = d3.mouse(this);
+      coordinatesx.unshift(coordinates1[0]);
+      coordinatesy.unshift(coordinates1[1]);
+      console.log(coordinatesx, coordinatesy);
+    })
 
-      /* can move up into the if/else, but more clear to separate functionality */
-      if (shaping_column !== "Select" ) {
-        lasso.items(d3.selectAll(".dot"));
-      } else {
-        lasso.items(d3.selectAll(".dot"));
+
+    var len = color.domain().length;
+    // if spectrum
+    if (numerics[color_column] && document.getElementById('cbox1').checked) {
+      new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
+    } else { // no spectrum
+      // Shaping legend
+      console.log(Object);
+      var keys = Object.keys(symbols);
+      let leng = keys.length;
+      if (leng<20 && shaping_column != "Select") {
+        // draw legend
+        // ?? Not sure why, but this legend appears not to show
+        var legend = svg.selectAll(".legend")
+        .data(keys)
+        .enter().append("g");
+        // .attr("class", "legend");
+        // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
+        console.log(keys);
+        console.log(shaping_column);
+        console.log(symbol);
+        console.log(symbols);
+        // draw legend colored rectangles
+        legend.append("path")
+            // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
+            .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
+            .attr("x", width + 0)
+            .attr("width", 18)
+            .attr("height", 18)
+            // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
+            .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
+        // draw legend text
+        legend.append("text")
+            // .attr("x", 100 + 0)
+            // .attr("y", 4)
+            .attr("dy", ".35em")
+            .style("text-anchor", "begin")
+            .text(function(d) { return d;})
+            .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
       }
 
-      var len = color.domain().length;
-      // if spectrum
-      if (numerics[color_column] && document.getElementById('cbox1').checked) {
-        new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
-      } else { // no spectrum
-        // Shaping legend
-        console.log(Object);
-        var keys = Object.keys(symbols);
-        let leng = keys.length;
-        if (leng<20 && shaping_column != "Select") {
-          // draw legend
-          // ?? Not sure why, but this legend appears not to show
-          var legend = svg.selectAll(".legend")
-          .data(keys)
-          .enter().append("g");
-          // .attr("class", "legend");
-          // .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-          console.log(keys);
-          console.log(shaping_column);
-          console.log(symbol);
-          console.log(symbols);
-          // draw legend colored rectangles
-          legend.append("path")
-              // .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}).size(function(d) {return sizes[parseInt(symbol[d]/6)%3];}))
-              .attr("d", d3.svg.symbol().type(function(d) {return symbols[symbol[d]%6];}))
-              .attr("x", width + 0)
-              .attr("width", 18)
-              .attr("height", 18)
-              // .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ")"; });
-              .attr("transform", function(d, i) { return "translate(" + 20 + "," + i*20 + ") rotate(" + sizes[parseInt(symbol[d]%6)][parseInt(symbol[d]/6)%4] + ")"; });
-          // draw legend text
-          legend.append("text")
-              // .attr("x", 100 + 0)
-              // .attr("y", 4)
-              .attr("dy", ".35em")
-              .style("text-anchor", "begin")
-              .text(function(d) { return d;})
-              .attr("transform", function(d, i) { return "translate(30," + i * 20 + ")"; });
-        }
-
-        if(len <= 30 && color_column != "Select") {
-          new DefaultLegendGenerator(svg, color).generate();
-        }
-      };
+      if(len <= 30 && color_column != "Select") {
+        new DefaultLegendGenerator(svg, color).generate();
+      }
     };
   }); // end load data
 } // end highlighting

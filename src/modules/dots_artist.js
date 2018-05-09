@@ -1,69 +1,11 @@
 import {
-  dotSearchFilter,
-  printArray,
+  matchedData,
   transpar,
   xMap,
   yMap
 } from './utilities';
-import { tooltip } from './tooltips';
+import { PlotCallbackHelper } from './plot_callback_helper.js';
 
-// ******************************************
-// Utility Functions (probably will want to extract soon, maybe to utilities)
-// ******************************************
-let matchedData = (categorySearch, valSearch, match) => {
-  if (match) {
-    return (dataPoint) => {
-      return dotSearchFilter(dataPoint, categorySearch, valSearch) === 2;
-    }
-  }
-  return (dataPoint) => {
-    return dotSearchFilter(dataPoint, categorySearch, valSearch) === 1;
-  }
-};
-
-function PlotCallbackHelper(svg) {
-  this.marked = {}; // store X,Y coordinates of data points that have been clicked;
-
-  let desensitizeClickArea = () => {
-    this.marked[[d3.event.pageX, d3.event.pageY]] = true;
-    for (let i = 1; i < 4; i++) {
-      this.marked[[d3.event.pageX - i, d3.event.pageY - i]] = true;
-      this.marked[[d3.event.pageX + i, d3.event.pageY + i]] = true;
-      this.marked[[d3.event.pageX - i, d3.event.pageY + i]] = true;
-      this.marked[[d3.event.pageX + i, d3.event.pageY - i]] = true;
-    }
-  };
-
-  this.clickCallback = (categorySearchData) => {
-    return (dataPoint) => {
-      let featureColumn = document.getElementsByClassName('click-on-feature')[0].value;
-      if (!([d3.event.pageX, d3.event.pageY] in this.marked)) {
-        desensitizeClickArea();
-        svg.append("text")
-           .text(dataPoint[featureColumn])
-           .attr("x", (d3.event.pageX - 50))
-           .attr("y", (d3.event.pageY - 35));
-      }
-    }
-  };
-
-  this.mouseoverCallback = (categorySearchData) => {
-    return (dataPoint) => {
-      tooltip.transition()
-             .duration(200)
-             .style("opacity", 1);
-      tooltip.html(printArray(categorySearchData, dataPoint))
-             .style("left", "60px")
-             .style("top", "30px");
-    };
-  };
-
-  this.mouseoutCallback = (dataPoint) => {
-    tooltip.transition()
-           .duration(500)
-           .style("opacity", 0);
-  };
-};
 
 export function DotsArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
   this.points = svg.selectAll(".dot").data(data).enter();
@@ -98,7 +40,7 @@ export function DotsArtist ({svg, data, categorySearch, categorySearchData, valS
   };
 
   // ******************************************
-  // Dot Attributes
+  // Static Dot Attributes
   // ******************************************
   let unmatchedDotsAttributes = {
     radiusSize: 3,

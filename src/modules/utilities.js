@@ -10,6 +10,7 @@ export const queryParams = (() => {
   };
 })();
 
+
 // used to search a particular substring in the list of requested feature column
 // used to determine whether we should add allValues to selectedData, hence the t/f -> f/t
 export function searchDic(selectedData, allValues) {
@@ -61,6 +62,17 @@ export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, va
   })(dot, transparentColumn, valTransp);
 
   return isMatch ? parseFloat(valOpacityMatch) : parseFloat(valOpacityNoMatch);
+};
+
+export function matchedData (categorySearch, valSearch, match) {
+  if (match) {
+    return (dataPoint) => {
+      return dotSearchFilter(dataPoint, categorySearch, valSearch) === 2;
+    }
+  }
+  return (dataPoint) => {
+    return dotSearchFilter(dataPoint, categorySearch, valSearch) === 1;
+  }
 };
 
 export function dotSearchFilter (dot, categorySearch, valSearch) {
