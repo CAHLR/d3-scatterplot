@@ -1,5 +1,5 @@
 import { PlotCallbackHelper } from './plot_callback_helper.js';
-import { symbols, sizes } from './constants.js';
+import { ShapeGenerator } from './shape_generator.js';
 import {
   matchedData,
   transpar,
@@ -18,7 +18,7 @@ export function ShapesArtist ({svg, data, categorySearch, categorySearchData, va
   // same thing could probably be accomplished with an array -->
   // keys would be the elements, values would be the index position
   const uniqueDataValuesToShape = symbol; // local rename before global rename
-  const availableShapes = symbols; // local rename before global rename
+  this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape, featureToShape)
 
   // ******************************************
   // Static Shape Attributes
@@ -38,35 +38,10 @@ export function ShapesArtist ({svg, data, categorySearch, categorySearchData, va
   // ******************************************
   // Shape Helpers
   // ******************************************
-  let shapeIndex = (dataPoint) => {
-    const numberOfAvailableShapes = availableShapes.length;
-    // cycle through shape assignment for unique features to shape
-    let datum = dataPoint[featureToShape];
-    // I would like to see this following line be refactored to:
-    // uniqueDataValuesToShape.indexOf(datum) % numberOfAvailableShapes;
-    return uniqueDataValuesToShape[datum] % numberOfAvailableShapes;
-  }
-
-  let shapeRotation = (dataPoint) => {
-    const datum = dataPoint[featureToShape];
-    const numberOfAvailableShapes = availableShapes.length;
-  // IMPORTANT TODO:
-  // we need to refactor this next part (i.e. data structure of `sizes`) to remove 
-  // unintelligible math for identification and replace with human readable keys
-    let rotationOptionsForShape = sizes[shapeIndex(dataPoint)];
-    const numberOfDifferentRotations = rotationOptionsForShape.length;
-
-    // we add the rotation so that we can reuse the same shapes but plot them differently,
-    // thus expanding the total number of unique values we can represent with shapes
-    const uniqueRotationIndexForDatum = (
-      parseInt(uniqueDataValuesToShape[datum] / numberOfAvailableShapes)
-    ) % numberOfDifferentRotations;
-    return rotationOptionsForShape[uniqueRotationIndexForDatum];
-  }
 
   let transformAttributes = (dataPoint) => {
     let translateStyling = `translate(${xMap(dataPoint)},${yMap(dataPoint)})`;
-    let rotationStyling = `rotate(${shapeRotation(dataPoint)})`;
+    let rotationStyling = `rotate(${this.shapeGenerator.shapeRotation(dataPoint)})`;
     return `${translateStyling} ${rotationStyling}`;
   };
 
@@ -89,9 +64,7 @@ export function ShapesArtist ({svg, data, categorySearch, categorySearchData, va
   let drawShapes = (shapes, attributes) => {
     let shapeAttributes = d3.svg
                             .symbol()
-                            .type((dataPoint) => {
-                              return availableShapes[shapeIndex(dataPoint)]
-                            })
+                            .type(this.shapeGenerator.shapeType)
                             .size(attributes['shapeSize']);
 
     let callbackHelper = new PlotCallbackHelper(svg);
