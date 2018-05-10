@@ -6,10 +6,17 @@ import {
   xMap,
   yMap
 } from './utilities';
+import { plotOptionsReader } from './plot_options_reader.js';
 
-export function ShapesArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, uniqueDataValuesToShape, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
+export function ShapesArtist ({svg, data, categorySearch, categorySearchData, color, cValue2, cValue, uniqueDataValuesToShape}) {
   this.points = svg.selectAll(".dot").data(data).enter();
   this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
+  let searchText = plotOptionsReader.getSearchText();
+  let featureForTransparency = plotOptionsReader.getFeatureForTransparency();
+  let transparentSearchText = plotOptionsReader.getTransparentSearchText()
+  let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
+  let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
+
 
   // ******************************************
   // Static Shape Attributes
@@ -42,14 +49,20 @@ export function ShapesArtist ({svg, data, categorySearch, categorySearchData, va
 
   // should extract to the helper, rename helper
   let fill = (shape) => {
-    if (document.getElementsByClassName('log-spectrum-checkbox')[0].checked) {
+    if (plotOptionsReader.logSpectrumEnabled()) {
       return color(cValue2(shape));
     }
     return color(cValue(shape));
   };
 
   let opacity = (shape) => {
-    return transpar(shape, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch)
+    return transpar(
+      shape,
+      transparentSearchText,
+      featureForTransparency,
+      searchMatchOpacityValue,
+      noSearchMatchOpacityValue
+    )
   };
 
   let drawShapes = (shapes, attributes) => {
@@ -77,14 +90,14 @@ export function ShapesArtist ({svg, data, categorySearch, categorySearchData, va
   this.drawUnmatchedShapes = () => {
     let unmatchedShapes = this.points
                             .append("path")
-                            .filter(matchedData(categorySearch, valSearch, false));
+                            .filter(matchedData(categorySearch, searchText, false));
     drawShapes(unmatchedShapes, unmatchedShapesAttributes);
   }
 
   this.drawMatchedShapes = () => {
     let matchedShapes = this.points
                             .append("path")
-                            .filter(matchedData(categorySearch, valSearch, true));
+                            .filter(matchedData(categorySearch, searchText, true));
     drawShapes(matchedShapes, matchedShapesAttributes);
   }
 }

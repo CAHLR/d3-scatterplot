@@ -209,11 +209,7 @@ function plotting(){
   color_column = d3.event.target.value;
   colorValueFunction = createColorValue(color_column);
   colorValueFunction2 = createColorValue2(color_column);
-  let val_search = document.getElementById("searchText").value;
-  let val_transp = document.getElementById("transpText").value;
-  let val_opacityMatch = document.getElementById("opacityMatch").value;
-  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2);
 }
 
 // function to call for change event
@@ -222,11 +218,7 @@ function plotting5(){
   shaping_column = d3.event.target.value;
   colorValueFunction = createColorValue(color_column);
   colorValueFunction2 = createColorValue2(color_column);
-  let val_search = document.getElementById("searchText").value;
-  let val_transp = document.getElementById("transpText").value;
-  let val_opacityMatch = document.getElementById("opacityMatch").value;
-  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2);
 }
 
 var zoomed = 0;
@@ -237,11 +229,7 @@ var needDrawCircle = false;
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
 function searchEventHandler(event) {
   console.log(document.getElementById("searchText").value);
-  let val_search = document.getElementById("searchText").value;
-  let val_transp = document.getElementById("transpText").value;
-  let val_opacityMatch = document.getElementById("opacityMatch").value;
-  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2);
   return false;
 }
 function searchExactMatchEventHandler(event) {
@@ -252,11 +240,7 @@ function searchExactMatchEventHandler(event) {
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
 function transparentSearchEventHandler(event) {
   console.log(document.getElementById("transpText").value);
-  let val_search = document.getElementById("searchText").value;
-  let val_transp = document.getElementById("transpText").value;
-  let val_opacityMatch = document.getElementById("opacityMatch").value;
-  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2);
   return false;
 }
 function handleCheck1(event) {
@@ -284,11 +268,7 @@ function handleClick2(event){
 // it will be executed when spectrum/log is checked
 // ?? Can we collapse transparentSearchEventHandler,3,4?
 function spectrumAndLogColoringEventHandler(event) {
-  let val_search = document.getElementById("searchText").value;
-  let val_transp = document.getElementById("transpText").value;
-  let val_opacityMatch = document.getElementById("opacityMatch").value;
-  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
-  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2);
 }
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
@@ -296,12 +276,8 @@ function zoomEventHandler(){
   if (plotOptionsReader.zoomCheckboxEnabled() === false) {
     document.getElementById("zoomxy").value = ""; // clear the textbox
   }
-  let val_search = document.getElementById("searchText").value;
-  let val_transp = document.getElementById("transpText").value;
-  let val_opacityMatch = document.getElementById("opacityMatch").value;
-  let val_opacityNoMatch = document.getElementById("opacityNoMatch").value;
   needZoom = true;
-  highlighting(colorValueFunction, colorValueFunction2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch);
+  highlighting(colorValueFunction, colorValueFunction2);
 }
 
 (function setEventHandlers() {
@@ -343,7 +319,7 @@ let coordinatesx = [];
 let coordinatesy = [];
 
 // function for plotting
-function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch, val_opacityNoMatch) {
+function highlighting(cValue, cValue2) {
   let uniqueDataValuesToShape = [];
 
   let x_max, x_min, y_max, y_min, spectrumGenerator;
@@ -488,14 +464,6 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
     .style("text-anchor", "end")
     .text("");
 
-    // to identify the condition of transparent column values
-    if (transparent_column !== "Select" && val_transp !== "" && val_opacityNoMatch !== "") {
-      transparent_column = transparent_column.toString();
-      val_transp = val_transp.toString(); // ?? no to lower case here?
-    } else {
-      val_transp = val_transp.toString();
-    }
-
     // searching according to the substring given and searching column
 
     var searchFunc1 = function(d) {
@@ -505,10 +473,10 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       // noMatch true if not found
       var noMatch;
       if (document.getElementById('cbox5').checked) {
-        noMatch = d != val_search;
+        noMatch = d !== plotOptionsReader.getSearchText();
       } else {
-        noMatch = d.toLowerCase().indexOf(val_search.toLowerCase()) < 0
-        || val_search.length === 0;
+        noMatch = d.toLowerCase().indexOf(plotOptionsReader.getSearchText().toLowerCase()) < 0
+        || plotOptionsReader.getSearchText().length === 0;
       }
       return noMatch ? 1 : 2;
     };
@@ -531,7 +499,7 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
       }
     }
     // create the table
-    if ( val_search != "" && searched_data.length > 0) {
+    if ( plotOptionsReader.getSearchText() != "" && searched_data.length > 0) {
       var peopleTable1 = tabulate(searched_data, columns);
       if (queryParams.get('semantic_model') === "true") {
         console.log("Predicting words...");
@@ -550,14 +518,9 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
           categorySearch: category_search,
           categorySearchData: category_search_data,
           uniqueDataValuesToShape: uniqueDataValuesToShape,
-          valSearch: val_search,
           color: color,
           cValue2: cValue2,
-          cValue: cValue,
-          valTransp: val_transp,
-          transparentColumn: transparent_column,
-          valOpacityMatch: val_opacityMatch,
-          valOpacityNoMatch: val_opacityNoMatch
+          cValue: cValue
         }
       )
       shapesArtist.drawUnmatchedShapes();
@@ -571,14 +534,9 @@ function highlighting(cValue, cValue2, val_search, val_transp, val_opacityMatch,
           data: data,
           categorySearch: category_search,
           categorySearchData: category_search_data,
-          valSearch: val_search,
           color: color,
           cValue2: cValue2,
-          cValue: cValue,
-          valTransp: val_transp,
-          transparentColumn: transparent_column,
-          valOpacityMatch: val_opacityMatch,
-          valOpacityNoMatch: val_opacityNoMatch
+          cValue: cValue
         }
       )
       dotsArtist.drawUnmatchedDots();

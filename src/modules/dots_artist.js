@@ -7,8 +7,13 @@ import {
 import { PlotCallbackHelper } from './plot_callback_helper.js';
 import { plotOptionsReader } from './plot_options_reader.js';
 
-export function DotsArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
+export function DotsArtist ({svg, data, categorySearch, categorySearchData, color, cValue2, cValue}) {
   this.points = svg.selectAll(".dot").data(data).enter();
+  let searchText = plotOptionsReader.getSearchText();
+  let featureForTransparency = plotOptionsReader.getFeatureForTransparency();
+  let transparentSearchText = plotOptionsReader.getTransparentSearchText()
+  let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
+  let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
 
   let fill = (dot) => {
     if (plotOptionsReader.logSpectrumEnabled()) {
@@ -18,7 +23,13 @@ export function DotsArtist ({svg, data, categorySearch, categorySearchData, valS
   };
 
   let opacity = (dot) => {
-    return transpar(dot, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch)
+    return transpar(
+      dot,
+      transparentSearchText,
+      featureForTransparency,
+      searchMatchOpacityValue,
+      noSearchMatchOpacityValue
+    )
   };
 
   let drawDots = (dots, attributes) => {
@@ -61,14 +72,14 @@ export function DotsArtist ({svg, data, categorySearch, categorySearchData, valS
   this.drawUnmatchedDots = () => {
     let unmatchedDots = this.points
                             .append("circle")
-                            .filter(matchedData(categorySearch, valSearch, false));
+                            .filter(matchedData(categorySearch, searchText, false));
     drawDots(unmatchedDots, unmatchedDotsAttributes);
   };
 
   this.drawMatchedDots = () => {
     let matchedDots = this.points
                           .append('circle')
-                          .filter(matchedData(categorySearch, valSearch, true));
+                          .filter(matchedData(categorySearch, searchText, true));
    drawDots(matchedDots, matchedDotsAttributes);
   };
 };

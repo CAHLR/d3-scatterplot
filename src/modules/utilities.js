@@ -1,5 +1,6 @@
 import { height, margin, width } from './constants.js';
 import { URLSearchParamsPolyfill } from '../vendors/url_search_params_polyfill.js';
+import { plotOptionsReader } from './plot_options_reader.js';
 
 // Use native API or Polyfill for older browsers that don't support URLSearchParams API
 export const queryParams = (() => {
@@ -52,10 +53,9 @@ export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, va
   if (transparencyDisabled) { return 1 };
 
   let isMatch = ((dot, transparentColumn, valTransp) => {
-    let exactMatchEnabled = document.getElementsByClassName(
-      'transparency-exact-match'
-    )[0].checked;
-    if (exactMatchEnabled) { return dot[transparentColumn] === valTransp; }
+    if (plotOptionsReader.transparencyExactMatchEnabled()) {
+      return dot[transparentColumn] === valTransp;
+    }
 
     let caseInsensitiveMatch = dot[transparentColumn].toLowerCase().indexOf(valTransp.toLowerCase()) > -1;
     return (dot[transparentColumn] && caseInsensitiveMatch);
@@ -83,10 +83,9 @@ export function dotSearchFilter (dot, categorySearch, valSearch) {
   }
   // noMatch truthy if not found
   let noMatch = ((dot, categorySearch, valSearch) => {
-    let exactMatchEnabled = document.getElementsByClassName(
-      'search-exact-match'
-    )[0].checked;
-    if (exactMatchEnabled) { return dot[categorySearch] !== valSearch; }
+    if (plotOptionsReader.searchExactMatchEnabled()) {
+      return dot[categorySearch] !== valSearch;
+    }
 
     let caseInsensitiveMatch = dot[categorySearch].toLowerCase().indexOf(valSearch.toLowerCase()) < 0;
     return caseInsensitiveMatch || valSearch.length === 0
