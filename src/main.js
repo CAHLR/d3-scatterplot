@@ -19,6 +19,7 @@ import {
   yScale,
   yValue
 } from './modules/utilities.js';
+import { plotOptionsReader } from './modules/plot_options_reader.js';
 import {
   d3_category20_shuffled,
   height,
@@ -292,7 +293,7 @@ function spectrumAndLogColoringEventHandler(event) {
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function zoomEventHandler(){
-  if (!document.getElementById('cbox3').checked) {
+  if (plotOptionsReader.zoomCheckboxEnabled() === false) {
     document.getElementById("zoomxy").value = ""; // clear the textbox
   }
   let val_search = document.getElementById("searchText").value;
@@ -304,22 +305,22 @@ function zoomEventHandler(){
 }
 
 (function setEventHandlers() {
-  let zoomButton = document.getElementsByClassName('zoom-button')[0];
+  let zoomButton = plotOptionsReader.getZoomButton();
   zoomButton.onclick = zoomEventHandler;
 
-  let colorOptions = document.getElementsByClassName('color-option');
+  let colorOptions = plotOptionsReader.getColorOptions();
   for (let i = 0; i < 2; i++) {
     colorOptions[i].onclick = spectrumAndLogColoringEventHandler;
   };
 
 
-  let searchFormButton = document.getElementsByClassName('search-button')[0];
+  let searchFormButton = plotOptionsReader.getSearchButton();
   searchFormButton.addEventListener('click', (event) => {
     event.preventDefault();
     searchEventHandler();
   });
 
-  let transparentSearchButton = document.getElementsByClassName('transparent-search-button')[0];
+  let transparentSearchButton = plotOptionsReader.getTransparentSearchButton();
   transparentSearchButton.addEventListener('click', (event) => {
     event.preventDefault();
     transparentSearchEventHandler();

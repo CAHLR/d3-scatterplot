@@ -5,13 +5,13 @@ import {
   yMap
 } from './utilities';
 import { PlotCallbackHelper } from './plot_callback_helper.js';
-
+import { plotOptionsReader } from './plot_options_reader.js';
 
 export function DotsArtist ({svg, data, categorySearch, categorySearchData, valSearch, color, cValue2, cValue, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch}) {
   this.points = svg.selectAll(".dot").data(data).enter();
 
   let fill = (dot) => {
-    if (document.getElementsByClassName('log-spectrum-checkbox')[0].checked) {
+    if (plotOptionsReader.logSpectrumEnabled()) {
       return color(cValue2(dot));
     }
     return color(cValue(dot));

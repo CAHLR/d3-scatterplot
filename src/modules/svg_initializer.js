@@ -130,9 +130,6 @@ function LassoInitializer(svg, color, color_column, x_max, x_min, y_max, y_min, 
     // render the table for the points selected by lasso
     if (selected_data.length > 0) {
       console.log("Rendering table...");
-      console.log(selected_data);
-      console.log(columns);
-      console.log(selectedXValues);
       tabulate(selected_data, columns, selectedXValues);
       if (queryParams.get('semantic_model') === "true") {
         console.log("Predicting words...");

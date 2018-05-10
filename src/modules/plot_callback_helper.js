@@ -1,5 +1,6 @@
 import { tooltip } from './tooltips.js';
-import { printArray } from './utilities.js'
+import { printArray } from './utilities.js';
+import { plotOptionsReader } from './plot_options_reader.js';
 
 export function PlotCallbackHelper(svg) {
   this.marked = {}; // store X,Y coordinates of data points that have been clicked;
@@ -16,7 +17,7 @@ export function PlotCallbackHelper(svg) {
 
   this.clickCallback = (categorySearchData) => {
     return (dataPoint) => {
-      let featureColumn = document.getElementsByClassName('click-on-feature')[0].value;
+      let featureColumn = plotOptionsReader.getClickOnFeatureValue();
       if (!([d3.event.pageX, d3.event.pageY] in this.marked)) {
         desensitizeClickArea();
         svg.append("text")

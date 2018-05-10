@@ -1,7 +1,8 @@
 import { availableShapes, sizes } from './constants.js';
+import { plotOptionsReader } from './plot_options_reader.js';
 
 export function ShapeGenerator(uniqueDataValuesToShape) {
-  const featureToShape = document.getElementsByClassName('shape-by-feature')[0].value;
+  const featureToShape = plotOptionsReader.getFeatureToShape();
   this.uniqueDataValuesToShape = uniqueDataValuesToShape;
 
   let getDatum = (dataPoint) => {

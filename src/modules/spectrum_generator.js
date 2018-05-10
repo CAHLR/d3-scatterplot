@@ -1,15 +1,14 @@
 import { scale } from './constants.js';
 import { linSpace } from './utilities.js';
+import { plotOptionsReader } from './plot_options_reader.js';
 
 export function SpectrumGenerator(data) {
   let colorScale = scale; // stopgap til I rename in the entire app
   // *************************************
   // private functions
   // *************************************
-  let featureToColor = document.getElementsByClassName('color-by-feature')[0]
-                               .value;
-  let logEnabled = document.getElementsByClassName('log-spectrum-checkbox')[0]
-                           .checked;
+  let featureToColor = plotOptionsReader.getFeatureToColor();
+  let logEnabled = plotOptionsReader.logSpectrumEnabled();
   let scaledFeatureValue = (datum) => {
     let featureDatum = parseFloat(datum[featureToColor])
     if (logEnabled) return Math.log(featureDatum);
