@@ -27,6 +27,7 @@ import {
 } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
 import { ShapesArtist } from './modules/shapes_artist.js';
+import { AxisArtist } from './modules/axis_artist.js';
 import {
   DefaultLegendGenerator,
   SpectrumLegendGenerator,
@@ -186,8 +187,10 @@ let createColorValue2 = (targetColumn) => {
 let color = d3.scale.ordinal().range(d3_category20_shuffled);
 let colorValueFunction = createColorValue(color_column);
 let colorValueFunction2 = createColorValue2(color_column);
+let needZoom = false;
+
 // Initial plot draw happens here:
-highlighting(colorValueFunction, colorValueFunction2, queryParams.get("q") || "", "", "")
+highlighting(colorValueFunction, colorValueFunction2, needZoom)
 
 // the functions to call when the value of dropdown menu is changes
 // Click on feature
@@ -209,7 +212,8 @@ function plotting(){
   color_column = d3.event.target.value;
   colorValueFunction = createColorValue(color_column);
   colorValueFunction2 = createColorValue2(color_column);
-  highlighting(colorValueFunction, colorValueFunction2);
+  needZoom = false;
+  highlighting(colorValueFunction, colorValueFunction2, needZoom);
 }
 
 // function to call for change event
@@ -218,18 +222,19 @@ function plotting5(){
   shaping_column = d3.event.target.value;
   colorValueFunction = createColorValue(color_column);
   colorValueFunction2 = createColorValue2(color_column);
-  highlighting(colorValueFunction, colorValueFunction2);
+  needZoom = false;
+  highlighting(colorValueFunction, colorValueFunction2, needZoom);
 }
 
 var zoomed = 0;
-var needZoom = false;
 var needDrawCircle = false;
 
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
 function searchEventHandler(event) {
   console.log(document.getElementById("searchText").value);
-  highlighting(colorValueFunction, colorValueFunction2);
+  needZoom = false;
+  highlighting(colorValueFunction, colorValueFunction2, needZoom);
   return false;
 }
 function searchExactMatchEventHandler(event) {
@@ -277,7 +282,7 @@ function zoomEventHandler(){
     document.getElementById("zoomxy").value = ""; // clear the textbox
   }
   needZoom = true;
-  highlighting(colorValueFunction, colorValueFunction2);
+  highlighting(colorValueFunction, colorValueFunction2, needZoom);
 }
 
 (function setEventHandlers() {
@@ -319,7 +324,7 @@ let coordinatesx = [];
 let coordinatesy = [];
 
 // function for plotting
-function highlighting(cValue, cValue2) {
+function highlighting(cValue, cValue2, needZoom) {
   let uniqueDataValuesToShape = [];
 
   let x_max, x_min, y_max, y_min, spectrumGenerator;
@@ -381,88 +386,24 @@ function highlighting(cValue, cValue2) {
       color = d3.scale.ordinal().range(d3_category20_shuffled);
     }
 
-    // don't want dots overlapping axis, so add in buffer to data domain
-    var zoom = getParameterByName('Zoom'); // unused, capitalized Z anyway as changed above
-
-    if (document.getElementById("cbox3").checked==false) {
-      document.getElementById("zoomxy").value = "";
-      zoomed = 0;
-      needZoom = false;
-      x_max = d3.max(data, xValue)+1;
-      x_min = d3.min(data, xValue)-1;
-      y_max = d3.max(data, yValue)+1;
-      y_min = d3.min(data, yValue)-1;
-    }
-
-    // if zoom is checked and conditions are satisfied
-    if (document.getElementById("cbox3").checked==true  && needZoom == true && coordinatesx.length >= 2) {
-
-      x_max = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1]))+1;
-      x_min = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1]))-1;
-      y_max = yScale.invert(Math.min(coordinatesy[0], coordinatesy[1]))+1;
-      y_min = yScale.invert(Math.max(coordinatesy[0], coordinatesy[1]))-1;
-
-      console.log(x_max, x_min, y_max, y_min);
-      document.getElementById("zoomxy").value = "X:["+parseInt(x_min)+", "+parseInt(x_max)+"] Y:["+parseInt(y_min)+", "+parseInt(y_max)+"]";
-
-      zoomed = 1;
-      needZoom = false;
-            // document.getElementById("cbox3").checked = false;
-            /*
-                      zoom = zoom.substr(1, zoom.length-2);
-                      commaIndex = zoom.indexOf(',');
-                      x_min = parseFloat(zoom.substr(0, commaIndex));
-                      zoom = zoom.substr(commaIndex+1);
-                      commaIndex = zoom.indexOf(',');
-                      x_max = parseFloat(zoom.substr(0, commaIndex));
-                      zoom = zoom.substr(commaIndex+1);
-                      commaIndex = zoom.indexOf(',');
-                      y_min = parseFloat(zoom.substr(0, commaIndex));
-                      y_max = parseFloat(zoom.substr(commaIndex+1));
-                      */
-    }
-    xScale.domain([x_min, x_max]);
-    yScale.domain([y_min, y_max]);
-
-    // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-    // yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
-
-
+    let axisArtist = new AxisArtist(data, needZoom, coordinatesx, coordinatesy);
     // I know it looks ugly injecting so many arguments into the initializer right now,
     // but at least we're being explicit about dependencies as opposed to
     // implicit/throwing everything into global state
-    let svgInitializer = new SvgInitializer(color, color_column, x_max, x_min, y_max, y_min, temp1, temp2, categories, dict1, columns);
+    let svgInitializer = new SvgInitializer(color, color_column, axisArtist.xMax, axisArtist.xMin, axisArtist.yMax, axisArtist.yMin, temp1, temp2, categories, dict1, columns);
     let svg = svgInitializer.initializeWithLasso();
     let lasso = svgInitializer.lasso;
+    axisArtist.draw(svg);
+    svg.on("click",function() {
+      // svg.select("#myText").remove();
 
-    // x-axis
-    let cx = 0;
-    let cy = 0;
-    let ans = 0;
+      tooltip1.style("opacity", 0);
+      var coordinates1 = d3.mouse(this);
+      coordinatesx.unshift(coordinates1[0]);
+      coordinatesy.unshift(coordinates1[1]);
+      console.log(coordinatesx, coordinatesy);
+    })
 
-    // draw the x-axis of plot
-    svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-    .append("text")
-    .attr("class", "label")
-    .attr("x", width)
-    .attr("y", -6)
-    .style("text-anchor", "end")
-    .text("");
-
-    // draw the y-axis of plot
-    svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-    .append("text")
-    .attr("class", "label")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("");
 
     // searching according to the substring given and searching column
 
@@ -543,18 +484,6 @@ function highlighting(cValue, cValue2) {
       dotsArtist.drawMatchedDots();
       lasso.items(d3.selectAll(".dot"));
     }
-
-    // the event to call on click event
-    svg.on("click",function() {
-      // svg.select("#myText").remove();
-
-      tooltip1.style("opacity", 0);
-      var coordinates1 = d3.mouse(this);
-      coordinatesx.unshift(coordinates1[0]);
-      coordinatesy.unshift(coordinates1[1]);
-      console.log(coordinatesx, coordinatesy);
-    })
-
 
     // if coloring
     if (color_column !== "Select") {
