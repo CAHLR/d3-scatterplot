@@ -32,7 +32,7 @@ export function ShapeGenerator(uniqueDataValuesToShape) {
     const numberOfAvailableShapes = availableShapes.length;
     // IMPORTANT TODO:
     // we need to refactor this next part (i.e. data structure of `sizes`) to remove 
-    // unintelligible math for identification and replace with human readable keys
+    // integers for identification and replace with human-readable keys
     let rotationOptionsForShape = sizes[shapeIndex(dataPoint)];
     const numberOfDifferentRotations = rotationOptionsForShape.length;
 

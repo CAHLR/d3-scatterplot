@@ -68,14 +68,13 @@ function LassoInitializer(svg, color, color_column, x_max, x_min, y_max, y_min, 
     // ********************************************************************
     // The following code draws the side table using the selection data
     // ********************************************************************
-    // AJF annotation
     // The data that we have is multi-dimensional, with X and Y values only two
     // dimensions of the total available per datum.
     // The dimensions that we want to expose/categorize in the side table are
     // those that are not directly plottable on the X-Y axes.
     // This algorithm will:
     // 1) extract the explicit X/Y coordinate values from the selection
-    //  a) adjust/scale the x/y values (reason tbd still)
+    //  a) adjust/scale the x/y values
     // 2) find the corresponding points from all the data plotted (all data is sorted)
     // 3) extract the additional dimension data from the corresponding points in all data plotted
     // 4) create an array containing the feature data from the selection and the corresponding index in
