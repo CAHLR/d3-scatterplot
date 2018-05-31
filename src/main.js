@@ -8,23 +8,9 @@
 
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip1 } from './modules/tooltips.js';
-import {
-  getParameterByName,
-  queryParams,
-  searchDic,
-  xAxis,
-  xScale,
-  xValue,
-  yAxis,
-  yScale,
-  yValue
-} from './modules/utilities.js';
+import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
 import { plotOptionsReader } from './modules/plot_options_reader.js';
-import {
-  d3_category20_shuffled,
-  height,
-  width
-} from './modules/constants.js';
+import { d3_category20_shuffled, height, width } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
 import { ShapesArtist } from './modules/shapes_artist.js';
 import { AxisArtist } from './modules/axis_artist.js';

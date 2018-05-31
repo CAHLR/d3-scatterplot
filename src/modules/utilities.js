@@ -11,6 +11,18 @@ export const queryParams = (() => {
   };
 })();
 
+export let getArrayMin = (array) => {
+    return array.reduce(
+      (accumulator, currentValue) => Math.min(accumulator, currentValue)
+    );
+  };
+
+export let getArrayMax = (array) => {
+  return array.reduce(
+    (accumulator, currentValue) => Math.max(accumulator, currentValue)
+  );
+}
+
 
 // used to search a particular substring in the list of requested feature column
 // used to determine whether we should add allValues to selectedData, hence the t/f -> f/t
@@ -126,6 +138,3 @@ export let yScale = d3.scale.linear().range([height, 0]);
 export function xMap(data) { return xScale(xValue(data)) };
 export function yMap(data) { return yScale(yValue(data)) };
 
-// The following two variables are the X and Y axis objects
-export let xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-export let yAxis = d3.svg.axis().scale(yScale).orient("left");

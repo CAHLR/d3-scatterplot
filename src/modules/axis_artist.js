@@ -1,16 +1,21 @@
 import { plotOptionsReader } from './plot_options_reader.js';
-import { xAxis, xScale, xValue, yAxis, yScale, yValue } from './utilities.js';
+import { xScale, xValue, yScale, yValue, getArrayMin, getArrayMax } from './utilities.js';
 import { height, width } from './constants.js';
 
 export function AxisArtist(data, needZoom, coordinatesx, coordinatesy) {
+  // The following two variables are the X and Y axis objects
+  let xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+  let yAxis = d3.svg.axis().scale(yScale).orient("left");
+
   this.needZoom = needZoom;
   this.coordinatesy = coordinatesy;
   this.coordinatesx = coordinatesx;
+
   if (plotOptionsReader.zoomCheckboxEnabled() && needZoom === true && coordinatesx.length >= 2) {
-    this.xMin = xScale.invert(Math.min(coordinatesx[0], coordinatesx[1])) - 1;
-    this.xMax = xScale.invert(Math.max(coordinatesx[0], coordinatesx[1])) + 1;
-    this.yMin = parseInt(yScale.invert(Math.min(coordinatesy[0], coordinatesy[1])) - 1);
-    this.yMax = Math.round(yScale.invert(Math.max(coordinatesy[0], coordinatesy[1])) + 1);
+    this.xMin = xScale.invert(getArrayMin(coordinatesx)) - 1;
+    this.xMax = xScale.invert(getArrayMax(coordinatesx)) + 1;
+    this.yMin = parseInt(yScale.invert(getArrayMax(coordinatesy)) - 1);
+    this.yMax = Math.round(yScale.invert(getArrayMin(coordinatesy)) + 1);
   } else {
     this.xMin = d3.min(data, xValue) - 1;
     this.xMax = d3.max(data, xValue) + 1;
