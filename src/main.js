@@ -212,9 +212,6 @@ function plotting5(){
   highlighting(colorValueFunction, colorValueFunction2, needZoom);
 }
 
-var zoomed = 0;
-var needDrawCircle = false;
-
 // search event
 // it will be executed when search button is pressed and points that matches the searched string will be highlighted
 function searchEventHandler(event) {
