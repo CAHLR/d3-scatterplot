@@ -107,7 +107,7 @@ categories_copy_color.push(color_column);
 
 var columns = [];
 // column for the transparent value
-var transparent_column = "Select", feature_column = "", shaping_column = "Select";
+var transparent_column = "Select", feature_column = "";
 
 function extractCategoryLabelsFromData(data) {
   console.log('Loading main data')
@@ -150,7 +150,6 @@ function extractCategoryLabelsFromData(data) {
                  );
 
   category_search = category_search_data[0];
-  shaping_column = categories[0];
   feature_column = category_search_data[0];
   transparent_column = category_search_data[0];
 };
@@ -205,7 +204,6 @@ function plotting(){
 // function to call for change event
 // Shaping
 function plotting5(){
-  shaping_column = d3.event.target.value;
   colorValueFunction = createColorValue(color_column);
   colorValueFunction2 = createColorValue2(color_column);
   needZoom = false;
@@ -240,7 +238,6 @@ function handleCheck1(event) {
 // ?? I believe this function is unused, and draw also maps to zoomEventHandler
 // it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
 function handleClick2(event){
-  shaping_column = "Select";
   color_column = "Select";
   myForm.searchText.value = 0;
   myForm1.transpText.value = 0;
@@ -322,6 +319,8 @@ function highlighting(cValue, cValue2, needZoom) {
   d3.select("table").remove();
 
   d3.tsv(dataset, function(error, data) {
+    let shapingColumn = plotOptionsReader.getFeatureToShape();
+
     // AJF Note: it'd be nice to load the data once and then pass the data into the 
     // highlighting function
     console.log('Loading main data, again') // load data
@@ -348,8 +347,8 @@ function highlighting(cValue, cValue2, needZoom) {
       }
       // fill the symbol dictionary with all possible values of the shaping column as keys
       // value is the order of points
-      if (uniqueDataValuesToShape.indexOf(d[shaping_column]) === -1) {
-        uniqueDataValuesToShape.push(d[shaping_column]);
+      if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
+        uniqueDataValuesToShape.push(d[shapingColumn]);
       }
       // push all x values, y values, and all category search values into temp1/2/3
       temp1.push(d.x);
@@ -434,7 +433,7 @@ function highlighting(cValue, cValue2, needZoom) {
 
     /*** BEGIN drawing dots ***/
     // shaping of symbols according to the shaping column
-    if (shaping_column !== "Select" ) {
+    if (shapingColumn !== "Select" ) {
       let shapesArtist = new ShapesArtist(
         {
           svg: svg,
