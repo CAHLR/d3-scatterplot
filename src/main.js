@@ -107,7 +107,7 @@ categories_copy_color.push(color_column);
 
 var columns = [];
 // column for the transparent value
-var transparent_column = "Select", feature_column = "";
+var transparent_column = "Select";
 
 function extractCategoryLabelsFromData(data) {
   console.log('Loading main data')
@@ -145,12 +145,10 @@ function extractCategoryLabelsFromData(data) {
                    plotting,
                    plotting2,
                    plotting3,
-                   plotting4,
                    plotting5
                  );
 
   category_search = category_search_data[0];
-  feature_column = category_search_data[0];
   transparent_column = category_search_data[0];
 };
 
@@ -178,10 +176,6 @@ let needZoom = false;
 highlighting(colorValueFunction, colorValueFunction2, needZoom)
 
 // the functions to call when the value of dropdown menu is changes
-// Click on feature
-function plotting4(){
-  feature_column = d3.event.target.value;
-}
 // Transparent
 function plotting3(){
   transparent_column = d3.event.target.value;
