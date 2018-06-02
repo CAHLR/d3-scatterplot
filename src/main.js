@@ -36,8 +36,8 @@ if (queryParams.get("semantic_model") === "true") {
   var vectorfile = 'VS-' + dataset.split("_semantic")[0]+'.txt';
   var bowfile = dataset.split(/\.t[a-z]{2}$/)[0]+'_bow.txt';
 
-  console.log("Reading " + bowfile);
   d3.tsv(bowfile, function(text){
+    console.log("Reading " + bowfile);
     bow_2darray = text.map( Object.values );
     bow_2darray = bow_2darray.map(function(entry) {
       return entry.map(function(elem) {
@@ -46,8 +46,8 @@ if (queryParams.get("semantic_model") === "true") {
     });
   });
 
-  console.log("Reading " + vectorfile);
   d3.tsv(vectorfile, function(text){
+    console.log("Reading " + vectorfile);
     vectorspace_2darray = text.map( Object.values );
     vectorspace_2darray = vectorspace_2darray.map(function(arr) {
             // username column ends up last in the dictionary, due to alphanumeric sort
@@ -55,25 +55,29 @@ if (queryParams.get("semantic_model") === "true") {
               return parseFloat(elem);
             });
           });
+    console.log(vectorspace_2darray);
   });
-  console.log("Reading " + weightsfile);
   d3.tsv(weightsfile, function(text){
+    console.log("Reading " + weightsfile);
     weights_2darray = text.map( Object.values );
     weights_2darray = weights_2darray.map(function(entry) {
       return entry.map(function(elem) {
         return parseFloat(elem);
       });
     });
+    console.log(weights_2darray);
   });
-  console.log("Reading " + biasesfile);
   d3.tsv(biasesfile, function(text){
+    console.log("Reading " + biasesfile);
     biases_1darray = text.map( Object.values );
     biases_1darray = Object.values(biases_1darray.map(Number));
+    console.log(biases_1darray);
   });
-  console.log("Reading " + vocabfile);
   d3.tsv(vocabfile, function(text){
+    console.log("Reading " + vocabfile);
     vocab_1darray = text.map( Object.values );
     vocab_1darray = Object.values(vocab_1darray.map(String));
+    console.log(vocab_1darray);
   });
 }
 
@@ -102,6 +106,8 @@ var categories_copy_color = [];
 categories_copy_color.push(color_column);
 
 var columns = [];
+let mainData;
+let needZoom = false;
 
 function extractCategoryLabelsFromData(data) {
   console.log('Loading main data')
@@ -136,28 +142,28 @@ function extractCategoryLabelsFromData(data) {
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
   dropdownBuilder.setDropdownEventHandlers(plotting, plotting5);
+  mainData = data;
+
+  // Initial plot draw happens here:
+  highlighting(mainData, needZoom)
 };
 
 // getting header from csv file to make drowdown menus
 // NOTE: tsv() is an async function
 d3.tsv(dataset, extractCategoryLabelsFromData);
-let needZoom = false;
-
-// Initial plot draw happens here:
-highlighting(needZoom)
 
 // function to call for change event
 // Coloring
 function plotting(){
   needZoom = false;
-  highlighting(needZoom);
+  highlighting(mainData, needZoom);
 }
 
 // function to call for change event
 // Shaping
 function plotting5(){
   needZoom = false;
-  highlighting(needZoom);
+  highlighting(mainData, needZoom);
 }
 
 // search event
@@ -165,7 +171,7 @@ function plotting5(){
 function searchEventHandler(event) {
   console.log(document.getElementById("searchText").value);
   needZoom = false;
-  highlighting(needZoom);
+  highlighting(mainData, needZoom);
   return false;
 }
 function searchExactMatchEventHandler(event) {
@@ -177,7 +183,7 @@ function searchExactMatchEventHandler(event) {
 function transparentSearchEventHandler(event) {
   console.log(document.getElementById("transpText").value);
   needZoom = false;
-  highlighting(needZoom);
+  highlighting(mainData, needZoom);
   return false;
 }
 function handleCheck1(event) {
@@ -191,7 +197,7 @@ function handleCheck1(event) {
 // ?? Can we collapse transparentSearchEventHandler,3,4?
 function spectrumAndLogColoringEventHandler(event) {
   needZoom = false;
-  highlighting(needZoom);
+  highlighting(mainData, needZoom);
 }
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
@@ -200,7 +206,7 @@ function zoomEventHandler(){
     document.getElementById("zoomxy").value = ""; // clear the textbox
   }
   needZoom = true;
-  highlighting(needZoom);
+  highlighting(mainData, needZoom);
 }
 
 (function setEventHandlers() {
@@ -242,11 +248,12 @@ let coordinatesx = [];
 let coordinatesy = [];
 
 // function for plotting
-function highlighting(needZoom) {
+function highlighting(data, needZoom) {
   let uniqueDataValuesToShape = [];
   let spectrumGenerator;
   var xValues = [], yValues = [], searchColumnValues = [];
   var featureCategoryAndDataMap = {};
+  console.log('main data', data);
 
   // remove the existing svg plot if any and clear side table
   document.getElementById("demo3").innerHTML = "";
@@ -255,159 +262,157 @@ function highlighting(needZoom) {
   d3.select("svg").remove();
   d3.select("table").remove();
 
-  d3.tsv(dataset, function(error, data) {
-    let shapingColumn = plotOptionsReader.getFeatureToShape();
-    let searchCategory = plotOptionsReader.getSearchCategory();
-    let featureToColor = plotOptionsReader.getFeatureToColor();
-    let color;
+  // What is numerics doing?
+  // We want to ask the question of a given data point -- is the data associated
+  // with it numerical or is it other (e.g. categorical or ordinal, is the format a string?)
+  // Can we generate an object that will encapsulate this information and allow us
+  // to query it with a category name?
 
-    // AJF Note: it'd be nice to load the data once and then pass the data into the 
-    // highlighting function
-    console.log('Loading main data, again') // load data
-    // change string (from CSV) into number format
-    var numerics = {};
-    //Omitting Select (0)
-    for(var i=1;i<categories.length;i++) {
-      // initialize the value for each category key to empty list
-      featureCategoryAndDataMap[categories[i]] = [];
-      // initialize all categories as numeric
-      numerics[categories[i]] = 1;
+  let shapingColumn = plotOptionsReader.getFeatureToShape();
+  let searchCategory = plotOptionsReader.getSearchCategory();
+  let featureToColor = plotOptionsReader.getFeatureToColor();
+  let color;
+
+  // change string (from CSV) into number format
+  var numerics = {};
+  //Omitting Select (0)
+  for(var i=1;i<categories.length;i++) {
+    // initialize the value for each category key to empty list
+    featureCategoryAndDataMap[categories[i]] = [];
+    // initialize all categories as numeric
+    numerics[categories[i]] = 1;
+  }
+  let counter = 0;
+  data.forEach(function(d) {
+    // coerce the data to numbers
+    d.x = +d.x;
+    d["y"] = +d["y"];
+
+    for(var i=1;i<categories.length;i++){
+      // add every attribute of point to the {category:[val1,val2,...]}
+      featureCategoryAndDataMap[categories[i]].push(d[categories[i]]);
+      // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
+      numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
     }
-    let counter = 0;
-    data.forEach(function(d) {
-      // coerce the data to numbers
-      d.x = +d.x;
-      d["y"] = +d["y"];
+    // fill the symbol dictionary with all possible values of the shaping column as keys
+    // value is the order of points
+    if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
+      uniqueDataValuesToShape.push(d[shapingColumn]);
+    }
+    // push all x values, y values, and all category search values into xValues/2/3
+    xValues.push(d.x);
+    yValues.push(d["y"]);
+    searchColumnValues.push(d[searchCategory]);
+    // console.log(d["z"] == parseInt(d["z"]));
+  });
+  console.log("Numerics: ", numerics);
 
-      for(var i=1;i<categories.length;i++){
-        // add every attribute of point to the {category:[val1,val2,...]}
-        featureCategoryAndDataMap[categories[i]].push(d[categories[i]]);
-        // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
-        numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
+  // set color according to spectrum
+  if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
+    console.log('using spectrum');
+    spectrumGenerator = new SpectrumGenerator(data);
+    color = spectrumGenerator.color;
+  } else {
+    console.log('not using spectrum');
+    color = d3.scale.ordinal().range(d3_category20_shuffled);
+  }
+
+  let axisArtist = new AxisArtist(data, needZoom, coordinatesx, coordinatesy);
+  let svgInitializer = new SvgInitializer(color, axisArtist.xMax, axisArtist.xMin, axisArtist.yMax, axisArtist.yMin, xValues, yValues, categories, featureCategoryAndDataMap, columns);
+  let svg = svgInitializer.initializeWithLasso();
+  let lasso = svgInitializer.lasso;
+  axisArtist.draw(svg);
+  svg.on("click",function() {
+    // svg.select("#myText").remove();
+
+    tooltip1.style("opacity", 0);
+    var coordinates1 = d3.mouse(this);
+    coordinatesx.unshift(coordinates1[0]);
+    coordinatesy.unshift(coordinates1[1]);
+    console.log(coordinatesx, coordinatesy);
+  })
+
+
+  // searching according to the substring given and searching column
+
+  var searchFunc1 = function(d) {
+    if (typeof d == 'undefined' ) {
+      return 1;
+    }
+    // noMatch true if not found
+    var noMatch;
+    if (document.getElementById('cbox5').checked) {
+      noMatch = d !== plotOptionsReader.getSearchText();
+    } else {
+      noMatch = d.toLowerCase().indexOf(plotOptionsReader.getSearchText().toLowerCase()) < 0
+      || plotOptionsReader.getSearchText().length === 0;
+    }
+    return noMatch ? 1 : 2;
+  };
+
+  var searched_data = [], searched_data_indices = [], d_temp;
+  /* searchColumnValues holds the value of every point for the search column */
+  for (var i=0;i<searchColumnValues.length;i++) {
+    // 0 if found val in this point, 1 if not found
+    if ( searchFunc1(searchColumnValues[i])-1 ) {
+      d_temp = {};
+      // enter all data into dictionary
+      for(var j=1;j<categories.length;j++) {
+        d_temp[categories[j]] = featureCategoryAndDataMap[categories[j]][i];
       }
-      // fill the symbol dictionary with all possible values of the shaping column as keys
-      // value is the order of points
-      if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
-        uniqueDataValuesToShape.push(d[shapingColumn]);
+      // only add to searched_data if not already in
+      if(searchDic(searched_data, d_temp) === true) {
+        searched_data.push(d_temp);
+        searched_data_indices.push(i);
       }
-      // push all x values, y values, and all category search values into xValues/2/3
-      xValues.push(d.x);
-      yValues.push(d["y"]);
-      searchColumnValues.push(d[searchCategory]);
-      // console.log(d["z"] == parseInt(d["z"]));
-    });
-    console.log("Numerics: ", numerics);
-    console.log("Color Column: ",featureToColor);
-    // set color according to spectrum
+    }
+  }
+  // create the table
+  if ( plotOptionsReader.getSearchText() != "" && searched_data.length > 0) {
+    var peopleTable1 = tabulate(searched_data, columns);
+    if (queryParams.get('semantic_model') === "true") {
+      console.log("Predicting words...");
+      classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
+      benchmark(searched_data_indices, bow_2darray, vocab_1darray);
+    }
+  };
+
+  /*** BEGIN drawing dots ***/
+  // shaping of symbols according to the shaping column
+  if (shapingColumn !== "Select" ) {
+    let shapesArtist = new ShapesArtist(
+      {
+        svg: svg,
+        data: data,
+        categorySearchData: category_search_data,
+        uniqueDataValuesToShape: uniqueDataValuesToShape,
+        color: color
+      }
+    )
+    shapesArtist.drawUnmatchedShapes();
+    shapesArtist.drawMatchedShapes();
+    new ShapeLegendGenerator(uniqueDataValuesToShape).generate(svg);
+    lasso.items(d3.selectAll(".dot"));
+  } else {
+    let dotsArtist = new DotsArtist(
+      {
+        svg: svg,
+        data: data,
+        categorySearchData: category_search_data,
+        color: color
+      }
+    )
+    dotsArtist.drawUnmatchedDots();
+    dotsArtist.drawMatchedDots();
+    lasso.items(d3.selectAll(".dot"));
+  }
+
+  // if coloring
+  if (featureToColor !== "Select") {
     if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
-      console.log('using spectrum');
-      spectrumGenerator = new SpectrumGenerator(data);
-      color = spectrumGenerator.color;
+      new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
     } else {
-      console.log('not using spectrum');
-      color = d3.scale.ordinal().range(d3_category20_shuffled);
+      new DefaultLegendGenerator(svg, color).generate();
     }
-
-    let axisArtist = new AxisArtist(data, needZoom, coordinatesx, coordinatesy);
-    // I know it looks ugly injecting so many arguments into the initializer right now,
-    // but at least we're being explicit about dependencies as opposed to
-    // implicit/throwing everything into global state
-    let svgInitializer = new SvgInitializer(color, axisArtist.xMax, axisArtist.xMin, axisArtist.yMax, axisArtist.yMin, xValues, yValues, categories, featureCategoryAndDataMap, columns);
-    let svg = svgInitializer.initializeWithLasso();
-    let lasso = svgInitializer.lasso;
-    axisArtist.draw(svg);
-    svg.on("click",function() {
-      // svg.select("#myText").remove();
-
-      tooltip1.style("opacity", 0);
-      var coordinates1 = d3.mouse(this);
-      coordinatesx.unshift(coordinates1[0]);
-      coordinatesy.unshift(coordinates1[1]);
-      console.log(coordinatesx, coordinatesy);
-    })
-
-
-    // searching according to the substring given and searching column
-
-    var searchFunc1 = function(d) {
-      if (typeof d == 'undefined' ) {
-        return 1;
-      }
-      // noMatch true if not found
-      var noMatch;
-      if (document.getElementById('cbox5').checked) {
-        noMatch = d !== plotOptionsReader.getSearchText();
-      } else {
-        noMatch = d.toLowerCase().indexOf(plotOptionsReader.getSearchText().toLowerCase()) < 0
-        || plotOptionsReader.getSearchText().length === 0;
-      }
-      return noMatch ? 1 : 2;
-    };
-
-    var searched_data = [], searched_data_indices = [], d_temp;
-    /* searchColumnValues holds the value of every point for the search column */
-    for (var i=0;i<searchColumnValues.length;i++) {
-      // 0 if found val in this point, 1 if not found
-      if ( searchFunc1(searchColumnValues[i])-1 ) {
-        d_temp = {};
-        // enter all data into dictionary
-        for(var j=1;j<categories.length;j++) {
-          d_temp[categories[j]] = featureCategoryAndDataMap[categories[j]][i];
-        }
-        // only add to searched_data if not already in
-        if(searchDic(searched_data, d_temp) === true) {
-          searched_data.push(d_temp);
-          searched_data_indices.push(i);
-        }
-      }
-    }
-    // create the table
-    if ( plotOptionsReader.getSearchText() != "" && searched_data.length > 0) {
-      var peopleTable1 = tabulate(searched_data, columns);
-      if (queryParams.get('semantic_model') === "true") {
-        console.log("Predicting words...");
-        classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
-        benchmark(searched_data_indices, bow_2darray, vocab_1darray);
-      }
-    };
-
-    /*** BEGIN drawing dots ***/
-    // shaping of symbols according to the shaping column
-    if (shapingColumn !== "Select" ) {
-      let shapesArtist = new ShapesArtist(
-        {
-          svg: svg,
-          data: data,
-          categorySearchData: category_search_data,
-          uniqueDataValuesToShape: uniqueDataValuesToShape,
-          color: color
-        }
-      )
-      shapesArtist.drawUnmatchedShapes();
-      shapesArtist.drawMatchedShapes();
-      new ShapeLegendGenerator(uniqueDataValuesToShape).generate(svg);
-      lasso.items(d3.selectAll(".dot"));
-    } else {
-      let dotsArtist = new DotsArtist(
-        {
-          svg: svg,
-          data: data,
-          categorySearchData: category_search_data,
-          color: color
-        }
-      )
-      dotsArtist.drawUnmatchedDots();
-      dotsArtist.drawMatchedDots();
-      lasso.items(d3.selectAll(".dot"));
-    }
-
-    // if coloring
-    if (featureToColor !== "Select") {
-      if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
-        new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
-      } else {
-        new DefaultLegendGenerator(svg, color).generate();
-      }
-    };
-  }); // end load data
+  };
 } // end highlighting
