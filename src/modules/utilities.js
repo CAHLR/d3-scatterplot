@@ -47,6 +47,17 @@ export function linSpace(start, end, n) {
   return out;
 };
 
+export let extractFeatureToColorValue = (targetColumn) => {
+  return (data) => {
+    return data[targetColumn];
+  };
+};
+// need to rename this function to be more descriptive
+export let extractFeatureToColorLogValue = (targetColumn) => {
+  return (data) => {
+    return Math.log(parseFloat(data[targetColumn]));
+  };
+};
 
 // VIEW HELPER: used to display the summary on the webpage
 // print all the key values pairs of a point

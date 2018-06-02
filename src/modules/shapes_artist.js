@@ -1,6 +1,8 @@
 import { PlotCallbackHelper } from './plot_callback_helper.js';
 import { ShapeGenerator } from './shape_generator.js';
 import {
+  extractFeatureToColorValue,
+  extractFeatureToColorLogValue,
   matchedData,
   transpar,
   xMap,
@@ -8,7 +10,7 @@ import {
 } from './utilities';
 import { plotOptionsReader } from './plot_options_reader.js';
 
-export function ShapesArtist ({svg, data, categorySearchData, color, cValue2, cValue, uniqueDataValuesToShape}) {
+export function ShapesArtist ({svg, data, categorySearchData, color, uniqueDataValuesToShape}) {
   this.points = svg.selectAll(".dot").data(data).enter();
   this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
   let searchCategory = plotOptionsReader.getSearchCategory();
@@ -17,7 +19,17 @@ export function ShapesArtist ({svg, data, categorySearchData, color, cValue2, cV
   let transparentSearchText = plotOptionsReader.getTransparentSearchText()
   let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
   let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
+  let featureToColor =plotOptionsReader.getFeatureToColor();
 
+  // ******************************************
+  // Coloring helper function
+  // ******************************************
+  let featureToColorValue;
+  if (plotOptionsReader.logSpectrumEnabled()) {
+    featureToColorValue = extractFeatureToColorLogValue(featureToColor);
+  } else {
+    featureToColorValue = extractFeatureToColorValue(featureToColor);
+  }
 
   // ******************************************
   // Static Shape Attributes
@@ -48,12 +60,8 @@ export function ShapesArtist ({svg, data, categorySearchData, color, cValue2, cV
   // Dynamic Shape Attributes
   // ******************************************
 
-  // should extract to the helper, rename helper
   let fill = (shape) => {
-    if (plotOptionsReader.logSpectrumEnabled()) {
-      return color(cValue2(shape));
-    }
-    return color(cValue(shape));
+    return color(featureToColorValue(shape));
   };
 
   let opacity = (shape) => {

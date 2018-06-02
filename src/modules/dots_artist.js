@@ -1,4 +1,6 @@
 import {
+  extractFeatureToColorValue,
+  extractFeatureToColorLogValue,
   matchedData,
   transpar,
   xMap,
@@ -7,7 +9,7 @@ import {
 import { PlotCallbackHelper } from './plot_callback_helper.js';
 import { plotOptionsReader } from './plot_options_reader.js';
 
-export function DotsArtist ({svg, data, categorySearchData, color, cValue2, cValue}) {
+export function DotsArtist ({svg, data, categorySearchData, color}) {
   this.points = svg.selectAll(".dot").data(data).enter();
   let searchCategory = plotOptionsReader.getSearchCategory();
   let searchText = plotOptionsReader.getSearchText();
@@ -15,12 +17,23 @@ export function DotsArtist ({svg, data, categorySearchData, color, cValue2, cVal
   let transparentSearchText = plotOptionsReader.getTransparentSearchText()
   let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
   let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
+  let featureToColor =plotOptionsReader.getFeatureToColor();
 
+  // ******************************************
+  // Coloring helper function
+  // ******************************************
+  let featureToColorValue;
+  if (plotOptionsReader.logSpectrumEnabled()) {
+    featureToColorValue = extractFeatureToColorLogValue(featureToColor);
+  } else {
+    featureToColorValue = extractFeatureToColorValue(featureToColor);
+  }
+
+  // ******************************************
+  // Callbacks
+  // ******************************************
   let fill = (dot) => {
-    if (plotOptionsReader.logSpectrumEnabled()) {
-      return color(cValue2(dot));
-    }
-    return color(cValue(dot));
+    return color(featureToColorValue(dot));
   };
 
   let opacity = (dot) => {

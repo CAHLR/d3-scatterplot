@@ -141,43 +141,23 @@ function extractCategoryLabelsFromData(data) {
 // getting header from csv file to make drowdown menus
 // NOTE: tsv() is an async function
 d3.tsv(dataset, extractCategoryLabelsFromData);
-
-let createColorValue = (targetColumn) => {
-  return (data) => {
-    return data[targetColumn];
-  };
-};
-// need to rename this function to be more descriptive
-let createColorValue2 = (targetColumn) => {
-  return (data) => {
-    return Math.log(parseFloat(data[targetColumn]));
-  };
-};
-let color = d3.scale.ordinal().range(d3_category20_shuffled);
-let colorValueFunction = createColorValue(color_column);
-let colorValueFunction2 = createColorValue2(color_column);
 let needZoom = false;
 
 // Initial plot draw happens here:
-highlighting(colorValueFunction, colorValueFunction2, needZoom)
+highlighting(needZoom)
 
 // function to call for change event
 // Coloring
 function plotting(){
-  color_column = d3.event.target.value;
-  colorValueFunction = createColorValue(color_column);
-  colorValueFunction2 = createColorValue2(color_column);
   needZoom = false;
-  highlighting(colorValueFunction, colorValueFunction2, needZoom);
+  highlighting(needZoom);
 }
 
 // function to call for change event
 // Shaping
 function plotting5(){
-  colorValueFunction = createColorValue(color_column);
-  colorValueFunction2 = createColorValue2(color_column);
   needZoom = false;
-  highlighting(colorValueFunction, colorValueFunction2, needZoom);
+  highlighting(needZoom);
 }
 
 // search event
@@ -185,7 +165,7 @@ function plotting5(){
 function searchEventHandler(event) {
   console.log(document.getElementById("searchText").value);
   needZoom = false;
-  highlighting(colorValueFunction, colorValueFunction2, needZoom);
+  highlighting(needZoom);
   return false;
 }
 function searchExactMatchEventHandler(event) {
@@ -196,7 +176,8 @@ function searchExactMatchEventHandler(event) {
 // it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
 function transparentSearchEventHandler(event) {
   console.log(document.getElementById("transpText").value);
-  highlighting(colorValueFunction, colorValueFunction2);
+  needZoom = false;
+  highlighting(needZoom);
   return false;
 }
 function handleCheck1(event) {
@@ -205,25 +186,12 @@ function handleCheck1(event) {
   }
 }
 
-// ?? I believe this function is unused, and draw also maps to zoomEventHandler
-// it will be executed when Draw button is pressed and the plot will highlight those points that covers fixed percentage of point from the point obtained by mouse click
-function handleClick2(event){
-  color_column = "Select";
-  myForm.searchText.value = 0;
-  myForm1.transpText.value = 0;
-  myForm1.opacityMatch.value = 0;
-  myForm1.opacityNoMatch.value = 0;
-  shapingDropdown.property( "value", "Select" );
-  dropDown.property( "value", "Select" );
-  highlighting(colorValueFunction, colorValueFunction2, "", "", "");
-  return false;
-}
-
 // spectrum / log event
 // it will be executed when spectrum/log is checked
 // ?? Can we collapse transparentSearchEventHandler,3,4?
 function spectrumAndLogColoringEventHandler(event) {
-  highlighting(colorValueFunction, colorValueFunction2);
+  needZoom = false;
+  highlighting(needZoom);
 }
 
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
@@ -232,7 +200,7 @@ function zoomEventHandler(){
     document.getElementById("zoomxy").value = ""; // clear the textbox
   }
   needZoom = true;
-  highlighting(colorValueFunction, colorValueFunction2, needZoom);
+  highlighting(needZoom);
 }
 
 (function setEventHandlers() {
@@ -274,14 +242,13 @@ let coordinatesx = [];
 let coordinatesy = [];
 
 // function for plotting
-function highlighting(cValue, cValue2, needZoom) {
+function highlighting(needZoom) {
   let uniqueDataValuesToShape = [];
+  let spectrumGenerator;
+  var xValues = [], yValues = [], searchColumnValues = [];
+  var featureCategoryAndDataMap = {};
 
-  let x_max, x_min, y_max, y_min, spectrumGenerator;
-  var temp1 = [], temp2 = [], temp3 = [];
-  var dict1 = {};
-
-  // to remove the existing svg plot if any and clear side table
+  // remove the existing svg plot if any and clear side table
   document.getElementById("demo3").innerHTML = "";
   document.getElementById("predicted_words").innerHTML = "";
   document.getElementById("frequent_words").innerHTML = "";
@@ -291,6 +258,8 @@ function highlighting(cValue, cValue2, needZoom) {
   d3.tsv(dataset, function(error, data) {
     let shapingColumn = plotOptionsReader.getFeatureToShape();
     let searchCategory = plotOptionsReader.getSearchCategory();
+    let featureToColor = plotOptionsReader.getFeatureToColor();
+    let color;
 
     // AJF Note: it'd be nice to load the data once and then pass the data into the 
     // highlighting function
@@ -300,7 +269,7 @@ function highlighting(cValue, cValue2, needZoom) {
     //Omitting Select (0)
     for(var i=1;i<categories.length;i++) {
       // initialize the value for each category key to empty list
-      dict1[categories[i]] = [];
+      featureCategoryAndDataMap[categories[i]] = [];
       // initialize all categories as numeric
       numerics[categories[i]] = 1;
     }
@@ -312,7 +281,7 @@ function highlighting(cValue, cValue2, needZoom) {
 
       for(var i=1;i<categories.length;i++){
         // add every attribute of point to the {category:[val1,val2,...]}
-        dict1[categories[i]].push(d[categories[i]]);
+        featureCategoryAndDataMap[categories[i]].push(d[categories[i]]);
         // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
         numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
       }
@@ -321,16 +290,16 @@ function highlighting(cValue, cValue2, needZoom) {
       if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
         uniqueDataValuesToShape.push(d[shapingColumn]);
       }
-      // push all x values, y values, and all category search values into temp1/2/3
-      temp1.push(d.x);
-      temp2.push(d["y"]);
-      temp3.push(d[category_search]);
+      // push all x values, y values, and all category search values into xValues/2/3
+      xValues.push(d.x);
+      yValues.push(d["y"]);
+      searchColumnValues.push(d[searchCategory]);
       // console.log(d["z"] == parseInt(d["z"]));
     });
     console.log("Numerics: ", numerics);
-    console.log("Color Column: ",color_column);
+    console.log("Color Column: ",featureToColor);
     // set color according to spectrum
-    if (numerics[color_column] && document.getElementById('cbox1').checked) {
+    if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
       console.log('using spectrum');
       spectrumGenerator = new SpectrumGenerator(data);
       color = spectrumGenerator.color;
@@ -343,7 +312,7 @@ function highlighting(cValue, cValue2, needZoom) {
     // I know it looks ugly injecting so many arguments into the initializer right now,
     // but at least we're being explicit about dependencies as opposed to
     // implicit/throwing everything into global state
-    let svgInitializer = new SvgInitializer(color, color_column, axisArtist.xMax, axisArtist.xMin, axisArtist.yMax, axisArtist.yMin, temp1, temp2, categories, dict1, columns);
+    let svgInitializer = new SvgInitializer(color, axisArtist.xMax, axisArtist.xMin, axisArtist.yMax, axisArtist.yMin, xValues, yValues, categories, featureCategoryAndDataMap, columns);
     let svg = svgInitializer.initializeWithLasso();
     let lasso = svgInitializer.lasso;
     axisArtist.draw(svg);
@@ -376,14 +345,14 @@ function highlighting(cValue, cValue2, needZoom) {
     };
 
     var searched_data = [], searched_data_indices = [], d_temp;
-    /* temp3 holds the value of every point for the search column */
-    for (var i=0;i<temp3.length;i++) {
+    /* searchColumnValues holds the value of every point for the search column */
+    for (var i=0;i<searchColumnValues.length;i++) {
       // 0 if found val in this point, 1 if not found
-      if ( searchFunc1(temp3[i])-1 ) {
+      if ( searchFunc1(searchColumnValues[i])-1 ) {
         d_temp = {};
         // enter all data into dictionary
         for(var j=1;j<categories.length;j++) {
-          d_temp[categories[j]] = dict1[categories[j]][i];
+          d_temp[categories[j]] = featureCategoryAndDataMap[categories[j]][i];
         }
         // only add to searched_data if not already in
         if(searchDic(searched_data, d_temp) === true) {
@@ -411,9 +380,7 @@ function highlighting(cValue, cValue2, needZoom) {
           data: data,
           categorySearchData: category_search_data,
           uniqueDataValuesToShape: uniqueDataValuesToShape,
-          color: color,
-          cValue2: cValue2,
-          cValue: cValue
+          color: color
         }
       )
       shapesArtist.drawUnmatchedShapes();
@@ -426,9 +393,7 @@ function highlighting(cValue, cValue2, needZoom) {
           svg: svg,
           data: data,
           categorySearchData: category_search_data,
-          color: color,
-          cValue2: cValue2,
-          cValue: cValue
+          color: color
         }
       )
       dotsArtist.drawUnmatchedDots();
@@ -437,8 +402,8 @@ function highlighting(cValue, cValue2, needZoom) {
     }
 
     // if coloring
-    if (color_column !== "Select") {
-      if (numerics[color_column] && document.getElementById('cbox1').checked) {
+    if (featureToColor !== "Select") {
+      if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
         new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
       } else {
         new DefaultLegendGenerator(svg, color).generate();

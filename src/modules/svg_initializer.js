@@ -1,10 +1,12 @@
 import { height, margin, width } from './constants.js';
 import { classify, benchmark, tabulate } from './table_creator.js';
 import { searchDic, queryParams } from './utilities';
+import { plotOptionsReader } from './plot_options_reader.js';
 
 
-function LassoInitializer(svg, color, color_column, x_max, x_min, y_max, y_min, allXValues, allYValues, categories, dict1, columns) {
+function LassoInitializer(svg, color, x_max, x_min, y_max, y_min, allXValues, allYValues, categories, dict1, columns) {
   this.svg = svg;
+  let featureToColor = plotOptionsReader.getFeatureToColor();
 
   // *************************************
   // UTILITY FUNCTIONS
@@ -50,7 +52,7 @@ function LassoInitializer(svg, color, color_column, x_max, x_min, y_max, y_min, 
   let lassoEnd = () => {
     // Reset the color of all dots
     this.lasso.items()
-              .style("fill", (dot) => (color(dot[color_column])));
+              .style("fill", (dot) => (color(dot[featureToColor])));
 
     // Style the selected dots
     this.lasso.items()
@@ -81,7 +83,7 @@ function LassoInitializer(svg, color, color_column, x_max, x_min, y_max, y_min, 
     //    all data
     // 5) pass selected data array with additional dimensions to tabulation function to build
     //    side table
-    // When possible, see whether it's possible to get algorithm to run under O(n^2)
+    // TODO: see whether it's possible to get algorithm to run under O(n^2)
 
     // get values for table -> array inside a list
     let selectedDots = this.lasso.items()
@@ -152,7 +154,7 @@ function LassoInitializer(svg, color, color_column, x_max, x_min, y_max, y_min, 
   }
 }
 
-export function SvgInitializer (color, color_column, x_max, x_min, y_max, y_min, allXValues, allYValues, categories, dict1, columns) {
+export function SvgInitializer (color, x_max, x_min, y_max, y_min, allXValues, allYValues, categories, dict1, columns) {
   this.svg = d3.select("body")
                .select('div.plot-container')
                .append("svg")
@@ -161,7 +163,7 @@ export function SvgInitializer (color, color_column, x_max, x_min, y_max, y_min,
                .append("g")
                .attr("transform",`translate(${margin.left}, ${margin.top})`);
 
-  this.lasso = new LassoInitializer(this.svg, color, color_column, x_max, x_min, y_max, y_min, allXValues, allYValues, categories, dict1, columns).initialize();
+  this.lasso = new LassoInitializer(this.svg, color, x_max, x_min, y_max, y_min, allXValues, allYValues, categories, dict1, columns).initialize();
   this.initializeWithLasso = () => {
     // Init the lasso object on the svg:g that contains the dots
     this.svg.call(this.lasso);
