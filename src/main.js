@@ -2,10 +2,6 @@
 // Imports
 // *******************************************
 
-// TODO: Currently, we're importing everything into global scope. YUCK.
-// But as we disentangle scope violations and figure out better ways of incorporating
-// dependency injection, we can start to implement stronger encapsulation and message passing
-
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip1 } from './modules/tooltips.js';
 import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
@@ -106,8 +102,6 @@ var categories_copy_color = [];
 categories_copy_color.push(color_column);
 
 var columns = [];
-// column for the transparent value
-var transparent_column = "Select";
 
 function extractCategoryLabelsFromData(data) {
   console.log('Loading main data')
@@ -144,12 +138,10 @@ function extractCategoryLabelsFromData(data) {
   dropdownBuilder.setDropdownEventHandlers(
                    plotting,
                    plotting2,
-                   plotting3,
                    plotting5
                  );
 
   category_search = category_search_data[0];
-  transparent_column = category_search_data[0];
 };
 
 // getting header from csv file to make drowdown menus
@@ -176,10 +168,6 @@ let needZoom = false;
 highlighting(colorValueFunction, colorValueFunction2, needZoom)
 
 // the functions to call when the value of dropdown menu is changes
-// Transparent
-function plotting3(){
-  transparent_column = d3.event.target.value;
-}
 // Searching
 function plotting2(){
   category_search = d3.event.target.value;
