@@ -29,6 +29,9 @@ export const plotOptionsReader = {
 	getSearchButton: () => {
 		return document.getElementsByClassName('search-button')[0];
 	},
+	getSearchCategory: () => {
+		return document.getElementsByClassName('search-by-feature')[0].value;
+	},
 	getSearchText: () => {
 		return document.getElementsByClassName('search-text')[0].value;
 	},

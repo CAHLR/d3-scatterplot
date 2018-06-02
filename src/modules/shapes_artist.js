@@ -8,9 +8,10 @@ import {
 } from './utilities';
 import { plotOptionsReader } from './plot_options_reader.js';
 
-export function ShapesArtist ({svg, data, categorySearch, categorySearchData, color, cValue2, cValue, uniqueDataValuesToShape}) {
+export function ShapesArtist ({svg, data, categorySearchData, color, cValue2, cValue, uniqueDataValuesToShape}) {
   this.points = svg.selectAll(".dot").data(data).enter();
   this.shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
+  let searchCategory = plotOptionsReader.getSearchCategory();
   let searchText = plotOptionsReader.getSearchText();
   let featureForTransparency = plotOptionsReader.getFeatureForTransparency();
   let transparentSearchText = plotOptionsReader.getTransparentSearchText()
@@ -90,14 +91,14 @@ export function ShapesArtist ({svg, data, categorySearch, categorySearchData, co
   this.drawUnmatchedShapes = () => {
     let unmatchedShapes = this.points
                             .append("path")
-                            .filter(matchedData(categorySearch, searchText, false));
+                            .filter(matchedData(searchCategory, searchText, false));
     drawShapes(unmatchedShapes, unmatchedShapesAttributes);
   }
 
   this.drawMatchedShapes = () => {
     let matchedShapes = this.points
                             .append("path")
-                            .filter(matchedData(categorySearch, searchText, true));
+                            .filter(matchedData(searchCategory, searchText, true));
     drawShapes(matchedShapes, matchedShapesAttributes);
   }
 }

@@ -76,32 +76,32 @@ export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, va
   return isMatch ? parseFloat(valOpacityMatch) : parseFloat(valOpacityNoMatch);
 };
 
-export function matchedData (categorySearch, valSearch, match) {
+export function matchedData (searchCategory, valSearch, match) {
   if (match) {
     return (dataPoint) => {
-      return dotSearchFilter(dataPoint, categorySearch, valSearch) === 2;
+      return dotSearchFilter(dataPoint, searchCategory, valSearch) === 2;
     }
   }
   return (dataPoint) => {
-    return dotSearchFilter(dataPoint, categorySearch, valSearch) === 1;
+    return dotSearchFilter(dataPoint, searchCategory, valSearch) === 1;
   }
 };
 
-export function dotSearchFilter (dot, categorySearch, valSearch) {
+export function dotSearchFilter (dot, searchCategory, valSearch) {
   // return value 1 means unmatched dots
   // return value 2 means matched dots
-  if (typeof dot[categorySearch] == 'undefined' ) {
+  if (typeof dot[searchCategory] == 'undefined' ) {
     return 1;
   }
   // noMatch truthy if not found
-  let noMatch = ((dot, categorySearch, valSearch) => {
+  let noMatch = ((dot, searchCategory, valSearch) => {
     if (plotOptionsReader.searchExactMatchEnabled()) {
-      return dot[categorySearch] !== valSearch;
+      return dot[searchCategory] !== valSearch;
     }
 
-    let caseInsensitiveMatch = dot[categorySearch].toLowerCase().indexOf(valSearch.toLowerCase()) < 0;
+    let caseInsensitiveMatch = dot[searchCategory].toLowerCase().indexOf(valSearch.toLowerCase()) < 0;
     return caseInsensitiveMatch || valSearch.length === 0
-  })(dot, categorySearch, valSearch);
+  })(dot, searchCategory, valSearch);
 
   return noMatch ? 1 : 2;
 };

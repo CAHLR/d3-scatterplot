@@ -135,13 +135,7 @@ function extractCategoryLabelsFromData(data) {
   }
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
-  dropdownBuilder.setDropdownEventHandlers(
-                   plotting,
-                   plotting2,
-                   plotting5
-                 );
-
-  category_search = category_search_data[0];
+  dropdownBuilder.setDropdownEventHandlers(plotting, plotting5);
 };
 
 // getting header from csv file to make drowdown menus
@@ -166,12 +160,6 @@ let needZoom = false;
 
 // Initial plot draw happens here:
 highlighting(colorValueFunction, colorValueFunction2, needZoom)
-
-// the functions to call when the value of dropdown menu is changes
-// Searching
-function plotting2(){
-  category_search = d3.event.target.value;
-}
 
 // function to call for change event
 // Coloring
@@ -302,6 +290,7 @@ function highlighting(cValue, cValue2, needZoom) {
 
   d3.tsv(dataset, function(error, data) {
     let shapingColumn = plotOptionsReader.getFeatureToShape();
+    let searchCategory = plotOptionsReader.getSearchCategory();
 
     // AJF Note: it'd be nice to load the data once and then pass the data into the 
     // highlighting function
@@ -420,7 +409,6 @@ function highlighting(cValue, cValue2, needZoom) {
         {
           svg: svg,
           data: data,
-          categorySearch: category_search,
           categorySearchData: category_search_data,
           uniqueDataValuesToShape: uniqueDataValuesToShape,
           color: color,
@@ -430,14 +418,13 @@ function highlighting(cValue, cValue2, needZoom) {
       )
       shapesArtist.drawUnmatchedShapes();
       shapesArtist.drawMatchedShapes();
-      lasso.items(d3.selectAll(".dot"));
       new ShapeLegendGenerator(uniqueDataValuesToShape).generate(svg);
+      lasso.items(d3.selectAll(".dot"));
     } else {
       let dotsArtist = new DotsArtist(
         {
           svg: svg,
           data: data,
-          categorySearch: category_search,
           categorySearchData: category_search_data,
           color: color,
           cValue2: cValue2,

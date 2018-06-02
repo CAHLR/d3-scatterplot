@@ -7,8 +7,9 @@ import {
 import { PlotCallbackHelper } from './plot_callback_helper.js';
 import { plotOptionsReader } from './plot_options_reader.js';
 
-export function DotsArtist ({svg, data, categorySearch, categorySearchData, color, cValue2, cValue}) {
+export function DotsArtist ({svg, data, categorySearchData, color, cValue2, cValue}) {
   this.points = svg.selectAll(".dot").data(data).enter();
+  let searchCategory = plotOptionsReader.getSearchCategory();
   let searchText = plotOptionsReader.getSearchText();
   let featureForTransparency = plotOptionsReader.getFeatureForTransparency();
   let transparentSearchText = plotOptionsReader.getTransparentSearchText()
@@ -72,14 +73,14 @@ export function DotsArtist ({svg, data, categorySearch, categorySearchData, colo
   this.drawUnmatchedDots = () => {
     let unmatchedDots = this.points
                             .append("circle")
-                            .filter(matchedData(categorySearch, searchText, false));
+                            .filter(matchedData(searchCategory, searchText, false));
     drawDots(unmatchedDots, unmatchedDotsAttributes);
   };
 
   this.drawMatchedDots = () => {
     let matchedDots = this.points
                           .append('circle')
-                          .filter(matchedData(categorySearch, searchText, true));
+                          .filter(matchedData(searchCategory, searchText, true));
    drawDots(matchedDots, matchedDotsAttributes);
   };
 };

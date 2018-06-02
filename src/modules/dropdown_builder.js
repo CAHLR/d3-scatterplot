@@ -54,11 +54,8 @@ export function DropdownBuilder() {
     // Shaping
     populateDropdownOptions(this.shapingDropdown, categories)
   };
-  this.setDropdownEventHandlers = (plotting, plotting2, plotting5) => {
+  this.setDropdownEventHandlers = (plotting, plotting5) => {
     this.coloringDropdown.on("change", plotting);
-
-    // Searching
-    this.searchDropdown.on("change", plotting2);
 
     // Shaping
     this.shapingDropdown.on("change", plotting5);
