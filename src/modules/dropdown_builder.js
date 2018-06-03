@@ -54,10 +54,10 @@ export function DropdownBuilder() {
     // Shaping
     populateDropdownOptions(this.shapingDropdown, categories)
   };
-  this.setDropdownEventHandlers = (plotting, plotting5) => {
-    this.coloringDropdown.on("change", plotting);
+  this.setDropdownEventHandlers = (redrawFunction) => {
+    this.coloringDropdown.on("change", redrawFunction);
 
     // Shaping
-    this.shapingDropdown.on("change", plotting5);
+    this.shapingDropdown.on("change", redrawFunction);
   };
 };

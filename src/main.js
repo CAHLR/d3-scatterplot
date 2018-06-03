@@ -50,11 +50,11 @@ if (queryParams.get("semantic_model") === "true") {
     console.log("Reading " + vectorfile);
     vectorspace_2darray = text.map( Object.values );
     vectorspace_2darray = vectorspace_2darray.map(function(arr) {
-            // username column ends up last in the dictionary, due to alphanumeric sort
-            return arr.slice(0,-1).map(function(elem) {
-              return parseFloat(elem);
-            });
-          });
+      // username column ends up last in the dictionary, due to alphanumeric sort
+      return arr.slice(0,-1).map(function(elem) {
+        return parseFloat(elem);
+      });
+    });
     console.log(vectorspace_2darray);
   });
   d3.tsv(weightsfile, function(text){
@@ -107,9 +107,8 @@ categories_copy_color.push(color_column);
 
 var columns = [];
 let mainData;
-let needZoom = false;
 
-function extractCategoryLabelsFromData(data) {
+function loadMainData(data) {
   console.log('Loading main data')
   function extractCategoryHeaders(data) {
     let categoryHeadersFromFirstRowOfData = [];
@@ -139,64 +138,40 @@ function extractCategoryLabelsFromData(data) {
     }
     columns.push(categoryHeaders[i]);
   }
+  // is there a time that exists in which categories_copy_color !== categories?
+  console.log("category_search_data:", category_search_data)
+  console.log("categories_copy_color:", categories_copy_color)
+  console.log("categories:", categories)
+  console.log("columns:", columns)
+  console.log("categoryHeaders:", categoryHeaders)
+
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
-  dropdownBuilder.setDropdownEventHandlers(plotting, plotting5);
+  dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
   mainData = data;
 
   // Initial plot draw happens here:
-  highlighting(mainData, needZoom)
+  let needZoom = false;
+  highlighting(mainData, needZoom);
 };
 
 // getting header from csv file to make drowdown menus
 // NOTE: tsv() is an async function
-d3.tsv(dataset, extractCategoryLabelsFromData);
+d3.tsv(dataset, loadMainData);
 
-// function to call for change event
-// Coloring
-function plotting(){
-  needZoom = false;
-  highlighting(mainData, needZoom);
-}
 
-// function to call for change event
-// Shaping
-function plotting5(){
-  needZoom = false;
-  highlighting(mainData, needZoom);
-}
-
-// search event
-// it will be executed when search button is pressed and points that matches the searched string will be highlighted
-function searchEventHandler(event) {
-  console.log(document.getElementById("searchText").value);
-  needZoom = false;
-  highlighting(mainData, needZoom);
-  return false;
-}
 function searchExactMatchEventHandler(event) {
-  if (document.getElementById("searchText").value) searchEventHandler();
+  if (document.getElementById("searchText").value) redrawPlotWithoutZoom();
 }
 
-// transparent event
-// it will be executed when Transparent button is pressed and points that satisfies the condition will be highlighted
-function transparentSearchEventHandler(event) {
-  console.log(document.getElementById("transpText").value);
-  needZoom = false;
-  highlighting(mainData, needZoom);
-  return false;
-}
 function handleCheck1(event) {
   if (document.getElementById("transpText").value) {
-    transparentSearchEventHandler();
+    redrawPlotWithoutZoom();
   }
 }
 
-// spectrum / log event
-// it will be executed when spectrum/log is checked
-// ?? Can we collapse transparentSearchEventHandler,3,4?
-function spectrumAndLogColoringEventHandler(event) {
-  needZoom = false;
+function redrawPlotWithoutZoom() {
+  let needZoom = false;
   highlighting(mainData, needZoom);
 }
 
@@ -205,7 +180,7 @@ function zoomEventHandler(){
   if (plotOptionsReader.zoomCheckboxEnabled() === false) {
     document.getElementById("zoomxy").value = ""; // clear the textbox
   }
-  needZoom = true;
+  let needZoom = true;
   highlighting(mainData, needZoom);
 }
 
@@ -215,34 +190,22 @@ function zoomEventHandler(){
 
   let colorOptions = plotOptionsReader.getColorOptions();
   for (let i = 0; i < 2; i++) {
-    colorOptions[i].onclick = spectrumAndLogColoringEventHandler;
+    colorOptions[i].onclick = redrawPlotWithoutZoom;
   };
 
 
   let searchFormButton = plotOptionsReader.getSearchButton();
   searchFormButton.addEventListener('click', (event) => {
     event.preventDefault();
-    searchEventHandler();
+    redrawPlotWithoutZoom();
   });
 
   let transparentSearchButton = plotOptionsReader.getTransparentSearchButton();
   transparentSearchButton.addEventListener('click', (event) => {
     event.preventDefault();
-    transparentSearchEventHandler();
+    redrawPlotWithoutZoom();
   });
-
-  // AJF note: currently, I'm disabling the checkbox event handlers as I think
-  // they are disruptive to the UX of working with the tool
-
-  // let searchExactMatchCheckbox = document.getElementsByClassName('search-exact-match')[0];
-  // searchExactMatchCheckbox.onclick = searchExactMatchEventHandler;
-
-  // let transparencyExactMatch = document.getElementsByClassName('transparency-exact-match')[0];
-  // transparencyExactMatch.addEventListener('change', (event) => {
-  //   event.preventDefault();
-  //   transparentSearchEventHandler();
-  // });
-})()
+})();
 
 let coordinatesx = [];
 let coordinatesy = [];
@@ -332,9 +295,7 @@ function highlighting(data, needZoom) {
     console.log(coordinatesx, coordinatesy);
   })
 
-
   // searching according to the substring given and searching column
-
   var searchFunc1 = function(d) {
     if (typeof d == 'undefined' ) {
       return 1;
