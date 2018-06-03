@@ -25,9 +25,9 @@ To use semantic model:
 2. open your web browser to http://localhost:8000/index.html?dataset=example.tsv&semantic_model=true
 Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/index.html?dataset=example.txt&semantic_model=true for a faster experience.
 
-# Regression Test Plan
+## Regression Test Plan
 
-## Basic Standalone Features
+### Basic Standalone Features
 
 | Feature | Replication Instructions | Expectation |
 | ------- | ------------------------ | ----------- |
@@ -47,7 +47,7 @@ Note: semantic_model.py automatically generates .txt files for you, as files nee
 | Transparency search by exact value (Happy path) | Check the "Exact match" checkbox above the input field. Enter a value into the input field with placeholder "Match attri. val" that **__does__** exist (exactly) in the feature. Enter "1" in the "Opacity (match)" input field. Enter ".2" in the "Opacity (no match)" input field. Click the apply button. | After hitting apply, confirm that the scatterplot updates by making all data points not matching the searched value faint and not changing the opacity of matched data points. |
 | Zoom | Scroll down below the scatterplot and click the checkbox next to the "Zoom" label. Click on two data points in the scatter plot (you can confirm they've been clicked if their click by feature value appears). Click on the Zoom button below the scatter plot. | After clicking the Zoom button, confirm that the scatterplot is redrawn with the two selected datapoints in the center of the plot. Confirm that the values for axes have changed to reflect a more granular view. |
 
-## Combined Features
+### Combined Features
 Any of the above features should be able to be combined and still work as anticipated. For example, see regression plan for combined feature below.
 
 
