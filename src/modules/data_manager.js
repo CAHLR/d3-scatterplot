@@ -12,7 +12,7 @@ export function DataManager(data, categories) {
   };
 
   // featureCategoryAndDataMap is an object containing all
-  // every attribute of point e.g. { category: [val1,val2,...] }
+  // attributes of datapoint e.g. { category: [val1, val2, ...] }
   let initializeFeatureCateogryAndDataMap = (categories) => {
     this.featureCategoryAndDataMap = {};
     categories.forEach((category) => { this.featureCategoryAndDataMap[category] = []});

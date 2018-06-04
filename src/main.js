@@ -19,6 +19,7 @@ import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
 import { DataManager } from './modules/data_manager.js';
+import { SearchDataManager } from './modules/search_data_manager.js';
 
 // *******************************************
 // Begin Script
@@ -221,7 +222,6 @@ let coordinatesy = [];
 function highlighting(data, needZoom) {
   let uniqueDataValuesToShape = [];
   let spectrumGenerator;
-  let searchColumnValues = [];
   console.log('main data', data);
 
   // remove the existing svg plot if any and clear side table
@@ -242,7 +242,6 @@ function highlighting(data, needZoom) {
     if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
       uniqueDataValuesToShape.push(d[shapingColumn]);
     }
-    searchColumnValues.push(d[searchCategory]);
   });
 
   // set color according to spectrum
@@ -279,46 +278,15 @@ function highlighting(data, needZoom) {
     console.log(coordinatesx, coordinatesy);
   })
 
-  // searching according to the substring given and searching column
-  var searchFunc1 = function(d) {
-    if (typeof d == 'undefined' ) {
-      return 1;
-    }
-    // noMatch true if not found
-    var noMatch;
-    if (document.getElementById('cbox5').checked) {
-      noMatch = d !== plotOptionsReader.getSearchText();
-    } else {
-      noMatch = d.toLowerCase().indexOf(plotOptionsReader.getSearchText().toLowerCase()) < 0
-      || plotOptionsReader.getSearchText().length === 0;
-    }
-    return noMatch ? 1 : 2;
-  };
+  let searchDataManager = new SearchDataManager(dataManager.featureCategoryAndDataMap, categories);
 
-  var searched_data = [], searched_data_indices = [], d_temp;
-  /* searchColumnValues holds the value of every point for the search column */
-  for (var i=0;i<searchColumnValues.length;i++) {
-    // 0 if found val in this point, 1 if not found
-    if ( searchFunc1(searchColumnValues[i])-1 ) {
-      d_temp = {};
-      // enter all data into dictionary
-      for(var j=1;j<categories.length;j++) {
-        d_temp[categories[j]] = dataManager.featureCategoryAndDataMap[categories[j]][i];
-      }
-      // only add to searched_data if not already in
-      if(searchDic(searched_data, d_temp) === true) {
-        searched_data.push(d_temp);
-        searched_data_indices.push(i);
-      }
-    }
-  }
   // create the table
-  if ( plotOptionsReader.getSearchText() !== "" && searched_data.length > 0) {
-    var peopleTable1 = tabulate(searched_data, columns);
+  if ( plotOptionsReader.getSearchText() !== "" && searchDataManager.searchedData.length > 0) {
+    var peopleTable1 = tabulate(searchDataManager.searchedData, columns);
     if (queryParams.get('semantic_model') === "true") {
       console.log("Predicting words...");
-      classify(searched_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
-      benchmark(searched_data_indices, bow_2darray, vocab_1darray);
+      classify(searchDataManager.searchedDataIndices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);
+      benchmark(searchDataManager.searchedDataIndices, bow_2darray, vocab_1darray);
     }
   };
 
