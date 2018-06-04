@@ -49,6 +49,9 @@ export const plotOptionsReader = {
 	logSpectrumEnabled: () => {
 		return document.getElementsByClassName('log-spectrum-checkbox')[0].checked;
 	},
+	spectrumEnabled: () => {
+		return document.getElementsByClassName('spectrum-checkbox')[0].checked;
+	},
 	searchExactMatchEnabled: () =>{
 		return document.getElementsByClassName('search-exact-match')[0].checked;
 	},

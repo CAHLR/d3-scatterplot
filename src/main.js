@@ -18,6 +18,7 @@ import {
 import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
+import { DataManager } from './modules/data_manager.js';
 
 // *******************************************
 // Begin Script
@@ -107,6 +108,7 @@ categories_copy_color.push(color_column);
 
 var columns = [];
 let mainData;
+let dataManager;
 
 function loadMainData(data) {
   console.log('Loading main data')
@@ -148,10 +150,15 @@ function loadMainData(data) {
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
   dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
-  mainData = data;
+  mainData = data.map((datum) => {
+    datum['x'] = +datum['x'];
+    datum['y'] = +datum['y'];
+    return datum;
+  });
 
   // Initial plot draw happens here:
   let needZoom = false;
+  dataManager = new DataManager(mainData, categories);
   highlighting(mainData, needZoom);
 };
 
@@ -214,8 +221,7 @@ let coordinatesy = [];
 function highlighting(data, needZoom) {
   let uniqueDataValuesToShape = [];
   let spectrumGenerator;
-  var xValues = [], yValues = [], searchColumnValues = [];
-  var featureCategoryAndDataMap = {};
+  let searchColumnValues = [];
   console.log('main data', data);
 
   // remove the existing svg plot if any and clear side table
@@ -225,53 +231,22 @@ function highlighting(data, needZoom) {
   d3.select("svg").remove();
   d3.select("table").remove();
 
-  // What is numerics doing?
-  // We want to ask the question of a given data point -- is the data associated
-  // with it numerical or is it other (e.g. categorical or ordinal, is the format a string?)
-  // Can we generate an object that will encapsulate this information and allow us
-  // to query it with a category name?
-
   let shapingColumn = plotOptionsReader.getFeatureToShape();
   let searchCategory = plotOptionsReader.getSearchCategory();
   let featureToColor = plotOptionsReader.getFeatureToColor();
   let color;
 
-  // change string (from CSV) into number format
-  var numerics = {};
-  //Omitting Select (0)
-  for(var i=1;i<categories.length;i++) {
-    // initialize the value for each category key to empty list
-    featureCategoryAndDataMap[categories[i]] = [];
-    // initialize all categories as numeric
-    numerics[categories[i]] = 1;
-  }
-  let counter = 0;
   data.forEach(function(d) {
-    // coerce the data to numbers
-    d.x = +d.x;
-    d["y"] = +d["y"];
-
-    for(var i=1;i<categories.length;i++){
-      // add every attribute of point to the {category:[val1,val2,...]}
-      featureCategoryAndDataMap[categories[i]].push(d[categories[i]]);
-      // revoke a category's numerics status if find an entry has a non-Int or non-null value for that category
-      numerics[categories[i]] = numerics[categories[i]] && (d[categories[i]] == "" || d[categories[i]] == parseFloat(d[categories[i]]));
-    }
     // fill the symbol dictionary with all possible values of the shaping column as keys
     // value is the order of points
     if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
       uniqueDataValuesToShape.push(d[shapingColumn]);
     }
-    // push all x values, y values, and all category search values into xValues/2/3
-    xValues.push(d.x);
-    yValues.push(d["y"]);
     searchColumnValues.push(d[searchCategory]);
-    // console.log(d["z"] == parseInt(d["z"]));
   });
-  console.log("Numerics: ", numerics);
 
   // set color according to spectrum
-  if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
+  if (dataManager.featureIsNumeric(featureToColor) && plotOptionsReader.spectrumEnabled()) {
     console.log('using spectrum');
     spectrumGenerator = new SpectrumGenerator(data);
     color = spectrumGenerator.color;
@@ -281,13 +256,22 @@ function highlighting(data, needZoom) {
   }
 
   let axisArtist = new AxisArtist(data, needZoom, coordinatesx, coordinatesy);
-  let svgInitializer = new SvgInitializer(color, axisArtist.xMax, axisArtist.xMin, axisArtist.yMax, axisArtist.yMin, xValues, yValues, categories, featureCategoryAndDataMap, columns);
+  let svgInitializer = new SvgInitializer(
+    color,
+    axisArtist.xMax,
+    axisArtist.xMin,
+    axisArtist.yMax,
+    axisArtist.yMin,
+    dataManager.xValues,
+    dataManager.yValues,
+    categories,
+    dataManager.featureCategoryAndDataMap,
+    columns
+  );
   let svg = svgInitializer.initializeWithLasso();
   let lasso = svgInitializer.lasso;
   axisArtist.draw(svg);
   svg.on("click",function() {
-    // svg.select("#myText").remove();
-
     tooltip1.style("opacity", 0);
     var coordinates1 = d3.mouse(this);
     coordinatesx.unshift(coordinates1[0]);
@@ -319,7 +303,7 @@ function highlighting(data, needZoom) {
       d_temp = {};
       // enter all data into dictionary
       for(var j=1;j<categories.length;j++) {
-        d_temp[categories[j]] = featureCategoryAndDataMap[categories[j]][i];
+        d_temp[categories[j]] = dataManager.featureCategoryAndDataMap[categories[j]][i];
       }
       // only add to searched_data if not already in
       if(searchDic(searched_data, d_temp) === true) {
@@ -329,7 +313,7 @@ function highlighting(data, needZoom) {
     }
   }
   // create the table
-  if ( plotOptionsReader.getSearchText() != "" && searched_data.length > 0) {
+  if ( plotOptionsReader.getSearchText() !== "" && searched_data.length > 0) {
     var peopleTable1 = tabulate(searched_data, columns);
     if (queryParams.get('semantic_model') === "true") {
       console.log("Predicting words...");
@@ -339,7 +323,6 @@ function highlighting(data, needZoom) {
   };
 
   /*** BEGIN drawing dots ***/
-  // shaping of symbols according to the shaping column
   if (shapingColumn !== "Select" ) {
     let shapesArtist = new ShapesArtist(
       {
@@ -370,7 +353,7 @@ function highlighting(data, needZoom) {
 
   // if coloring
   if (featureToColor !== "Select") {
-    if (numerics[featureToColor] && document.getElementById('cbox1').checked) {
+    if (dataManager.featureIsNumeric(featureToColor) && plotOptionsReader.spectrumEnabled()) {
       new SpectrumLegendGenerator(svg, spectrumGenerator).generate();
     } else {
       new DefaultLegendGenerator(svg, color).generate();
