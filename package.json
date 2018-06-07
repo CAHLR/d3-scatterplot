@@ -1,0 +1,13 @@
+{
+  "name": "plot",
+  "version": "0.1.0",
+  "description": "CAHL Visualizer",
+  "scripts": {
+    "start": "npm run webpack",
+    "webpack": "webpack -d --watch"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "webpack": "^4.0.0"
+  }
+}

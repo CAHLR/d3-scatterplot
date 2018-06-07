@@ -1,0 +1,153 @@
+body {
+  font: 11px sans-serif;
+}
+
+/********************/
+/*     PLOT AREA    */
+/********************/
+.plot-area {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 36px;
+  padding-right: 120px;
+}
+
+.dot{
+    stroke: #000;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.tooltip {
+  background: rgba(255,255,255,0.80);
+  height: 28px;
+  padding-left: 36px;
+  pointer-events: none;
+  position: absolute;
+  width: 250px;
+}
+.tooltip1 {
+  position: absolute;
+  width: 100px;
+  height:20px;
+  background: rgba(255,255,255,0.9);
+  pointer-events: none;
+}
+
+/*Never referenced - unused*/
+#legend-svg {
+  vertical-align: top;
+}
+.point {
+  fill: steelblue;
+  stroke: #000;
+}
+
+/****************/
+/*    LASSO     */
+/****************/
+.lasso path {
+  stroke: rgb(80,80,80);
+  stroke-width:2px;
+}
+.lasso .drawn {
+  fill-opacity:.05 ;
+}
+.lasso .loop_close {
+  fill:none;
+  stroke-dasharray: 4,4;
+}
+.lasso .origin {
+  fill:#3399FF;
+  fill-opacity:.5;
+}
+.not_possible {
+  fill:rgb(200,200,200);
+}
+.possible {
+  fill:#EC888C;
+}
+
+.bar rect {
+  fill: steelblue;
+}
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+
+/********************/
+/*      OPTIONS     */
+/********************/
+.plot-options-container {
+  padding-left: 80px
+}
+
+.options-container {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.click-on-feature-container,
+.color-by-feature-container,
+.color-by-feature-options-container,
+.search-by-feature-container,
+.search-form-container,
+.side-table,
+.shape-by-feature-container,
+.transparency-by-feature-dropdown-container,
+.transparency-exact-match-container,
+.zoom-container {
+  font-size: 1.5em;
+}
+/* TODO: Refactor using CSS grid, this is still hacky, though less so */
+.click-on-feature-container {
+  max-width: 220px;
+}
+.color-by-feature-container {
+  max-width: 180px;
+}
+.color-by-feature-options-container {
+  max-width: 300px;
+}
+.search-by-feature-container {
+  max-width: 180px;
+}
+.search-form-container {
+  max-width: 400px;
+}
+.shape-by-feature-container {
+  max-width: 180px;
+}
+.transparency-by-feature-dropdown-container {
+  max-width: 260px;
+}
+.zoom-container {
+  max-width: 600px;
+}
+
+input {
+  width: 145px;
+}
+/*The checkbox*/
+.input1{
+  width : 40px;
+}
+/*Input textbox for circle and zoom*/
+.input2{
+  width : 225px;
+  height : 25px;
+}
