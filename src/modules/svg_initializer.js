@@ -67,71 +67,14 @@ function LassoInitializer(svg, color, x_max, x_min, y_max, y_min, allXValues, al
               .attr("r", 3)
               .style("stroke", "#000");
 
-    // ********************************************************************
-    // The following code draws the side table using the selection data
-    // ********************************************************************
-    // The data that we have is multi-dimensional, with X and Y values only two
-    // dimensions of the total available per datum.
-    // The dimensions that we want to expose/categorize in the side table are
-    // those that are not directly plottable on the X-Y axes.
-    // This algorithm will:
-    // 1) extract the explicit X/Y coordinate values from the selection
-    //  a) adjust/scale the x/y values
-    // 2) find the corresponding points from all the data plotted (all data is sorted)
-    // 3) extract the additional dimension data from the corresponding points in all data plotted
-    // 4) create an array containing the feature data from the selection and the corresponding index in
-    //    all data
-    // 5) pass selected data array with additional dimensions to tabulation function to build
-    //    side table
-    // TODO: see whether it's possible to get algorithm to run under O(n^2)
-
-    // get values for table -> array inside a list
     let selectedDots = this.lasso.items()
                                  .filter((dot) => (dot.selected === true))[0];
-    // adjust the x and y values
-    let selectedXValues = [];
-    let selectedYValues = [];
-    for (let i=0; i < selectedDots.length; i++) {
-      // From the spec: https://www.w3.org/TR/SVGTiny12/svgudom.html#svg__SVGLocatable_getBBox
-      // SVGLocatable.getBBox()
-      // Returns a DOMRect representing the computed bounding box of the current element.
-      selectedXValues.push(
-        (((selectedDots[i].getBBox().x + 6.5) * (x_max - x_min)) / width) + x_min
-      );
-      selectedYValues.push(
-        ((selectedDots[i].getBBox().y + 6.5) * (y_min - y_max)) / height + y_max
-      );
-    };
-    var selected_data=[], selected_data_indices=[];
-
-    // Compare every selected point to all points (tempX)
-    // in order to match coordinates with actual data
-    for (let ii=0; ii < selectedXValues.length; ii++) {
-      console.log("lasso_end gathering selected data");
-      console.log(allXValues.length);
-      for (let jj=0; jj < allXValues.length; jj++) {
-        selectedXValues[ii] = +(selectedXValues[ii].toFixed(3)); // coerce String to Int
-        selectedYValues[ii] = +(selectedYValues[ii].toFixed(5)); // coerce String to Int
-        // find which data point in the selection corresponds to the data in allData (index jj)
-        if ( (selectedXValues[ii] === +(allXValues[jj].toFixed(3))) && (selectedYValues[ii] === +(allYValues[jj].toFixed(5))) ) {
-          let all_values = {};
-          // set the value
-          for (var k=1;k<categories.length;k++) {
-            all_values[categories[k]] = (dict1[categories[k]][jj]);
-          }
-          if(searchDic(selected_data,all_values)==true){
-            selected_data.push(all_values);
-            selected_data_indices.push(jj);
-            break;
-          }
-        }
-      }
-    }
+    let selectedData = selectedDots.map((dot) => (dot.__data__));
 
     // render the table for the points selected by lasso
-    if (selected_data.length > 0) {
+    if (selectedData.length > 0) {
       console.log("Rendering table...");
-      tabulate(selected_data, columns, selectedXValues);
+      tabulate(selectedData, columns);
       if (queryParams.get('semantic_model') === "true") {
         console.log("Predicting words...");
         classify(selected_data_indices, vectorspace_2darray, weights_2darray, biases_1darray, vocab_1darray);

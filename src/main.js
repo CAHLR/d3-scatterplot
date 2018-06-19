@@ -261,8 +261,8 @@ function highlighting(data, needZoom) {
     axisArtist.xMin,
     axisArtist.yMax,
     axisArtist.yMin,
-    dataManager.xValues,
-    dataManager.yValues,
+    dataManager.allXValues,
+    dataManager.allYValues,
     categories,
     dataManager.featureCategoryAndDataMap,
     columns
