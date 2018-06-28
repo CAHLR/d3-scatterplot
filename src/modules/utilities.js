@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 import { height, margin, width } from './constants.js';
 import { URLSearchParamsPolyfill } from '../vendors/url_search_params_polyfill.js';
 import { plotOptionsReader } from './plot_options_reader.js';
@@ -10,6 +12,26 @@ export const queryParams = (() => {
     return new URLSearchParamsPolyfill(location.search)
   };
 })();
+
+export function featureToColorValueTranslator() {
+  let featureToColor = plotOptionsReader.getFeatureToColor();
+  let extractFeatureToColorValue = (targetColumn) => {
+    return (data) => {
+      return data[targetColumn];
+    };
+  };
+  let extractFeatureToColorLogValue = (targetColumn) => {
+    return (data) => {
+      return Math.log(parseFloat(data[targetColumn]));
+    };
+  };
+
+  if (plotOptionsReader.logSpectrumEnabled()) {
+    return extractFeatureToColorLogValue(featureToColor);
+  } else {
+    return extractFeatureToColorValue(featureToColor);
+  }
+};
 
 export let getArrayMin = (array) => {
     return array.reduce(
@@ -45,18 +67,6 @@ export function linSpace(start, end, n) {
   }
   out.push(end);
   return out;
-};
-
-export let extractFeatureToColorValue = (targetColumn) => {
-  return (data) => {
-    return data[targetColumn];
-  };
-};
-// need to rename this function to be more descriptive
-export let extractFeatureToColorLogValue = (targetColumn) => {
-  return (data) => {
-    return Math.log(parseFloat(data[targetColumn]));
-  };
 };
 
 // VIEW HELPER: used to display the summary on the webpage
@@ -140,8 +150,8 @@ export function yValue(data) { return data["y"] };
 // The following two functions map a value to a visual display encoding, such as
 // a pixel position.
 // Type Signature: Value -> display Object
-export let xScale = d3.scale.linear().range([0, width]);
-export let yScale = d3.scale.linear().range([height, 0]);
+export let xScale = d3.scaleLinear().range([0, width]);
+export let yScale = d3.scaleLinear().range([height, 0]);
 
 // The following two functions map from data Object to display value (? not sure
 // if value of object)

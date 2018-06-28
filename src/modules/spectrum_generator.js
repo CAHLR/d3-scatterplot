@@ -27,8 +27,7 @@ export function SpectrumGenerator(data) {
   // *************************************
   // Public functions
   // *************************************
-  this.color = d3.scale
-                 .linear()
+  this.color = d3.scaleLinear()
                  .domain(spectrumColorBreakpoints)
                  .range(colorScale);
 }

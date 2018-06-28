@@ -1,6 +1,5 @@
 import {
-  extractFeatureToColorValue,
-  extractFeatureToColorLogValue,
+  featureToColorValueTranslator,
   matchedData,
   transpar,
   xMap,
@@ -17,17 +16,7 @@ export function DotsArtist ({svg, data, categorySearchData, color}) {
   let transparentSearchText = plotOptionsReader.getTransparentSearchText()
   let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
   let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
-  let featureToColor =plotOptionsReader.getFeatureToColor();
-
-  // ******************************************
-  // Coloring helper function
-  // ******************************************
-  let featureToColorValue;
-  if (plotOptionsReader.logSpectrumEnabled()) {
-    featureToColorValue = extractFeatureToColorLogValue(featureToColor);
-  } else {
-    featureToColorValue = extractFeatureToColorValue(featureToColor);
-  }
+  let featureToColorValue = featureToColorValueTranslator();
 
   // ******************************************
   // Callbacks

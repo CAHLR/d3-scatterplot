@@ -97,8 +97,8 @@ export function SpectrumLegendGenerator(svg, spectrumGenerator) {
       this.spectrumGenerator.spectrumMin,
       this.spectrumGenerator.spectrumMax
     ];
-    let legendScale = d3.scale.linear().domain(scaleBoundaries).range([150, 0]);
-    let legendAxis = d3.svg.axis().scale(legendScale).orient("right").ticks(10);
+    let legendScale = d3.scaleLinear().domain(scaleBoundaries).range([150, 0]);
+    let legendAxis = d3.axisRight().scale(legendScale).ticks(10);
 
     legend.append("g")
           .attr("class", "legend axis")
@@ -136,20 +136,27 @@ export function ShapeLegendGenerator(uniqueDataValuesToShape) {
   };
 
   let generateLegendSymbols = (legendRows) => {
-    legendRows.append('path')
-              .attr('d', d3.svg.symbol().type(this.shapeGenerator.shapeType))
-              .attr('x', width)
-              .attr('width', 18)
-              .attr('height', 18)
-              .attr('class', 'shape-symbol')
-              .attr('transform', (el, index) => {
-                return `translate(20,${index * 20}) rotate(${this.shapeGenerator.shapeRotation(el)})`
-              });
+    let shapeType = this.shapeGenerator.shapeType;
+    let shapeRotation = this.shapeGenerator.shapeRotation;
+    // NOTE: no fat arrow function here in order to let `each()` change the scope
+    // of `this`
+    legendRows.each(function(datum, index, nodes) {
+      let currentRow = d3.select(this);
+      currentRow.append('path')
+                .attr('d', d3.symbol().type(shapeType(datum)))
+                .attr('x', width)
+                .attr('width', 18)
+                .attr('height', 18)
+                .attr('class', 'shape-symbol')
+                .attr('transform', (el) => {
+                  return `translate(20,${index * 20}) rotate(${shapeRotation(datum)})`
+                });
+    })
   };
 
   this.generate = (svg) => {
     let uniqueShapeCount = uniqueDataValuesToShape.length;
-    if (uniqueShapeCount >= 20) { return };
+    if (uniqueShapeCount >= 24) { return };
     let legend = generateLegendRows(svg);
     generateLegendSymbols(legend);
     generateLegendLabels(legend);
