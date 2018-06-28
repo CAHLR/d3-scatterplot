@@ -42,5 +42,3 @@ sizes[3] = ["0", "45", "0", "0"];
 sizes[4] = ["0", "90", "0", "0"];
 sizes[5] = ["0", "45", "0", "0"];
 sizes[6] = ["0", "0", "0", "0"];
-
-// export const availableShapes = ["circle", "cross", "diamond", "square", "star", "triangle", "wye"];
