@@ -2,6 +2,7 @@
 // Imports
 // *******************************************
 
+import * as d3 from "d3";
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip1 } from './modules/tooltips.js';
 import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
@@ -9,6 +10,7 @@ import { plotOptionsReader } from './modules/plot_options_reader.js';
 import { d3_category20_shuffled, height, width } from './modules/constants.js';
 import { DotsArtist } from './modules/dots_artist.js';
 import { ShapesArtist } from './modules/shapes_artist.js';
+import { ShapeGenerator } from './modules/shape_generator.js';
 import { AxisArtist } from './modules/axis_artist.js';
 import {
   DefaultLegendGenerator,
@@ -26,8 +28,6 @@ import { SearchDataManager } from './modules/search_data_manager.js';
 // *******************************************
 
 export const dataset = queryParams.get("dataset") || "joined_data.csv";
-
-
 var weights_2darray = [], biases_1darray = [], vocab_1darray = [], vectorspace_2darray = [], bow_2darray = [];
 // Semantic model option set up
 if (queryParams.get("semantic_model") === "true") {
@@ -113,19 +113,7 @@ let dataManager;
 
 function loadMainData(data) {
   console.log('Loading main data')
-  function extractCategoryHeaders(data) {
-    let categoryHeadersFromFirstRowOfData = [];
-    categoryHeadersFromFirstRowOfData = Object.keys(data[0]);
-    // remove x and y
-    categoryHeadersFromFirstRowOfData.splice(
-      categoryHeadersFromFirstRowOfData.indexOf('x'), 1
-    );
-    categoryHeadersFromFirstRowOfData.splice(
-      categoryHeadersFromFirstRowOfData.indexOf('y'), 1
-    );
-    return categoryHeadersFromFirstRowOfData;
-  }
-  let categoryHeaders = extractCategoryHeaders(data);
+  let categoryHeaders = data.columns.filter(cat => cat !== 'x' && cat !== 'y');
 
   for(var i=0;i<categoryHeaders.length;i++) {
     if (categoryHeaders[i] != category_search) {
@@ -163,9 +151,10 @@ function loadMainData(data) {
   highlighting(mainData, needZoom);
 };
 
-// getting header from csv file to make drowdown menus
 // NOTE: tsv() is an async function
-d3.tsv(dataset, loadMainData);
+console.log('initiating dataset load;');
+let fetchPromise = d3.tsv(dataset);
+fetchPromise.then(loadMainData).catch(e => console.log(e));
 
 
 function searchExactMatchEventHandler(event) {
@@ -220,6 +209,7 @@ let coordinatesy = [];
 
 // function for plotting
 function highlighting(data, needZoom) {
+  let shapeGenerator;
   let uniqueDataValuesToShape = [];
   let spectrumGenerator;
   console.log('main data', data);
@@ -242,6 +232,7 @@ function highlighting(data, needZoom) {
     if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
       uniqueDataValuesToShape.push(d[shapingColumn]);
     }
+    shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
   });
 
   // set color according to spectrum
@@ -251,21 +242,19 @@ function highlighting(data, needZoom) {
     color = spectrumGenerator.color;
   } else {
     console.log('not using spectrum');
-    color = d3.scale.ordinal().range(d3_category20_shuffled);
+    color = d3.scaleOrdinal().range(d3_category20_shuffled);
   }
 
   let axisArtist = new AxisArtist(data, needZoom, coordinatesx, coordinatesy);
   let svgInitializer = new SvgInitializer(
     color,
-    axisArtist.xMax,
-    axisArtist.xMin,
-    axisArtist.yMax,
-    axisArtist.yMin,
+    axisArtist,
     dataManager.allXValues,
     dataManager.allYValues,
     categories,
     dataManager.featureCategoryAndDataMap,
-    columns
+    columns,
+    shapeGenerator
   );
   let svg = svgInitializer.initializeWithLasso();
   let lasso = svgInitializer.lasso;
@@ -304,7 +293,7 @@ function highlighting(data, needZoom) {
     shapesArtist.drawUnmatchedShapes();
     shapesArtist.drawMatchedShapes();
     new ShapeLegendGenerator(uniqueDataValuesToShape).generate(svg);
-    lasso.items(d3.selectAll(".dot"));
+    lasso.items(d3.selectAll(".point"));
   } else {
     let dotsArtist = new DotsArtist(
       {

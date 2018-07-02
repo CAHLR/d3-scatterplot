@@ -17,17 +17,27 @@ Plot tool expects a tsv file as input which has columns labeled 'x' and 'y' and 
 
 Command line example to get the viz running:
 1. clone the repo
-2. inside the repo run: python3 -m http.server
-3. open your web browser to http://localhost:8000/index.html?dataset=example.tsv
+2. run `npm install`
+3. inside the repo run: python3 -m http.server
+4. open your web browser to http://localhost:8000/index.html?dataset=example.tsv
 
 To use semantic model:
 1. run representation_presenter.py and semantic_model.py (instructions in respective repos)
-2. open your web browser to http://localhost:8000/index.html?dataset=example.tsv&semantic_model=true
-Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/index.html?dataset=example.txt&semantic_model=true for a faster experience.
+2. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv&semantic_model=true
+Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.
 
-## Regression Test Plan
+### Dev notes
+This project uses webpack to bundle various modules together into a single `bundle.js` file that is embedded on the `index.html` page.
 
-### Basic Standalone Features
+To start the webpack bundler service, run `npm start` (make sure you've `npm install`ed). This command will watch the for changes in repo and update the `bundle.js` file to match saved changes.
+*NOTE:* you _must_ run bundler in order to have changes reflected in the overall file.
+
+- TODO: migrate semantic model functionality from monolith version to modularized version of the tool
+
+
+#### Regression Test Plan
+
+##### Basic Standalone Features
 
 | Feature | Replication Instructions | Expectation |
 | ------- | ------------------------ | ----------- |
@@ -54,14 +64,3 @@ Any of the above features should be able to be combined and still work as antici
 | Feature | Replication Instructions | Expectation |
 | ------- | ------------------------ | ----------- |
 | Log-Spectrum coloring for features with numerical data | Select a feature with numerical data from the "Color By:" dropdown. From the "Options:" checkbox beneath the "Color By" label, check the "Spectrum" and "Log" checkboxes. | The plot should update the colors of plotted data to reflect a new, more gradual color scheme. The legend in the right hand side of the plot should merge from multiple discrete categories to a single spectrum legend. The legend markers should reflect a log scale instead of a linear scale. |
-
-
-## Dev notes
-Began to incorporate webpack in order to compile modules and maintain better code encapsulation for readability and maintainability. 
-Installation can be done by running `npm install -g webpack` (currently running v. 4.6.0). 
-To start the webpack bundler service, run `npm start`. This command will watch the repo and update the `bundle.js` file to match saved changes.
-
-- TODO: make sure tool works with semantic model
-- TODO: investigate lasso functionality with shapes, seems like they might failing silently
-- TODO: investigate why lasso with spectrum and Log enabled changes dot fill to dark blue
-- TODO: investigate further writing [automated tests for d3](https://busypeoples.github.io/post/testing-d3-with-jasmine/)

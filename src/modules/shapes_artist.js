@@ -1,8 +1,7 @@
 import { PlotCallbackHelper } from './plot_callback_helper.js';
 import { ShapeGenerator } from './shape_generator.js';
 import {
-  extractFeatureToColorValue,
-  extractFeatureToColorLogValue,
+  featureToColorValueTranslator,
   matchedData,
   transpar,
   xMap,
@@ -19,17 +18,7 @@ export function ShapesArtist ({svg, data, categorySearchData, color, uniqueDataV
   let transparentSearchText = plotOptionsReader.getTransparentSearchText()
   let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
   let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
-  let featureToColor =plotOptionsReader.getFeatureToColor();
-
-  // ******************************************
-  // Coloring helper function
-  // ******************************************
-  let featureToColorValue;
-  if (plotOptionsReader.logSpectrumEnabled()) {
-    featureToColorValue = extractFeatureToColorLogValue(featureToColor);
-  } else {
-    featureToColorValue = extractFeatureToColorValue(featureToColor);
-  }
+  let featureToColorValue = featureToColorValueTranslator();
 
   // ******************************************
   // Static Shape Attributes
@@ -75,15 +64,11 @@ export function ShapesArtist ({svg, data, categorySearchData, color, uniqueDataV
   };
 
   let drawShapes = (shapes, attributes) => {
-    let shapeAttributes = d3.svg
-                            .symbol()
-                            .type(this.shapeGenerator.shapeType)
-                            .size(attributes['shapeSize']);
-
+    console.log(this)
     let callbackHelper = new PlotCallbackHelper(svg);
+    let shapeType = this.shapeGenerator.shapeType;
     // consistent attributes
     shapes.attr('class', 'point')
-          .attr('d', shapeAttributes)
           .attr('transform', transformAttributes)
           .style('fill', fill)
           .style('opacity', opacity)
@@ -91,8 +76,12 @@ export function ShapesArtist ({svg, data, categorySearchData, color, uniqueDataV
           .on("mouseout", callbackHelper.mouseoutCallback)
           .on("click", callbackHelper.clickCallback(categorySearchData))
 
+    shapes.attr('d', (datum) => {
+      return d3.symbol().type(shapeType(datum)).size(attributes['shapeSize'])()
+    })
+
     // customized attributes
-    shapes.style('stroke', attributes['borderColor']) // border color
+    shapes.style('stroke', attributes['borderColor'])
           .style('stroke-width', attributes['borderWidth'])
   };
 

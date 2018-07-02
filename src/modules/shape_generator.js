@@ -1,5 +1,6 @@
-import { availableShapes, sizes } from './constants.js';
+import { sizes } from './constants.js';
 import { plotOptionsReader } from './plot_options_reader.js';
+import { symbols } from 'd3-shape';
 
 export function ShapeGenerator(uniqueDataValuesToShape) {
   const featureToShape = plotOptionsReader.getFeatureToShape();
@@ -13,7 +14,7 @@ export function ShapeGenerator(uniqueDataValuesToShape) {
   // Helpers
   // ***************************************
   let shapeIndex = (dataPoint) => {
-    const numberOfAvailableShapes = availableShapes.length;
+    const numberOfAvailableShapes = symbols.length;
     let datum = getDatum(dataPoint);
     // cycle through shape assignment for unique features to shape
     return this.uniqueDataValuesToShape.indexOf(datum) % numberOfAvailableShapes;
@@ -24,12 +25,12 @@ export function ShapeGenerator(uniqueDataValuesToShape) {
   // ***************************************
 
   this.shapeType = (dataPoint) => {
-    return availableShapes[shapeIndex(dataPoint)]
+    return symbols[shapeIndex(dataPoint)]
   };
 
   this.shapeRotation = (dataPoint) => {
     const datum = getDatum(dataPoint);
-    const numberOfAvailableShapes = availableShapes.length;
+    const numberOfAvailableShapes = symbols.length;
     // IMPORTANT TODO:
     // we need to refactor this next part (i.e. data structure of `sizes`) to remove 
     // integers for identification and replace with human-readable keys

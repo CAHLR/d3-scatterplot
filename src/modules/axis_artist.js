@@ -1,11 +1,13 @@
+import * as d3 from "d3";
+
 import { plotOptionsReader } from './plot_options_reader.js';
 import { xScale, xValue, yScale, yValue, getArrayMin, getArrayMax } from './utilities.js';
 import { height, width } from './constants.js';
 
 export function AxisArtist(data, needZoom, coordinatesx, coordinatesy) {
   // The following two variables are the X and Y axis objects
-  let xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-  let yAxis = d3.svg.axis().scale(yScale).orient("left");
+  let xAxis = d3.axisBottom(xScale);
+  let yAxis = d3.axisLeft(yScale);
 
   this.needZoom = needZoom;
   this.coordinatesy = coordinatesy;

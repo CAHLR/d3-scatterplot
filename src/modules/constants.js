@@ -40,5 +40,5 @@ sizes[1] = ["0", "45", "0", "0"];
 sizes[2] = ["0", "90", "0", "0"];
 sizes[3] = ["0", "45", "0", "0"];
 sizes[4] = ["0", "90", "0", "0"];
-sizes[5] = ["0", "0", "0", "0"];
-export const availableShapes = ["diamond", "cross", "triangle-up", "square", "triangle-down","circle"];
+sizes[5] = ["0", "45", "0", "0"];
+sizes[6] = ["0", "0", "0", "0"];

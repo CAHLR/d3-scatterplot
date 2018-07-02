@@ -8,6 +8,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "webpack": "^4.0.0"
+    "webpack": "^4.0.0",
+    "d3": "^5.5.0",
+    "mathjs": "^5.0.0",
+    "crossfilter2": "^1.4.6"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "webpack-cli": "^3.0.8"
   }
 }
