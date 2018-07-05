@@ -127,7 +127,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
     setDatapointSize(notSelectedDatapoints, false);
 
     selectedDatapoints.classed('selected', true);
-    let selectedData = notSelectedDatapoints.data();
+    let selectedData = selectedDatapoints.data();
 
     // render the table for the points selected by lasso
     if (selectedData.length > 0) {
