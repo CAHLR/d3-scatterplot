@@ -3,7 +3,12 @@ import { lasso } from 'd3-lasso';
 
 import { height, margin, width } from './constants.js';
 import { classify, benchmark, tabulate } from './table_creator.js';
-import { featureToColorValueTranslator, queryParams, searchDic } from './utilities';
+import {
+  featureToColorValueTranslator,
+  queryParams,
+  searchDic,
+  flattenArray
+} from './utilities';
 import { plotOptionsReader } from './plot_options_reader.js';
 
 
@@ -50,9 +55,6 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
   let datapointNotSelected = (dot) => {
     return !dot.getAttribute('class').split(' ').includes('selected');
   }
-  let flattenArray = (array) => {
-    return array.reduce((acc, val) => acc.concat(val), []);
-  }
 
   let parseDataSelection = (lasso) => {
     var selectedNodes, notSelectedNodes;
@@ -91,9 +93,9 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
     if (window.event.shiftKey) {
       return;
     } else {
-      items.attr("r", 3.5) // reset size
-           .classed("not_possible", true)
+      items.classed("not_possible", true)
            .classed("selected", false); // style as not possible
+      setDatapointSize(items, false)
     }
   };
 
