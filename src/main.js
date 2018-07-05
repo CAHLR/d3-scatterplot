@@ -209,7 +209,6 @@ let coordinatesy = [];
 
 // function for plotting
 function highlighting(data, needZoom) {
-  let shapeGenerator;
   let uniqueDataValuesToShape = [];
   let spectrumGenerator;
   console.log('main data', data);
@@ -232,8 +231,8 @@ function highlighting(data, needZoom) {
     if (uniqueDataValuesToShape.indexOf(d[shapingColumn]) === -1) {
       uniqueDataValuesToShape.push(d[shapingColumn]);
     }
-    shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
   });
+  let shapeGenerator = new ShapeGenerator(uniqueDataValuesToShape);
 
   // set color according to spectrum
   if (dataManager.featureIsNumeric(featureToColor) && plotOptionsReader.spectrumEnabled()) {

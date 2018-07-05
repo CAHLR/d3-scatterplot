@@ -34,15 +34,19 @@ export function featureToColorValueTranslator() {
 };
 
 export let getArrayMin = (array) => {
-    return array.reduce(
-      (accumulator, currentValue) => Math.min(accumulator, currentValue)
-    );
-  };
+  return array.reduce(
+    (accumulator, currentValue) => Math.min(accumulator, currentValue)
+  );
+};
 
 export let getArrayMax = (array) => {
   return array.reduce(
     (accumulator, currentValue) => Math.max(accumulator, currentValue)
   );
+}
+
+export let flattenArray = (array) => {
+  return array.reduce((acc, val) => acc.concat(val), []);
 }
 
 

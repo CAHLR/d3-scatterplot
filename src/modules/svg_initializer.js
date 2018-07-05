@@ -3,7 +3,12 @@ import { lasso } from 'd3-lasso';
 
 import { height, margin, width } from './constants.js';
 import { classify, benchmark, tabulate } from './table_creator.js';
-import { featureToColorValueTranslator, queryParams, searchDic } from './utilities';
+import {
+  featureToColorValueTranslator,
+  queryParams,
+  searchDic,
+  flattenArray
+} from './utilities';
 import { plotOptionsReader } from './plot_options_reader.js';
 
 
@@ -44,6 +49,31 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
     }
   }
 
+  let datapointIsSelected = (dot) => {
+    return dot.getAttribute('class').split(' ').includes('selected');
+  }
+  let datapointNotSelected = (dot) => {
+    return !dot.getAttribute('class').split(' ').includes('selected');
+  }
+
+  let parseDataSelection = (lasso) => {
+    var selectedNodes, notSelectedNodes;
+    let multipleClusterSelectionEnabled = window.event.shiftKey;
+    if (multipleClusterSelectionEnabled) {
+      selectedNodes = flattenArray([
+        lasso.selectedItems().nodes(),
+        lasso.notSelectedItems().nodes().filter(datapointIsSelected)
+      ])
+      notSelectedNodes = flattenArray([
+        lasso.notSelectedItems().nodes().filter(datapointNotSelected)
+      ])
+    } else {
+      selectedNodes = lasso.selectedItems().nodes()
+      notSelectedNodes = lasso.notSelectedItems().nodes()
+    }
+    return [d3.selectAll(selectedNodes), d3.selectAll(notSelectedNodes)]
+  }
+
   // *************************************
   // LASSO AREA AND CALLBACKS
   // *************************************
@@ -58,11 +88,15 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
 
   let lassoStart = () => {
     removeTable();
-    this.lasso.items()
-         .attr("r", 3.5) // reset size
-         .style("fill", null) // clear all of the fills (greys out)
-         .classed("not_possible", true)
-         .classed("selected", false); // style as not possible
+    // clear all of the fills (greys out)
+    let items = this.lasso.items().style("fill", null);
+
+    if (window.event.shiftKey) {
+      return;
+    } else {
+      items.classed("selected", false);
+      setDatapointSize(items, false)
+    }
   };
 
   let lassoDraw = () => {
@@ -80,25 +114,21 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
 
   let lassoEnd = () => {
     // Reset the color of all dots
-    this.lasso.items()
-              .style("fill", (dot) => (color(featureToColorValue(dot))));
+    this.lasso.items().style("fill", (dot) => (color(featureToColorValue(dot))))
+                      .classed("not_possible", false)
+                      .classed("possible", false);
 
+    var [selectedDatapoints, notSelectedDatapoints] = parseDataSelection(this.lasso);
     // Style the selected data
-    let selectedData = this.lasso.selectedItems();
-    selectedData.classed("not_possible", false)
-                .classed("possible", false);
-    setDatapointSize(selectedData, true);
+    selectedDatapoints.classed('selected', true); // necessary for multiple selections
+    setDatapointSize(selectedDatapoints, true);
 
-    // Reset the style of the not selected data (we made them 0.5 smaller)
-    let notSelectedData = this.lasso.notSelectedItems()
-                                    .classed("not_possible", false)
-                                    .classed("possible", false)
-                                    .style("stroke", "#000");
-    setDatapointSize(notSelectedData, false);
-
-    selectedData = this.lasso.selectedItems().nodes().map(shape => shape.__data__);
+    // Reset the style of the not selected data
+    notSelectedDatapoints.style("stroke", "#000");
+    setDatapointSize(notSelectedDatapoints, false);
 
     // render the table for the points selected by lasso
+    let selectedData = selectedDatapoints.data();
     if (selectedData.length > 0) {
       console.log("Rendering table...");
       tabulate(selectedData, columns);
