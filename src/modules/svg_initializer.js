@@ -88,13 +88,13 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
 
   let lassoStart = () => {
     removeTable();
-    let items = this.lasso.items()
-                          .style("fill", null) // clear all of the fills (greys out)
+    // clear all of the fills (greys out)
+    let items = this.lasso.items().style("fill", null);
+
     if (window.event.shiftKey) {
       return;
     } else {
-      items.classed("not_possible", true)
-           .classed("selected", false); // style as not possible
+      items.classed("selected", false);
       setDatapointSize(items, false)
     }
   };
@@ -113,25 +113,22 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
   };
 
   let lassoEnd = () => {
-    var [selectedDatapoints, notSelectedDatapoints] = parseDataSelection(this.lasso);
     // Reset the color of all dots
-    this.lasso.items()
-              .style("fill", (dot) => (color(featureToColorValue(dot))));
-    // Style the selected data
-    selectedDatapoints.classed("not_possible", false)
+    this.lasso.items().style("fill", (dot) => (color(featureToColorValue(dot))))
+                      .classed("not_possible", false)
                       .classed("possible", false);
+
+    var [selectedDatapoints, notSelectedDatapoints] = parseDataSelection(this.lasso);
+    // Style the selected data
+    selectedDatapoints.classed('selected', true); // necessary for multiple selections
     setDatapointSize(selectedDatapoints, true);
 
-    // Reset the style of the not selected data (we made them 0.5 smaller)
-    notSelectedDatapoints.classed("not_possible", false)
-                         .classed("possible", false)
-                         .style("stroke", "#000");
+    // Reset the style of the not selected data
+    notSelectedDatapoints.style("stroke", "#000");
     setDatapointSize(notSelectedDatapoints, false);
 
-    selectedDatapoints.classed('selected', true);
-    let selectedData = selectedDatapoints.data();
-
     // render the table for the points selected by lasso
+    let selectedData = selectedDatapoints.data();
     if (selectedData.length > 0) {
       console.log("Rendering table...");
       tabulate(selectedData, columns);
