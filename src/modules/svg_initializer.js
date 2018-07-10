@@ -58,7 +58,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
 
   let parseDataSelection = (lasso) => {
     var selectedNodes, notSelectedNodes;
-    let multipleClusterSelectionEnabled = window.event.shiftKey;
+    let multipleClusterSelectionEnabled = d3.event.sourceEvent.shiftKey;
     if (multipleClusterSelectionEnabled) {
       selectedNodes = flattenArray([
         lasso.selectedItems().nodes(),
@@ -91,7 +91,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
     // clear all of the fills (greys out)
     let items = this.lasso.items().style("fill", null);
 
-    if (window.event.shiftKey) {
+    if (d3.event.sourceEvent.shiftKey) {
       return;
     } else {
       items.classed("selected", false);
