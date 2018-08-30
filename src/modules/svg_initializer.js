@@ -12,7 +12,7 @@ import {
 import { plotOptionsReader } from './plot_options_reader.js';
 
 
-function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, categories, featureCategoryAndDataMap, columns, shapeGenerator) {
+function LassoInitializer(svg, color, axisArtist, categories, columns, shapeGenerator) {
   this.svg = svg;
   var [smallDotSize, largeDotSize] = [3, 6.5];
   var [smallShapeSize, largeShapeSize] = [30, 180];
@@ -156,7 +156,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
   }
 }
 
-export function SvgInitializer (color, axisArtist, allXValues, allYValues, categories, featureCategoryAndDataMap, columns, shapeGenerator) {
+export function SvgInitializer (color, axisArtist, categories, columns, shapeGenerator) {
   this.svg = d3.select("body")
                .select('div.plot-container')
                .append("svg")
@@ -165,7 +165,7 @@ export function SvgInitializer (color, axisArtist, allXValues, allYValues, categ
                .append("g")
                .attr("transform",`translate(${margin.left}, ${margin.top})`);
 
-  this.lasso = new LassoInitializer(this.svg, color, axisArtist, allXValues, allYValues, categories, featureCategoryAndDataMap, columns, shapeGenerator).initialize();
+  this.lasso = new LassoInitializer(this.svg, color, axisArtist, categories, columns, shapeGenerator).initialize();
   this.initializeWithLasso = () => {
     // Init the lasso object on the svg:g that contains the dots
     this.svg.call(this.lasso);
