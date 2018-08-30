@@ -7,15 +7,12 @@ import {
 } from './utilities';
 import { PlotCallbackHelper } from './plot_callback_helper.js';
 import { plotOptionsReader } from './plot_options_reader.js';
+import { TransparencyService } from './transparency_service.js';
 
 export function DotsArtist ({svg, data, categorySearchData, color}) {
   this.points = svg.selectAll(".dot").data(data).enter();
   let searchCategory = plotOptionsReader.getSearchCategory();
   let searchText = plotOptionsReader.getSearchText();
-  let featureForTransparency = plotOptionsReader.getFeatureForTransparency();
-  let transparentSearchText = plotOptionsReader.getTransparentSearchText()
-  let searchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchMatch();
-  let noSearchMatchOpacityValue = plotOptionsReader.getOpacityValueSearchNoMatch();
   let featureToColorValue = featureToColorValueTranslator();
 
   // ******************************************
@@ -23,16 +20,6 @@ export function DotsArtist ({svg, data, categorySearchData, color}) {
   // ******************************************
   let fill = (dot) => {
     return color(featureToColorValue(dot));
-  };
-
-  let opacity = (dot) => {
-    return transpar(
-      dot,
-      transparentSearchText,
-      featureForTransparency,
-      searchMatchOpacityValue,
-      noSearchMatchOpacityValue
-    )
   };
 
   let drawDots = (dots, attributes) => {
@@ -45,7 +32,7 @@ export function DotsArtist ({svg, data, categorySearchData, color}) {
         .on("mouseout", callbackHelper.mouseoutCallback)
         .on("click", callbackHelper.clickCallback(categorySearchData))
         .style('fill', fill)
-        .style('opacity', opacity)
+        .style('opacity', TransparencyService.opacityValue)
 
     // customized attributes
     dots.attr('r', attributes['radiusSize']) //radius size
