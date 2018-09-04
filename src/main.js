@@ -4,7 +4,7 @@
 
 import * as d3 from "d3";
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
-import { tooltip1 } from './modules/tooltips.js';
+import { tooltip, initialTooltipState } from './modules/tooltips.js';
 import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
 import { plotOptionsReader } from './modules/plot_options_reader.js';
 import { d3_category20_shuffled, height, width } from './modules/constants.js';
@@ -136,6 +136,8 @@ function loadMainData(data) {
   console.log("columns:", columns)
   console.log("categoryHeaders:", categoryHeaders)
 
+  tooltip.html(initialTooltipState(category_search_data));
+
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
   dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
@@ -213,8 +215,6 @@ function highlighting(data, needZoom) {
   let spectrumGenerator;
   console.log('main data', data);
 
-  // remove the existing svg plot if any and clear side table
-  document.getElementById("demo3").innerHTML = "";
   document.getElementById("predicted_words").innerHTML = "";
   document.getElementById("frequent_words").innerHTML = "";
   d3.select("svg").remove();
@@ -259,7 +259,6 @@ function highlighting(data, needZoom) {
   let lasso = svgInitializer.lasso;
   axisArtist.draw(svg);
   svg.on("click",function() {
-    tooltip1.style("opacity", 0);
     var coordinates1 = d3.mouse(this);
     coordinatesx.unshift(coordinates1[0]);
     coordinatesy.unshift(coordinates1[1]);

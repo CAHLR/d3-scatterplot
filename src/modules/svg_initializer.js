@@ -27,7 +27,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
 
   let removeTable = () => {
     d3.select("table").remove();
-    document.getElementById("demo3").innerHTML = "";
+    document.getElementsByClassName('side-table')[0].innerHTML = '';
   };
 
   let dataAreShapes = (selectedData) => {
@@ -157,8 +157,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
 }
 
 export function SvgInitializer (color, axisArtist, allXValues, allYValues, categories, featureCategoryAndDataMap, columns, shapeGenerator) {
-  this.svg = d3.select("body")
-               .select('div.plot-container')
+  this.svg = d3.select('.plot-container')
                .append("svg")
                .attr("width", width + margin.left + margin.right)
                .attr("height", height + margin.top + margin.bottom)

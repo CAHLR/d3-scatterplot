@@ -1,5 +1,4 @@
-import { tooltip } from './tooltips.js';
-import { printArray } from './utilities.js';
+import { tooltip, tooltipHTMLContent } from './tooltips.js';
 import { plotOptionsReader } from './plot_options_reader.js';
 
 export function PlotCallbackHelper(svg) {
@@ -33,9 +32,7 @@ export function PlotCallbackHelper(svg) {
       tooltip.transition()
              .duration(200)
              .style("opacity", 1);
-      tooltip.html(printArray(categorySearchData, dataPoint))
-             .style("left", "60px")
-             .style("top", "30px");
+      tooltip.html(tooltipHTMLContent(categorySearchData, dataPoint));
     };
   };
 

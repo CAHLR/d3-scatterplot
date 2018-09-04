@@ -1,16 +1,103 @@
 body {
-  font: 11px sans-serif;
+  font: 12px sans-serif;
 }
+
+/****************************/
+/*     FILTER DROPDOWNS     */
+/****************************/
+.drop-down-menu {
+  display: block;
+}
+
+.menu-title {
+  cursor: pointer;
+}
+
+.menu-title {
+  display:block;
+  padding: 10px 15px;
+}
+
+.activate {
+  display: none;
+
+  position: absolute;
+  cursor: pointer;
+  width: 100%;
+  height: 40px;
+  margin: 0 0 0 -15px;
+  opacity: 0;
+}
+
+.drop-down {
+  max-height: 0;
+  overflow: hidden;
+}
+
+.drop-down p {
+  background: #222;
+}
+
+.activate:checked ~ .drop-down {
+  max-height: 200px;
+  display: block;
+}
+
 
 /********************/
 /*     PLOT AREA    */
 /********************/
 .plot-area {
-  display: flex;
-  justify-content: space-between;
-  padding-left: 36px;
-  padding-right: 120px;
+  display: grid;
+  grid-gap: 1px 1px;
+  grid-template-areas: ". . . ." ". tooltip . ." ". plot-container side-table ." ". filters-and-options . ." ". . . .";
+  grid-template-columns: 1% 70% auto 1%;
+  grid-template-rows: 0.1fr 0.4fr 4.6fr 1.1fr 0.2fr;
+  height: calc(100vh - 10px);
 }
+
+.plot-container {
+  grid-area: plot-container;
+}
+
+.side-table {
+  font-size: 1.2em;
+  grid-area: side-table;
+  margin-left: 12px;
+  margin-top: 16px;
+  overflow: scroll;
+}
+
+.tooltip {
+  grid-area: tooltip;
+  grid-column: 2 / span 2;
+  margin-left: 24px;
+  margin-top: 16px;
+  min-height: 60px;
+  opacity: 0;
+}
+.tooltip table {
+  border-collapse: collapse;
+  border-style: hidden;
+  float: center;
+  pointer-events: none;
+}
+.tooltip table td {
+  border: 1px solid black;
+  font-size: 0.8rem;
+  padding: 8px;
+  text-align: center;
+}
+.tooltip .headers {
+  font-weight: bold;
+}
+
+
+.filters-and-options {
+  grid-area: filters-and-options;
+  grid-column: 2 / span 2;
+}
+
 
 .dot{
     stroke: #000;
@@ -20,30 +107,6 @@ body {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
-}
-.tooltip {
-  background: rgba(255,255,255,0.80);
-  height: 28px;
-  padding-left: 36px;
-  pointer-events: none;
-  position: absolute;
-  width: 250px;
-}
-.tooltip1 {
-  position: absolute;
-  width: 100px;
-  height:20px;
-  background: rgba(255,255,255,0.9);
-  pointer-events: none;
-}
-
-/*Never referenced - unused*/
-#legend-svg {
-  vertical-align: top;
-}
-.point {
-  fill: steelblue;
-  stroke: #000;
 }
 
 /****************/
@@ -106,7 +169,6 @@ body {
 .color-by-feature-options-container,
 .search-by-feature-container,
 .search-form-container,
-.side-table,
 .shape-by-feature-container,
 .transparency-by-feature-dropdown-container,
 .transparency-exact-match-container,

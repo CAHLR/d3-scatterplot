@@ -102,6 +102,6 @@ export function tabulate (data_tab, columns) {
     output = output + "<br>";
   }
   // side table
-  document.getElementById("demo3").innerHTML = output;
+  document.getElementsByClassName('side-table')[0].innerHTML = output;
   return table;
 }
