@@ -54,7 +54,7 @@ export function benchmark (indices, bow_source, vocab_source) { // may need to a
 
 // displays the summary in tabular form
 export function tabulate (data_tab, columns) {
-  let table = d3.select("body").select('div.plot-options-container').append("table").attr("class", "select3"),
+  let table = d3.select('.plot-options-container').append("table").attr("class", "summary-data"),
       thead = table.append("thead"),
       tbody = table.append("tbody");
 

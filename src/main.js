@@ -177,7 +177,7 @@ function redrawPlotWithoutZoom() {
 // it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function zoomEventHandler(){
   if (plotOptionsReader.zoomCheckboxEnabled() === false) {
-    document.getElementById("zoomxy").value = ""; // clear the textbox
+    document.getElementsByClassName("zoomxy")[0].innerText = ""; // clear the textbox
   }
   let needZoom = true;
   highlighting(mainData, needZoom);
@@ -218,7 +218,7 @@ function highlighting(data, needZoom) {
   document.getElementById("predicted_words").innerHTML = "";
   document.getElementById("frequent_words").innerHTML = "";
   d3.select("svg").remove();
-  d3.select("table").remove();
+  d3.select(".summary-data").remove();
 
   let shapingColumn = plotOptionsReader.getFeatureToShape();
   let searchCategory = plotOptionsReader.getSearchCategory();

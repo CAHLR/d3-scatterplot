@@ -15,66 +15,145 @@
       <div class="tooltip">
       </div>
       <div class="filters-and-options">
-      <div class="plot-options-container">
-        <div class="options-container zoom-container">
-          <div class="enable-zoom">
-            <b>Zoom</b>
-            <input class="input1 enable-zoom-checkbox" type="checkbox" id="cbox3" value="third_checkbox"></input>
+        <div class="plot-options-container">
+
+          <!-- https://codepen.io/raubaca/pen/PZzpVe -->
+          <div class="tab">
+            <input id="zoom-tab" type="checkbox" name="tabs">
+            <label for="zoom-tab">Zoom</label>
+            <div class="tab-content zoom-container">
+              <ul>
+                <li>
+                  <p class="option-description"></p>
+                    To zoom into a subsection of the plot, toggle 'Enable', select two data points on the plot to act as the boundaries, and push the zoom button.
+                  </p>
+                  <p class="zoomxy"></p>
+
+                  <div class="toggle-and-zoom">
+                    <div class="toggle-container">
+                      <p class="zoom-toggle-label">Enable</p>
+                      <div class="toggle">
+                        <input type="checkbox" class="check enable-zoom">
+                        <b class="switch"></b>
+                        <b class="track"></b>
+                      </div>
+                    </div>
+                    <input type="submit" class="input2 zoom-button" value="Zoom">
+                  </div>
+                <li>
+              </ul>
+            </div>
           </div>
-          <input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"></input>
-          <button class = "input2 zoom-button" value="Zoom" >Zoom</button>
-        </div>
 
-        <div class="color-by-feature-container options-container" id="demo" >
-          <b>Color by: </b>
-        </div>
-        <div class="color-by-feature-options-container options-container">
-          <b>Options: </b>
-          <label>Spectrum</label>
-          <input class="input1 color-option spectrum-checkbox" type="checkbox" id="cbox1" value="first_checkbox">
-          <label>Log</label>
-          <input class="input1 color-option log-spectrum-checkbox" type="checkbox" id="cbox2" value="second_checkbox">
-        </div>
+           <div class="tab">
+            <input id="color-tab" type="checkbox" name="tabs">
+            <label for="color-tab">Color</label>
+            <div class="tab-content color-container">
+              <ul>
+                <li>
+                  <p class="option-description"></p>
+                    Select a feature/column name from the dropdown to redraw the scatterplot, assigning a different color for each value of the feature.
 
-        <div class="click-on-feature-container options-container">
-          <b>Click on feature: </b>
-        </div>
+                    If the feature has a continuous range of values, you can select the spectrum option to change the color scheme to better reflect the value range.
 
-        <div class="shape-by-feature-container options-container">
-          <b>Shape by: </b>
-        </div>
-
-        <div class="search-by-feature-container options-container" id="demo2">
-          <b>Search by: </b>
-        </div>
-
-        <div class="search-form-container form-container">
-          <div class="search-exact-match-container">
-            <label>Exact match: </label>
-            <input class="input1 search-exact-match" type="checkbox" id="cbox5" value="fifth_checkbox">
+                    Additionally, selecting the log option will redraw the values on a log scale.
+                  </p>
+                  <div class="color-by-feature-container">
+                  </div>
+                  <div class="color-option">
+                    <b>Spectrum</b>
+                    <input class="input1 color-option spectrum-checkbox" type="checkbox" id="cbox1" value="first_checkbox">
+                  </div>
+                  <div class="color-option">
+                    <b>Log</b>
+                    <input class="input1 color-option log-spectrum-checkbox" type="checkbox" id="cbox2" value="second_checkbox">
+                  </div>
+                <li>
+              </ul>
+            </div>
           </div>
-          <form name="myform" class="search-form">
-            <input type="text" class='search-text' id="searchText" placeholder="Search text">
-            <input class='search-button' name="Submit"  type="submit" value="Apply" >
-          </form>
-        </div>
 
-        <div class="transparency-by-feature-container form-container">
-          <div class="transparency-by-feature-dropdown-container options-container" id="demo4" >
-            <b>Transparent attribute: </b>
+          <div class="tab">
+            <input id="click-on-feature-tab" type="checkbox" name="tabs">
+            <label for="click-on-feature-tab">Click on Feature</label>
+            <div class="tab-content">
+              <p class="option-description">
+                Selecting a feature/column name from the dropdown will change the annotations that are displayed on the scatterplot when a datapoint is clicked.
+              </p>
+              <div class="click-on-feature-container"></div>
+            </div>
           </div>
-          <div class="transparency-exact-match-container">
-            <label>Exact match: </label>
-            <input class="input1 transparency-exact-match" type="checkbox" id="cbox6" value="sixth_checkbox">
+
+          <div class="tab">
+            <input id="shape-by-feature-tab" type="checkbox" name="tabs">
+            <label for="shape-by-feature-tab">Shape by Feature</label>
+            <div class="tab-content">
+              <p class="option-description">
+                Selecting a feature/column name from the dropdown will change the annotations that are displayed on the scatterplot when a datapoint is clicked.
+              </p>
+              <div class="shape-by-feature-container"></div>
+            </div>
           </div>
-          <form name="myform1" class="form1 transparency-form-container">
-            <p>Enter attribute value, and opacity values b/w 0 and 1:</p>
-            <input type="text" class='transparency-search-text' id="transpText" placeholder="Match attri. val">
-            <input type="text" class='opacity-value-search-match' id="opacityMatch" placeholder="Opacity (match)">
-            <input type="text" class='opacity-value-search-no-match' id="opacityNoMatch" placeholder="Opacity (no match)">
-            <input class='transparent-search-button' name="Submit"  type="submit" value="Apply">
-          </form>
-        </div>
+
+          <div class="tab">
+            <input id="search-by-feature-tab" type="checkbox" name="tabs">
+            <label for="search-by-feature-tab">Search by Feature</label>
+            <div class="tab-content">
+              <p class="option-description">
+                Search a feature by value. Values that match will be highlighted in yellow. Toggle exact match to match on case-sensitive criteria.
+              </p>
+              <div class="search-selection-options">
+                <div class="search-by-feature-container"></div>
+                <div class="search-toggle-and-submit">
+                  <div class="exact-match">
+                    <p class="search-toggle-label">Exact match:</p>
+                    <!-- https://codepen.io/daneden/pen/JFxAw -->
+                    <div class="toggle">
+                      <input type="checkbox" class="check search-exact-match">
+                      <b class="switch"></b>
+                      <b class="track"></b>
+                    </div>
+                  </div>
+                  <form name="myform" class="search-form">
+                    <input type="text" class='search-text' id="searchText" placeholder="Search text">
+                    <input class='search-button' name="Submit"  type="submit" value="Apply" >
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab">
+            <input id="transparency-by-feature-tab" type="checkbox" name="tabs">
+            <label for="transparency-by-feature-tab">Transparency by Feature</label>
+            <div class="tab-content">
+              <p class="option-description">
+                Search a feature by value. Values that match will be drawn with the match opacity. Values that do not match will be drawn with the no-match opacity. Toggle exact match to match on case-sensitive criteria. Setting the opacity to 0 will remove the data points fitting the respective match criteria.
+              </p>
+              <div class="transparency-selection-options">
+                <div class="transparency-by-feature-container"></div>
+                <div class="transparency-toggle-and-submit">
+                  <div class="exact-match">
+                    <p class="transparency-toggle-label">Exact match:</p>
+                    <!-- https://codepen.io/daneden/pen/JFxAw -->
+                    <div class="toggle">
+                      <input type="checkbox" class="check transparency-exact-match">
+                      <b class="switch"></b>
+                      <b class="track"></b>
+                    </div>
+                  </div>
+                  <form name="myform1" class="form1 transparency-form-container">
+                    <p>Enter attribute value, and opacity values b/w 0 and 1:</p>
+                    <input type="text" class='transparency-search-text' id="transpText" placeholder="Match attri. val">
+                    <input type="text" class='opacity-value-search-match' id="opacityMatch" placeholder="Opacity (match)">
+                    <input type="text" class='opacity-value-search-no-match' id="opacityNoMatch" placeholder="Opacity (no match)">
+                    <input class='transparent-search-button' name="Submit"  type="submit" value="Apply">
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

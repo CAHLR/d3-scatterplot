@@ -3,8 +3,8 @@ import * as d3 from "d3";
 export function DropdownBuilder() {
   let createDowndownMenu = (nameAttribute, containerClass, dropdownClass) => {
     return d3.select("body")
-             .select(`div.${containerClass}`)
-             .append("select")
+             .select(`.${containerClass}`)
+             .insert("select", ':first-child')
              .attr("name", nameAttribute)
              .attr('class', dropdownClass);
   }
@@ -39,7 +39,7 @@ export function DropdownBuilder() {
     );
     this.transparentDropdown = createDowndownMenu(
       'color_column',
-      'transparency-by-feature-dropdown-container',
+      'transparency-by-feature-container',
       'transparency-by-feature'
     );
   };

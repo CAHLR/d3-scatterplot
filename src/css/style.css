@@ -5,42 +5,130 @@ body {
 /****************************/
 /*     FILTER DROPDOWNS     */
 /****************************/
-.drop-down-menu {
-  display: block;
-}
-
-.menu-title {
-  cursor: pointer;
-}
-
-.menu-title {
-  display:block;
-  padding: 10px 15px;
-}
-
-.activate {
-  display: none;
-
-  position: absolute;
-  cursor: pointer;
+.tab {
+  position: relative;
+  margin-bottom: 1px;
   width: 100%;
-  height: 40px;
-  margin: 0 0 0 -15px;
-  opacity: 0;
-}
-
-.drop-down {
-  max-height: 0;
+  color: #fff;
   overflow: hidden;
 }
-
-.drop-down p {
-  background: #222;
+.tab > input {
+  position: absolute;
+  opacity: 0;
+}
+.tab label {
+  position: relative;
+  display: block;
+  padding: 0 0 0 1em;
+  background: #16a085;
+  font-weight: bold;
+  line-height: 3;
+  cursor: pointer;
 }
 
-.activate:checked ~ .drop-down {
-  max-height: 200px;
+.tab-content {
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  background: #1abc9c;
+  -webkit-transition: max-height .35s;
+  -o-transition: max-height .35s;
+  transition: max-height .35s;
+}
+
+/* :checked */
+.tab input:checked ~ .tab-content {
+  max-height: 100vh;
+}
+/* Icon */
+.tab label::after {
+  position: absolute;
+  right: 0;
+  top: 0;
   display: block;
+  width: 3em;
+  height: 3em;
+  line-height: 3;
+  text-align: center;
+  -webkit-transition: all .35s;
+  -o-transition: all .35s;
+  transition: all .35s;
+}
+.tab input[type=checkbox] + label::after {
+  content: "+";
+}
+
+/* animation */
+.tab input[type=checkbox]:checked + label::after {
+  transform: rotate(315deg);
+}
+
+.tab-content li {
+  list-style-type: none;
+}
+
+/********************/
+/*      TOGGLES     */
+/********************/
+.toggle {
+  display: inline-block;
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 100px;
+  background-color: #ddd;
+  box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.05);
+}
+
+.check {
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 6;
+}
+
+/* this is the animation element of the checkbox */
+.check:checked ~ .track {
+  box-shadow: inset 0 0 0 20px #4bd863;
+}
+
+.check:checked ~ .switch {
+  right: 2px;
+  left: 22px;
+  transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  transition-property: left, right;
+  transition-delay: 0.05s, 0s;
+}
+
+.switch {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  bottom: 2px;
+  right: 22px;
+  background-color: #fff;
+  border-radius: 36px;
+  z-index: 1;
+  transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  transition-property: left, right;
+  transition-delay: 0s, 0.05s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
 }
 
 
@@ -54,6 +142,7 @@ body {
   grid-template-columns: 1% 70% auto 1%;
   grid-template-rows: 0.1fr 0.4fr 4.6fr 1.1fr 0.2fr;
   height: calc(100vh - 10px);
+  margin-bottom: 40px;
 }
 
 .plot-container {
@@ -95,7 +184,6 @@ body {
 
 .filters-and-options {
   grid-area: filters-and-options;
-  grid-column: 2 / span 2;
 }
 
 
@@ -147,7 +235,8 @@ body {
 /*      OPTIONS     */
 /********************/
 .plot-options-container {
-  padding-left: 80px
+  padding-left: 40px;
+  width: 70%;
 }
 
 .options-container {
@@ -164,52 +253,49 @@ body {
   margin: 8px 0;
 }
 
-.click-on-feature-container,
-.color-by-feature-container,
-.color-by-feature-options-container,
-.search-by-feature-container,
-.search-form-container,
-.shape-by-feature-container,
-.transparency-by-feature-dropdown-container,
-.transparency-exact-match-container,
-.zoom-container {
-  font-size: 1.5em;
-}
-/* TODO: Refactor using CSS grid, this is still hacky, though less so */
-.click-on-feature-container {
-  max-width: 220px;
-}
-.color-by-feature-container {
-  max-width: 180px;
-}
-.color-by-feature-options-container {
-  max-width: 300px;
-}
-.search-by-feature-container {
-  max-width: 180px;
-}
-.search-form-container {
-  max-width: 400px;
-}
-.shape-by-feature-container {
-  max-width: 180px;
-}
-.transparency-by-feature-dropdown-container {
-  max-width: 260px;
-}
-.zoom-container {
-  max-width: 600px;
+.summary-data {
+  margin-top: 60px;
 }
 
-input {
-  width: 145px;
+.toggle-and-zoom {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-around;
+  max-width: 200px;
 }
-/*The checkbox*/
-.input1{
-  width : 40px;
+.toggle-container {
+  display: inline-block;
 }
-/*Input textbox for circle and zoom*/
-.input2{
-  width : 225px;
-  height : 25px;
+
+.zoom-toggle-label {
+  margin: 8px 0;
+}
+.option-description {
+  padding: 8px;
+  font-size: 1em;
+}
+
+.color-option {
+  display: inline-block;
+  padding: 8px;
+}
+
+/* Margin for select dropdowns */
+.shape-by-feature, .search-by-feature, .click-on-feature, .transparency-by-feature {
+  margin-bottom: 24px;
+  margin-left: 24px;
+}
+
+.search-selection-options {
+  position: relative;
+}
+.search-by-feature-container {
+  float: left;
+  padding-right: 24px;
+}
+
+.search-toggle-and-submit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

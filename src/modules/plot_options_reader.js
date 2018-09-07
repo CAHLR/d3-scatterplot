@@ -59,6 +59,6 @@ export const plotOptionsReader = {
 		return document.getElementsByClassName('transparency-exact-match')[0].checked;
 	},
 	zoomCheckboxEnabled: () => {
-		return document.getElementsByClassName('enable-zoom-checkbox')[0].checked;
+		return document.getElementsByClassName('enable-zoom')[0].checked;
 	},
 };

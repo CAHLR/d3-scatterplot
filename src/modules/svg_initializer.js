@@ -26,7 +26,7 @@ function LassoInitializer(svg, color, axisArtist, allXValues, allYValues, catego
   // *************************************
 
   let removeTable = () => {
-    d3.select("table").remove();
+    d3.select(".summary-data").remove();
     document.getElementsByClassName('side-table')[0].innerHTML = '';
   };
 
