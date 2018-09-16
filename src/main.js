@@ -2,26 +2,27 @@
 // Imports
 // *******************************************
 
-import * as d3 from "d3";
-import { classify, benchmark, tabulate } from './modules/table_creator.js';
-import { tooltip, initialTooltipState } from './modules/tooltips.js';
-import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
-import { plotOptionsReader } from './modules/plot_options_reader.js';
-import { d3_category20_shuffled, height, width } from './modules/constants.js';
-import { DotsArtist } from './modules/dots_artist.js';
-import { ShapesArtist } from './modules/shapes_artist.js';
-import { ShapeGenerator } from './modules/shape_generator.js';
 import { AxisArtist } from './modules/axis_artist.js';
+import { d3_category20_shuffled, height, width } from './modules/constants.js';
+import * as d3 from "d3";
+import { DataManager } from './modules/data_manager.js';
+import { DotsArtist } from './modules/dots_artist.js';
+import { DropdownBuilder } from './modules/dropdown_builder.js';
 import {
   DefaultLegendGenerator,
   SpectrumLegendGenerator,
   ShapeLegendGenerator
 } from './modules/legend_generators.js';
+import { plotOptionsReader } from './modules/plot_options_reader.js';
+import { SearchDataManager } from './modules/search_data_manager.js';
+import { ShapesArtist } from './modules/shapes_artist.js';
+import { ShapeGenerator } from './modules/shape_generator.js';
 import { SpectrumGenerator } from './modules/spectrum_generator.js';
 import { SvgInitializer } from './modules/svg_initializer.js';
-import { DropdownBuilder } from './modules/dropdown_builder.js';
-import { DataManager } from './modules/data_manager.js';
-import { SearchDataManager } from './modules/search_data_manager.js';
+import { classify, benchmark, tabulate } from './modules/table_creator.js';
+import { tooltip, initialTooltipState, tooltipHTMLContent } from './modules/tooltips.js';
+import { TransparencyService } from './modules/transparency_service.js';
+import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
 
 // *******************************************
 // Begin Script
@@ -129,15 +130,8 @@ function loadMainData(data) {
     }
     columns.push(categoryHeaders[i]);
   }
-  // is there a time that exists in which categories_copy_color !== categories?
-  console.log("category_search_data:", category_search_data)
-  console.log("categories_copy_color:", categories_copy_color)
-  console.log("categories:", categories)
-  console.log("columns:", columns)
-  console.log("categoryHeaders:", categoryHeaders)
 
   tooltip.html(initialTooltipState(category_search_data));
-
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(category_search_data, categories_copy_color, categories);
   dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
@@ -163,24 +157,19 @@ function searchExactMatchEventHandler(event) {
   if (document.getElementById("searchText").value) redrawPlotWithoutZoom();
 }
 
-function handleCheck1(event) {
-  if (document.getElementById("transpText").value) {
-    redrawPlotWithoutZoom();
-  }
-}
-
 function redrawPlotWithoutZoom() {
   let needZoom = false;
-  highlighting(mainData, needZoom);
+  let filteredData = TransparencyService.filter(mainData);
+  highlighting(filteredData, needZoom);
 }
 
-// it will be executed when (?? draw and) zoom button is pressed and the plot will zoomed out according to the points obtained by mouse click event
 function zoomEventHandler(){
   if (plotOptionsReader.zoomCheckboxEnabled() === false) {
     document.getElementsByClassName("zoomxy")[0].innerText = ""; // clear the textbox
   }
   let needZoom = true;
-  highlighting(mainData, needZoom);
+  let filteredData = TransparencyService.filter(mainData);
+  highlighting(filteredData, needZoom);
 }
 
 (function setEventHandlers() {
@@ -248,10 +237,7 @@ function highlighting(data, needZoom) {
   let svgInitializer = new SvgInitializer(
     color,
     axisArtist,
-    dataManager.allXValues,
-    dataManager.allYValues,
     categories,
-    dataManager.featureCategoryAndDataMap,
     columns,
     shapeGenerator
   );

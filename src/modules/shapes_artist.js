@@ -64,7 +64,6 @@ export function ShapesArtist ({svg, data, categorySearchData, color, uniqueDataV
   };
 
   let drawShapes = (shapes, attributes) => {
-    console.log(this)
     let callbackHelper = new PlotCallbackHelper(svg);
     let shapeType = this.shapeGenerator.shapeType;
     // consistent attributes
