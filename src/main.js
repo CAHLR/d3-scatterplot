@@ -104,16 +104,20 @@ if (categorySearch) categorySearchData.push(categorySearch);
 // check whether the coloring column is provided in the url or not
 let colorColumn = queryParams.get("color") || "Select";
 
-// categoriesCopyColor is just the copy of categories
-var categoriesCopyColor = [];
-categoriesCopyColor.push(colorColumn);
-
 var columns = [];
 let mainData;
 let dataManager;
 
 function loadMainData(data) {
-  console.log('Loading main data')
+  console.log('Loading main data');
+  let categoryHeaders = data.columns.filter(cat => cat !== 'x' && cat !== 'y');
+  categoryHeaders.forEach((categoryHeader) => {
+    if (categoryHeader !== categorySearch) {
+      categorySearchData.push(categoryHeader);
+    }
+    categories.push(categoryHeader);
+    columns.push(categoryHeader);
+  });
   mainData = data.map((datum) => {
     datum['x'] = +datum['x'];
     datum['y'] = +datum['y'];
@@ -121,26 +125,9 @@ function loadMainData(data) {
   });
   dataManager = new DataManager(mainData, categories);
 
-  let categoryHeaders = data.columns.filter(cat => cat !== 'x' && cat !== 'y');
-
-  for(var i=0;i<categoryHeaders.length;i++) {
-    if (categoryHeaders[i] != categorySearch) {
-      categorySearchData.push(categoryHeaders[i]);
-    }
-  }
-
-  for(var i=0;i<categoryHeaders.length;i++) {
-    // colorColumn already pushed
-    if (categoryHeaders[i] != colorColumn) {
-      categories.push(categoryHeaders[i]);
-      categoriesCopyColor.push(categoryHeaders[i]);
-    }
-    columns.push(categoryHeaders[i]);
-  }
-
   tooltip.html(initialTooltipState(categorySearchData));
   let dropdownBuilder = new DropdownBuilder();
-  dropdownBuilder.build(categorySearchData, categoriesCopyColor, categories);
+  dropdownBuilder.build(categorySearchData, categories);
   dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
 
   // Initial plot draw happens here:

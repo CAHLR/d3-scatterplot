@@ -43,18 +43,18 @@ export function DropdownBuilder() {
       'transparency-by-feature'
     );
   };
-  this.build = (categorySearchData, categoriesCopyColor, categories) => {
+  this.build = (categorySearchData, categories) => {
     createAllDropdowns();
     // Searching
-    populateDropdownOptions(this.searchDropdown, categorySearchData)
+    populateDropdownOptions(this.searchDropdown, categorySearchData);
     // Coloring
-    populateDropdownOptions(this.coloringDropdown, categoriesCopyColor)
+    populateDropdownOptions(this.coloringDropdown, categories);
     // Transparent
-    populateDropdownOptions(this.transparentDropdown, categorySearchData)
+    populateDropdownOptions(this.transparentDropdown, categorySearchData);
     // Click on feature
-    populateDropdownOptions(this.clickOnFeatureDropdown, categorySearchData)
+    populateDropdownOptions(this.clickOnFeatureDropdown, categorySearchData);
     // Shaping
-    populateDropdownOptions(this.shapingDropdown, categories)
+    populateDropdownOptions(this.shapingDropdown, categories);
   };
   this.setDropdownEventHandlers = (redrawFunction) => {
     this.coloringDropdown.on("change", redrawFunction);
