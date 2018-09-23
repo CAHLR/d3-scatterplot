@@ -92,21 +92,21 @@ categories.push(defaultValue);
 // it may make things screwy...we can probably make it a bit more fault tolerant
 if (queryParams.get("color")) categories.push(queryParams.get("color"));
 
-// category_search stores the name of column according to which searching is to be done
-var category_search_data = [];
+// categorySearch stores the name of column according to which searching is to be done
+var categorySearchData = [];
 
 // check whether the searching column is provided in the url or not
-let category_search = queryParams.get("search");
-if (category_search) category_search_data.push(category_search);
+let categorySearch = queryParams.get("search");
+if (categorySearch) categorySearchData.push(categorySearch);
 
 // setup fill color
-// color_column stores the name of column according to which coloring is to be done
+// colorColumn stores the name of column according to which coloring is to be done
 // check whether the coloring column is provided in the url or not
-let color_column = queryParams.get("color") || "Select";
+let colorColumn = queryParams.get("color") || "Select";
 
-// categories_copy_color is just the copy of categories
-var categories_copy_color = [];
-categories_copy_color.push(color_column);
+// categoriesCopyColor is just the copy of categories
+var categoriesCopyColor = [];
+categoriesCopyColor.push(colorColumn);
 
 var columns = [];
 let mainData;
@@ -114,36 +114,37 @@ let dataManager;
 
 function loadMainData(data) {
   console.log('Loading main data')
-  let categoryHeaders = data.columns.filter(cat => cat !== 'x' && cat !== 'y');
-
-  for(var i=0;i<categoryHeaders.length;i++) {
-    if (categoryHeaders[i] != category_search) {
-      category_search_data.push(categoryHeaders[i]);
-    }
-  }
-
-  for(var i=0;i<categoryHeaders.length;i++) {
-    // color_column already pushed
-    if (categoryHeaders[i] != color_column) {
-      categories.push(categoryHeaders[i]);
-      categories_copy_color.push(categoryHeaders[i]);
-    }
-    columns.push(categoryHeaders[i]);
-  }
-
-  tooltip.html(initialTooltipState(category_search_data));
-  let dropdownBuilder = new DropdownBuilder();
-  dropdownBuilder.build(category_search_data, categories_copy_color, categories);
-  dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
   mainData = data.map((datum) => {
     datum['x'] = +datum['x'];
     datum['y'] = +datum['y'];
     return datum;
   });
+  dataManager = new DataManager(mainData, categories);
+
+  let categoryHeaders = data.columns.filter(cat => cat !== 'x' && cat !== 'y');
+
+  for(var i=0;i<categoryHeaders.length;i++) {
+    if (categoryHeaders[i] != categorySearch) {
+      categorySearchData.push(categoryHeaders[i]);
+    }
+  }
+
+  for(var i=0;i<categoryHeaders.length;i++) {
+    // colorColumn already pushed
+    if (categoryHeaders[i] != colorColumn) {
+      categories.push(categoryHeaders[i]);
+      categoriesCopyColor.push(categoryHeaders[i]);
+    }
+    columns.push(categoryHeaders[i]);
+  }
+
+  tooltip.html(initialTooltipState(categorySearchData));
+  let dropdownBuilder = new DropdownBuilder();
+  dropdownBuilder.build(categorySearchData, categoriesCopyColor, categories);
+  dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
 
   // Initial plot draw happens here:
   let needZoom = false;
-  dataManager = new DataManager(mainData, categories);
   highlighting(mainData, needZoom);
 };
 
@@ -269,7 +270,7 @@ function highlighting(data, needZoom) {
       {
         svg: svg,
         data: data,
-        categorySearchData: category_search_data,
+        categorySearchData: categorySearchData,
         uniqueDataValuesToShape: uniqueDataValuesToShape,
         color: color
       }
@@ -283,7 +284,7 @@ function highlighting(data, needZoom) {
       {
         svg: svg,
         data: data,
-        categorySearchData: category_search_data,
+        categorySearchData: categorySearchData,
         color: color
       }
     )
