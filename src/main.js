@@ -25,6 +25,7 @@ import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip, initialTooltipState, tooltipHTMLContent } from './modules/tooltips.js';
 import { TransparencyService } from './modules/transparency_service.js';
 import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
+import { ZoomService } from './modules/zoom_service.js';
 
 // *******************************************
 // Begin Script
@@ -168,7 +169,8 @@ function zoomEventHandler(){
   }
   let needZoom = true;
   let filteredData = TransparencyService.filter(mainData);
-  highlighting(filteredData, needZoom);
+  let zoomFilteredData = ZoomService.filter(filteredData, coordinatesx, coordinatesy);
+  highlighting(zoomFilteredData, needZoom);
 }
 
 (function setEventHandlers() {
@@ -197,8 +199,8 @@ function zoomEventHandler(){
   });
 })();
 
-let coordinatesx = [];
-let coordinatesy = [];
+var coordinatesx = [];
+var coordinatesy = [];
 
 // function for plotting
 function highlighting(data, needZoom) {
