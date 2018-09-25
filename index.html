@@ -4,6 +4,7 @@
   <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
   <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
   <link rel="stylesheet" type="text/css" href="src/css/style.css" />
+  <link rel="stylesheet" type="text/css" href="src/css/noUiSlider.css" />
   <body>
     <p class="p12" id="predicted_words"></p>
     <p class="p13" id="frequent_words"></p>
@@ -105,6 +106,21 @@
               </form>
             </div>
           </div>
+
+          <div class="option-container">
+            <div class="option-title">Filter by Value</div>
+            <div class="filter-by-value-container hidden">
+              <label>Feature to filter on:</label>
+            </div>
+            <div class="filter-button-container hidden">
+              <input type="submit" class="filter-button hidden" value="Filter">
+            </div>
+            <div class="sliders"></div>
+            <p class="unsupported-dataset-message">
+              The dataset you are exploring only contains categorical data and therefore cannot use this feature.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
     <!-- These javascript modules are used to draw the interactive plot  -->

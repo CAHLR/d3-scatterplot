@@ -8,6 +8,8 @@ import * as d3 from "d3";
 import { DataManager } from './modules/data_manager.js';
 import { DotsArtist } from './modules/dots_artist.js';
 import { DropdownBuilder } from './modules/dropdown_builder.js';
+import { FilterScrubber } from './modules/filter_scrubber.js';
+import { FilterService } from './modules/filter_service.js';
 import {
   DefaultLegendGenerator,
   SpectrumLegendGenerator,
@@ -107,6 +109,7 @@ let colorColumn = queryParams.get("color") || "Select";
 var columns = [];
 let mainData;
 let dataManager;
+let filterScrubber;
 
 function loadMainData(data) {
   console.log('Loading main data');
@@ -124,6 +127,7 @@ function loadMainData(data) {
     return datum;
   });
   dataManager = new DataManager(mainData, categories);
+  filterScrubber = new FilterScrubber(dataManager, categories).mount();
 
   tooltip.html(initialTooltipState(categorySearchData));
   let dropdownBuilder = new DropdownBuilder();
@@ -151,6 +155,13 @@ function redrawPlotWithoutZoom() {
   highlighting(filteredData, needZoom);
 }
 
+function filterEventHandler() {
+  let needZoom = false;
+  let filteredData = TransparencyService.filter(mainData);
+  let featureFilteredData = FilterService.filter(filteredData);
+  highlighting(featureFilteredData, needZoom);
+}
+
 function zoomEventHandler(){
   if (plotOptionsReader.zoomCheckboxEnabled() === false) {
     document.getElementsByClassName("zoomxy")[0].innerText = ""; // clear the textbox
@@ -163,6 +174,9 @@ function zoomEventHandler(){
 (function setEventHandlers() {
   let zoomButton = plotOptionsReader.getZoomButton();
   zoomButton.onclick = zoomEventHandler;
+
+  let filterButton = plotOptionsReader.getFilterByValueButton();
+  filterButton.onclick = filterEventHandler;
 
   let colorOptions = plotOptionsReader.getColorOptions();
   for (let i = 0; i < 2; i++) {

@@ -8,10 +8,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "webpack": "^4.0.0",
+    "crossfilter2": "^1.4.6",
     "d3": "^5.5.0",
+    "d3-lasso": "0.0.5",
     "mathjs": "^5.0.0",
-    "crossfilter2": "^1.4.6"
+    "nouislider": "^12.0.0",
+    "webpack": "^4.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

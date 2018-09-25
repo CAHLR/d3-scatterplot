@@ -13,6 +13,16 @@ export const queryParams = (() => {
   };
 })();
 
+export function showElement(element) {
+  let newClassName = element.className.replace(/hidden/gi,'');
+  element.className = newClassName;
+};
+
+export function hideElement(element) {
+  let newClassName = `${element.className} hidden`;
+  element.className = newClassName;
+};
+
 export function featureToColorValueTranslator() {
   let featureToColor = plotOptionsReader.getFeatureToColor();
   let extractFeatureToColorValue = (targetColumn) => {

@@ -23,7 +23,8 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      d3: 'd3'
+      d3: 'd3',
+      noUiSlider: 'nouislider'
     })
   ]
 };

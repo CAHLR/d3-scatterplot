@@ -1,15 +1,16 @@
 import * as d3 from "d3";
 
 export function DropdownBuilder() {
-  let createDowndownMenu = (nameAttribute, containerClass, dropdownClass) => {
+
+  this.createDowndownMenu = (nameAttribute, containerClass, dropdownClass) => {
     return d3.select("body")
              .select(`.${containerClass}`)
-             .insert("select", ':first-child')
+             .append("select")
              .attr("name", nameAttribute)
              .attr('class', dropdownClass);
   }
 
-  let populateDropdownOptions = (dropdown, data) => {
+  this.populateDropdownOptions = (dropdown, data) => {
     return dropdown.selectAll('option')
                    .data(data)
                    .enter()
@@ -17,45 +18,46 @@ export function DropdownBuilder() {
                    .text((featureName) => (featureName));
   };
   let createAllDropdowns = () => {
-    this.clickOnFeatureDropdown = createDowndownMenu(
+    this.clickOnFeatureDropdown = this.createDowndownMenu(
       'color_column',
       'click-on-feature-container',
       'click-on-feature'
     );
-    this.coloringDropdown = createDowndownMenu(
+    this.coloringDropdown = this.createDowndownMenu(
       'color_column',
       'color-by-feature-container',
       'color-by-feature'
     );
-    this.searchDropdown = createDowndownMenu(
+    this.searchDropdown = this.createDowndownMenu(
       'color_column',
       'search-by-feature-container',
       'search-by-feature'
     );
-    this.shapingDropdown = createDowndownMenu(
+    this.shapingDropdown = this.createDowndownMenu(
       'color_column',
       'shape-by-feature-container',
       'shape-by-feature'
     );
-    this.transparentDropdown = createDowndownMenu(
+    this.transparentDropdown = this.createDowndownMenu(
       'color_column',
-      'transparency-by-feature-container',
       'transparency-by-feature'
     );
+
   };
   this.build = (categorySearchData, categories) => {
     createAllDropdowns();
     // Searching
-    populateDropdownOptions(this.searchDropdown, categorySearchData);
+    this.populateDropdownOptions(this.searchDropdown, categorySearchData);
     // Coloring
-    populateDropdownOptions(this.coloringDropdown, categories);
+    this.populateDropdownOptions(this.coloringDropdown, categories);
     // Transparent
-    populateDropdownOptions(this.transparentDropdown, categorySearchData);
+    this.populateDropdownOptions(this.transparentDropdown, categorySearchData);
     // Click on feature
-    populateDropdownOptions(this.clickOnFeatureDropdown, categorySearchData);
+    this.populateDropdownOptions(this.clickOnFeatureDropdown, categorySearchData);
     // Shaping
-    populateDropdownOptions(this.shapingDropdown, categories);
+    this.populateDropdownOptions(this.shapingDropdown, categories);
   };
+
   this.setDropdownEventHandlers = (redrawFunction) => {
     this.coloringDropdown.on("change", redrawFunction);
 

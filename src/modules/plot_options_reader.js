@@ -9,6 +9,9 @@ export const plotOptionsReader = {
 	getColorOptions: () => {
 		return document.getElementsByClassName('color-option');
 	},
+	getDefaultFilterMessage: () => {
+		return document.getElementsByClassName('unsupported-dataset-message')[0];
+	},
 	getFeatureForTransparency: () => {
 		return document.getElementsByClassName('transparency-by-feature')[0]
 									 .value
@@ -19,6 +22,21 @@ export const plotOptionsReader = {
 	},
 	getFeatureToShape: () => {
 		return document.getElementsByClassName('shape-by-feature')[0].value;
+	},
+	getFilterByValueButton: () => {
+		return document.getElementsByClassName('filter-button')[0];
+	},
+	getFilterByValueButtonContainer: () => {
+		return document.getElementsByClassName('filter-button-container')[0];
+	},
+	getFilterByValueFeature: () => {
+		return document.getElementsByClassName('filter-by-value')[0].value;
+	},
+	getFilterByValueSelectionContainer: () => {
+		return document.getElementsByClassName('filter-by-value-container')[0];
+	},
+	getFilterByValueSlider: () => {
+		return document.getElementsByClassName('sliders')[0].noUiSlider;
 	},
 	getOpacityValueSearchMatch: () => {
 		return document.getElementsByClassName('opacity-value-search-match')[0].value;
