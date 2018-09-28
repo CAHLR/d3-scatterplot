@@ -42,7 +42,7 @@ export const plotOptionsReader = {
 		return document.getElementsByClassName('sliders')[0].noUiSlider;
 	},
 	getLiveUpdateToggled: () => {
-		return document.getElementsByClassName('live-update-toggled')[0].value;
+		return document.getElementsByClassName('live-update-toggled')[0].checked;
 	},
 	getOpacityValueSearchMatch: () => {
 		return document.getElementsByClassName('opacity-value-search-match')[0].value;

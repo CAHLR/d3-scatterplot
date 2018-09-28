@@ -182,7 +182,7 @@ function zoomEventHandler(){
 
   document.addEventListener('scrubberMounted', () => {
     plotOptionsReader.getFilterByValueSlider().on('update', () => {
-      if ( plotOptionsReader.getLiveUpdateToggled() === 'on' ) {
+      if ( plotOptionsReader.getLiveUpdateToggled()) {
         filterEventHandler();
       }
     })
