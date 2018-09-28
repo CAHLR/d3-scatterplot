@@ -40,6 +40,7 @@ export function DropdownBuilder() {
     );
     this.transparentDropdown = this.createDowndownMenu(
       'color_column',
+      'transparency-by-feature-container',
       'transparency-by-feature'
     );
 
