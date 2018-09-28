@@ -29,14 +29,20 @@ export const plotOptionsReader = {
 	getFilterByValueButtonContainer: () => {
 		return document.getElementsByClassName('filter-button-container')[0];
 	},
+	getFilterByValueSelectedFeature: () => {
+		return document.getElementsByClassName('scrubber-dropdown')[0].value;
+	},
 	getFilterByValueFeature: () => {
 		return document.getElementsByClassName('filter-by-value')[0].value;
 	},
-	getFilterByValueSelectionContainer: () => {
-		return document.getElementsByClassName('filter-by-value-container')[0];
+	getFilterByValueOptionsContainer: () => {
+		return document.getElementsByClassName('filter-by-value-options')[0];
 	},
 	getFilterByValueSlider: () => {
 		return document.getElementsByClassName('sliders')[0].noUiSlider;
+	},
+	getLiveUpdateToggled: () => {
+		return document.getElementsByClassName('live-update-toggled')[0].value;
 	},
 	getOpacityValueSearchMatch: () => {
 		return document.getElementsByClassName('opacity-value-search-match')[0].value;

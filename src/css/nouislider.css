@@ -285,3 +285,11 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   top: 50%;
   right: 120%;
 }
+
+/*Only show tooltip when sliding*/
+.noUi-tooltip {
+    display: none;
+}
+.noUi-active .noUi-tooltip {
+    display: block;
+}

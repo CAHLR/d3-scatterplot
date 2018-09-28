@@ -180,6 +180,14 @@ function zoomEventHandler(){
   let filterButton = plotOptionsReader.getFilterByValueButton();
   filterButton.onclick = filterEventHandler;
 
+  document.addEventListener('scrubberMounted', () => {
+    plotOptionsReader.getFilterByValueSlider().on('update', () => {
+      if ( plotOptionsReader.getLiveUpdateToggled() === 'on' ) {
+        filterEventHandler();
+      }
+    })
+  });
+
   let colorOptions = plotOptionsReader.getColorOptions();
   for (let i = 0; i < 2; i++) {
     colorOptions[i].onclick = redrawPlotWithoutZoom;

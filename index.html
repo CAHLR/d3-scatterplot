@@ -109,8 +109,19 @@
 
           <div class="option-container">
             <div class="option-title">Filter by Value</div>
-            <div class="filter-by-value-container hidden">
-              <label>Feature to filter on:</label>
+            <div class="filter-by-value-options hidden">
+              <div class="filter-by-value-container">
+                <label>Feature to filter on:</label>
+              </div>
+              <div class="live-update">
+                <p class="live-update-toggle-label">Live update</p>
+                <!-- https://codepen.io/daneden/pen/JFxAw -->
+                <div class="toggle">
+                  <input type="checkbox" class="check live-update-toggled">
+                  <b class="switch"></b>
+                  <b class="track"></b>
+                </div>
+              </div>
             </div>
             <div class="filter-button-container hidden">
               <input type="submit" class="filter-button hidden" value="Filter">
