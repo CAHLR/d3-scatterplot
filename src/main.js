@@ -1,6 +1,9 @@
 // *******************************************
 // Imports
 // *******************************************
+// ****** CSS
+import style from './css/style.css';
+import nouisliderStyle from './css/nouislider.css';
 
 import { AxisArtist } from './modules/axis_artist.js';
 import { d3_category20_shuffled, height, width } from './modules/constants.js';
