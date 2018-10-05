@@ -50,6 +50,9 @@ export const plotOptionsReader = {
 	getOpacityValueSearchNoMatch: () => {
 		return document.getElementsByClassName('opacity-value-search-no-match')[0].value;
 	},
+	getResetButton: () => {
+		return document.getElementsByClassName('reset-button')[0];
+	},
 	getSearchButton: () => {
 		return document.getElementsByClassName('search-button')[0];
 	},

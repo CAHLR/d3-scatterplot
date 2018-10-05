@@ -93,10 +93,6 @@ select.filter-by-value {
   justify-content: space-between;
 }
 
-.hidden {
-  display: none;
-}
-
 .unsupported-dataset-message {
   max-width: 400px;
 }
@@ -276,4 +272,12 @@ select.filter-by-value {
 
 .possible {
   fill: #EC888C;
+}
+
+/*******************/
+/* GENERAL UTILITY */
+/*******************/
+
+.hidden {
+  display: none;
 }

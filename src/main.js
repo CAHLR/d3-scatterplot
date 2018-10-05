@@ -150,6 +150,11 @@ function searchExactMatchEventHandler(event) {
   if (document.getElementById("searchText").value) redrawPlotWithoutZoom();
 }
 
+function resetPlotEventHandler() {
+  let needZoom = false;
+  highlighting(mainData, needZoom);
+}
+
 function redrawPlotWithoutZoom() {
   let needZoom = false;
   let filteredData = TransparencyService.filter(mainData);
@@ -176,6 +181,9 @@ function zoomEventHandler(){
 (function setEventHandlers() {
   let zoomButton = plotOptionsReader.getZoomButton();
   zoomButton.onclick = zoomEventHandler;
+
+  let resetButton = plotOptionsReader.getResetButton();
+  resetButton.onclick = resetPlotEventHandler;
 
   let filterButton = plotOptionsReader.getFilterByValueButton();
   filterButton.onclick = filterEventHandler;
