@@ -88,8 +88,9 @@ export function FilterScrubber(dataManager, categories) {
     let options = {
       start: createStartpoints(data),
       range: createRangeObject(uniqueValues),
-      snap: true,
       // Display colored bars between handles
+      snap: true,
+      behaviour: 'drag',
       connect: true,
       pips: {
         mode: 'positions',
