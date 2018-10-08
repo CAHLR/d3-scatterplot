@@ -13,6 +13,16 @@ export const queryParams = (() => {
   };
 })();
 
+export function showElement(element) {
+  let newClassName = element.className.replace(/hidden/gi,'');
+  element.className = newClassName;
+};
+
+export function hideElement(element) {
+  let newClassName = `${element.className} hidden`;
+  element.className = newClassName;
+};
+
 export function featureToColorValueTranslator() {
   let featureToColor = plotOptionsReader.getFeatureToColor();
   let extractFeatureToColorValue = (targetColumn) => {
@@ -71,17 +81,6 @@ export function linSpace(start, end, n) {
   }
   out.push(end);
   return out;
-};
-
-// VIEW HELPER: used to display the summary on the webpage
-// print all the key values pairs of a point
-export function printArray(arr, d) {
-  var x = "";
-  for (var i=0; i < arr.length; i++) {
-    x = x + "<b>" + arr[i] + "</b>: " + d[arr[i]] + "<br>"
-  }
-  x = x + d.x + "<br>" + d["y"];
-  return x;
 };
 
 export function transpar (dot, valTransp, transparentColumn, valOpacityMatch, valOpacityNoMatch) {

@@ -13,7 +13,7 @@ export function DataManager(data, categories) {
 
   // featureCategoryAndDataMap is an object containing all
   // attributes of datapoint e.g. { category: [val1, val2, ...] }
-  let initializeFeatureCateogryAndDataMap = (categories) => {
+  let initializeFeatureCategoryAndDataMap = (categories) => {
     this.featureCategoryAndDataMap = {};
     categories.forEach((category) => { this.featureCategoryAndDataMap[category] = []});
   }
@@ -23,14 +23,14 @@ export function DataManager(data, categories) {
   }
 
   let initialize = (data, categories) => {
-    initializeFeatureCateogryAndDataMap(categories);
+    initializeFeatureCategoryAndDataMap(categories);
     data.forEach((datum) => {
-      for(let i=0; i < categoryList.length; i++){
-        populateDataTypeMap(datum, categoryList[i]);
-        populatefeatureCategoryAndDataMap(datum, categoryList[i]);
+      categories.forEach((category) => {
+        populateDataTypeMap(datum, category);
+        populatefeatureCategoryAndDataMap(datum, category);
         this.allXValues.push(datum['x']);
         this.allYValues.push(datum['y']);
-      }
+      })
     });
   }
 

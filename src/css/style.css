@@ -1,97 +1,56 @@
 body {
-  font: 11px sans-serif;
+  font: 12px sans-serif;
 }
 
-/********************/
-/*     PLOT AREA    */
-/********************/
-.plot-area {
+/************************/
+/*      OPTION AREA     */
+/************************/
+.filters-and-options {
+  grid-area: filters-and-options;
+  grid-column: span 2 / 4;
+  margin-bottom: 40px;
+}
+
+.options {
+  align-content: start;
+  background: #16a085;
+  border-radius: 8px;
   display: flex;
-  justify-content: space-between;
-  padding-left: 36px;
-  padding-right: 120px;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
-.dot{
-    stroke: #000;
-}
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-.tooltip {
-  background: rgba(255,255,255,0.80);
-  height: 28px;
-  padding-left: 36px;
-  pointer-events: none;
-  position: absolute;
-  width: 250px;
-}
-.tooltip1 {
-  position: absolute;
-  width: 100px;
-  height:20px;
-  background: rgba(255,255,255,0.9);
-  pointer-events: none;
-}
-
-/*Never referenced - unused*/
-#legend-svg {
-  vertical-align: top;
-}
-.point {
-  fill: steelblue;
-  stroke: #000;
-}
-
-/****************/
-/*    LASSO     */
-/****************/
-.lasso path {
-  stroke: rgb(80,80,80);
-  stroke-width:2px;
-}
-.lasso .drawn {
-  fill-opacity:.05 ;
-}
-.lasso .loop_close {
-  fill:none;
-  stroke-dasharray: 4,4;
-}
-.lasso .origin {
-  fill:#3399FF;
-  fill-opacity:.5;
-}
-.not_possible {
-  fill:rgb(200,200,200);
-}
-.possible {
-  fill:#EC888C;
-}
-
-.bar rect {
-  fill: steelblue;
-}
-.bar text {
-  fill: #fff;
-  font: 10px sans-serif;
-}
-
-
-/********************/
-/*      OPTIONS     */
-/********************/
-.plot-options-container {
-  padding-left: 80px
-}
-
-.options-container {
-  align-items: center;
+.option-container {
+  background: #1abc9c;
+  border-radius: 24px;
+  color: white;
   display: flex;
-  justify-content: space-between;
-  margin: 8px 0;
+  flex-direction: column;
+  font-size: 1rem;
+  justify-content: space-around;
+  margin: 8px;
+  max-height: 180px;
+  min-height: 120px;
+  min-width: 140px;
+  padding: 16px;
+}
+
+.option-container select {
+  display: block;
+  margin: 12px auto;
+}
+
+select.filter-by-value {
+  display: inline-block
+}
+
+.option-title {
+  font-weight: bold;
+  text-align: center;
+}
+
+.exact-match {
+  margin-bottom: 16px;
 }
 
 .form-container {
@@ -101,53 +60,224 @@ body {
   margin: 8px 0;
 }
 
-.click-on-feature-container,
-.color-by-feature-container,
-.color-by-feature-options-container,
-.search-by-feature-container,
-.search-form-container,
-.side-table,
-.shape-by-feature-container,
-.transparency-by-feature-dropdown-container,
-.transparency-exact-match-container,
-.zoom-container {
-  font-size: 1.5em;
-}
-/* TODO: Refactor using CSS grid, this is still hacky, though less so */
-.click-on-feature-container {
-  max-width: 220px;
-}
-.color-by-feature-container {
-  max-width: 180px;
-}
-.color-by-feature-options-container {
-  max-width: 300px;
-}
-.search-by-feature-container {
-  max-width: 180px;
-}
-.search-form-container {
-  max-width: 400px;
-}
-.shape-by-feature-container {
-  max-width: 180px;
-}
-.transparency-by-feature-dropdown-container {
-  max-width: 260px;
-}
-.zoom-container {
-  max-width: 600px;
+.summary-data {
+  background: white;
+  margin-top: 60px;
 }
 
-input {
-  width: 145px;
+.toggle-container {
+  display: inline-block;
 }
-/*The checkbox*/
-.input1{
-  width : 40px;
+
+.toggle-and-zoom {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-around;
+  max-width: 200px;
 }
-/*Input textbox for circle and zoom*/
-.input2{
-  width : 225px;
-  height : 25px;
+
+.search-toggle-label, .transparency-toggle-label, .zoom-toggle-label {
+  display: inline;
+  margin: 8px 0;
+}
+
+/* Margin for select dropdowns */
+.click-on-feature, .search-by-feature, .shape-by-feature, .transparency-by-feature {
+  margin-bottom: 24px;
+  margin-left: 24px;
+}
+
+.search-toggle-and-submit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.unsupported-dataset-message {
+  max-width: 400px;
+}
+
+.filter-button {
+  margin: 0 auto 20px;
+  display: block;
+}
+
+.filter-by-value-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+/********************/
+/*      TOGGLES     */
+/********************/
+.check {
+  cursor: pointer;
+  display: block;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 6;
+}
+
+/* this is the animation element of the checkbox */
+.check:checked ~ .switch {
+  left: 22px;
+  right: 2px;
+  transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  transition-delay: 0.05s, 0s;
+  transition-property: left, right;
+}
+
+.check:checked ~ .track {
+  box-shadow: inset 0 0 0 20px #4bd863;
+}
+
+.switch {
+  background-color: #fff;
+  border-radius: 36px;
+  bottom: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  left: 2px;
+  position: absolute;
+  right: 22px;
+  top: 2px;
+  transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  transition-delay: 0s, 0.05s;
+  transition-property: left, right;
+  z-index: 1;
+}
+
+.toggle {
+  background-color: #ddd;
+  border-radius: 100px;
+  box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.05);
+  display: inline-block;
+  height: 20px;
+  position: relative;
+  width: 40px;
+}
+
+.track {
+  border-radius: 40px;
+  bottom: 0;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.05);
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+/********************/
+/*     PLOT AREA    */
+/********************/
+
+.axis path, .axis line {
+  fill: none;
+  shape-rendering: crispEdges;
+  stroke: #000;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.plot-area {
+  display: grid;
+  grid-gap: 1px 1px;
+  grid-template-areas: ". . . ." ". tooltip . ." ". plot-container side-table ." ". filters-and-options . ." ". . . .";
+  grid-template-columns: 1% 70% auto 1%;
+  grid-template-rows: 0.1fr 0.4fr 4.6fr 1.1fr 0.2fr;
+  height: calc(100vh - 10px);
+  margin-bottom: 40px;
+}
+
+.plot-container {
+  grid-area: plot-container;
+}
+
+.side-table {
+  font-size: 1.2em;
+  grid-area: side-table;
+  margin-left: 12px;
+  margin-top: 16px;
+  overflow: scroll;
+}
+
+.tooltip {
+  grid-area: tooltip;
+  grid-column: 2 / span 2;
+  margin-left: 24px;
+  margin-top: 16px;
+  min-height: 60px;
+  opacity: 0;
+}
+
+.tooltip table {
+  border-collapse: collapse;
+  border-style: hidden;
+  float: center;
+  pointer-events: none;
+}
+
+.tooltip table td {
+  border: 1px solid black;
+  font-size: 0.8rem;
+  padding: 8px;
+  text-align: center;
+}
+
+.tooltip .headers {
+  font-weight: bold;
+}
+
+/****************/
+/*    LASSO     */
+/****************/
+
+.bar rect {
+  fill: steelblue;
+}
+
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+.lasso .drawn {
+  fill-opacity:.05 ;
+}
+
+.lasso .loop_close {
+  fill: none;
+  stroke-dasharray: 4,4;
+}
+
+.lasso .origin {
+  fill: #3399FF;
+  fill-opacity: .5;
+}
+
+.lasso path {
+  stroke: rgb(80,80,80);
+  stroke-width:2px;
+}
+
+.not_possible {
+  fill: rgb(200,200,200);
+}
+
+.possible {
+  fill: #EC888C;
+}
+
+/*******************/
+/* GENERAL UTILITY */
+/*******************/
+
+.hidden {
+  display: none;
 }

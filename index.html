@@ -3,81 +3,144 @@
   <meta charset="utf-8">
   <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
   <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
-  <link rel="stylesheet" type="text/css" href="src/css/style.css" />
   <body>
     <p class="p12" id="predicted_words"></p>
     <p class="p13" id="frequent_words"></p>
     <div class="plot-area">
-      <div class="plot-container"></div>
-      <p class="side-table" id="demo3"></p>
+      <div class="plot-container">
+      </div>
+      <div class="side-table">
+      </div>
+      <div class="tooltip">
+      </div>
+      <div class="filters-and-options">
+        <p class="zoomxy"></p>
+        <div class="options">
+          <div class="option-container">
+            <div class="option-title">Color</div>
+            <div class="color-by-feature-container"></div>
+            <div class="toggle-container">
+              <div class="spectrum-option color-option">
+                <b>Enable Spectrum</b>
+                <div class="toggle">
+                  <input type="checkbox" class="check spectrum-checkbox">
+                  <b class="switch"></b>
+                  <b class="track"></b>
+                </div>
+              </div>
+              <div class="log-option color-option">
+                <b>Enable Log Scale</b>
+                <div class="toggle">
+                  <input type="checkbox" class="check log-spectrum-checkbox">
+                  <b class="switch"></b>
+                  <b class="track"></b>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Shape by Feature</div>
+            <div class="shape-by-feature-container"></div>
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Zoom</div>
+            <div class="toggle-container">
+              <p class="zoom-toggle-label">Enable</p>
+              <div class="toggle">
+                <input type="checkbox" class="check enable-zoom">
+                <b class="switch"></b>
+                <b class="track"></b>
+              </div>
+            </div>
+            <input type="submit" class="zoom-button" value="Zoom">
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Click on Feature</div>
+            <div class="click-on-feature-container"></div>
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Search by Feature</div>
+            <div class="search-by-feature-container"></div>
+            <div class="search-toggle-and-submit">
+              <div class="exact-match">
+                <p class="search-toggle-label">Exact match:</p>
+                <!-- https://codepen.io/daneden/pen/JFxAw -->
+                <div class="toggle">
+                  <input type="checkbox" class="check search-exact-match">
+                  <b class="switch"></b>
+                  <b class="track"></b>
+                </div>
+              </div>
+              <form name="myform" class="search-form">
+                <input type="text" class='search-text' id="searchText" placeholder="Search text">
+                <input class='search-button' name="Submit"  type="submit" value="Apply" >
+              </form>
+            </div>
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Transparency by Feature</div>
+            <div class="transparency-by-feature-container"></div>
+            <div class="transparency-toggle-and-submit">
+              <div class="exact-match">
+                <p class="transparency-toggle-label">Exact match:</p>
+                <!-- https://codepen.io/daneden/pen/JFxAw -->
+                <div class="toggle">
+                  <input type="checkbox" class="check transparency-exact-match">
+                  <b class="switch"></b>
+                  <b class="track"></b>
+                </div>
+              </div>
+              <form class="transparency-form-container">
+                <p>Enter attribute value, and opacity values b/w 0 and 1:</p>
+                <input type="text" class='transparency-search-text' id="transpText" placeholder="Match attri. val">
+                <input type="text" class='opacity-value-search-match' id="opacityMatch" placeholder="Opacity (match)">
+                <input type="text" class='opacity-value-search-no-match' id="opacityNoMatch" placeholder="Opacity (no match)">
+                <input class='transparent-search-button' name="Submit"  type="submit" value="Apply">
+              </form>
+            </div>
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Filter by Value</div>
+            <div class="filter-by-value-options hidden">
+              <div class="filter-by-value-container">
+                <label>Feature to filter on:</label>
+              </div>
+              <div class="live-update">
+                <p class="live-update-toggle-label">Live update</p>
+                <!-- https://codepen.io/daneden/pen/JFxAw -->
+                <div class="toggle">
+                  <input type="checkbox" class="check live-update-toggled">
+                  <b class="switch"></b>
+                  <b class="track"></b>
+                </div>
+              </div>
+            </div>
+            <div class="filter-button-container hidden">
+              <input type="submit" class="filter-button hidden" value="Filter">
+            </div>
+            <div class="sliders"></div>
+            <p class="unsupported-dataset-message">
+              The dataset you are exploring only contains categorical data and therefore cannot use this feature.
+            </p>
+          </div>
+
+          <div class="option-container">
+            <div class="option-title">Reset Plot</div>
+            <input type="submit" class="reset-button" value="Reset">
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="plot-options-container">
-      <div class="options-container zoom-container">
-        <div class="enable-zoom">
-          <b>Zoom</b>
-          <input class="input1 enable-zoom-checkbox" type="checkbox" id="cbox3" value="third_checkbox"></input>
-        </div>
-        <input class = "input2" type="text" id="zoomxy" placeholder="Select 2 pts after check"></input>
-        <button class = "input2 zoom-button" value="Zoom" >Zoom</button>
-      </div>
-
-      <div class="color-by-feature-container options-container" id="demo" >
-        <b>Color by: </b>
-      </div>
-      <div class="color-by-feature-options-container options-container">
-        <b>Options: </b>
-        <label>Spectrum</label>
-        <input class="input1 color-option spectrum-checkbox" type="checkbox" id="cbox1" value="first_checkbox">
-        <label>Log</label>
-        <input class="input1 color-option log-spectrum-checkbox" type="checkbox" id="cbox2" value="second_checkbox">
-      </div>
-
-      <div class="click-on-feature-container options-container">
-        <b>Click on feature: </b>
-      </div>
-
-      <div class="shape-by-feature-container options-container">
-        <b>Shape by: </b>
-      </div>
-
-      <div class="search-by-feature-container options-container" id="demo2">
-        <b>Search by: </b>
-      </div>
-
-      <div class="search-form-container form-container">
-        <div class="search-exact-match-container">
-          <label>Exact match: </label>
-          <input class="input1 search-exact-match" type="checkbox" id="cbox5" value="fifth_checkbox">
-        </div>
-        <form name="myform" class="search-form">
-          <input type="text" class='search-text' id="searchText" placeholder="Search text">
-          <input class='search-button' name="Submit"  type="submit" value="Apply" >
-        </form>
-      </div>
-
-      <div class="transparency-by-feature-container form-container">
-        <div class="transparency-by-feature-dropdown-container options-container" id="demo4" >
-          <b>Transparent attribute: </b>
-        </div>
-        <div class="transparency-exact-match-container">
-          <label>Exact match: </label>
-          <input class="input1 transparency-exact-match" type="checkbox" id="cbox6" value="sixth_checkbox">
-        </div>
-        <form name="myform1" class="form1 transparency-form-container">
-          <p>Enter attribute value, and opacity values b/w 0 and 1:</p>
-          <input type="text" class='transparency-search-text' id="transpText" placeholder="Match attri. val">
-          <input type="text" class='opacity-value-search-match' id="opacityMatch" placeholder="Opacity (match)">
-          <input type="text" class='opacity-value-search-no-match' id="opacityNoMatch" placeholder="Opacity (no match)">
-          <input class='transparent-search-button' name="Submit"  type="submit" value="Apply">
-        </form>
-      </div>
-    </div>
-
     <!-- These javascript modules are used to draw the interactive plot  -->
     <script src="vendor/crossfilter.min.js"></script>
     <!-- Math script needs to be added to repo -->
     <!-- <script src="math.min.js"></script> -->
-    <!-- <script src="vendor/lasso.min.js"></script> -->
     <script src="dist/bundle.js"></script>
   </body>
 </html>

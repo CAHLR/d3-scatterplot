@@ -15,6 +15,10 @@ module.exports = {
         use: {
           loader: "babel-loader"
         }
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }
     ]
   },
@@ -23,7 +27,8 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      d3: 'd3'
+      d3: 'd3',
+      noUiSlider: 'nouislider'
     })
   ]
 };

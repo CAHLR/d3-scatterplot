@@ -9,6 +9,9 @@ export const plotOptionsReader = {
 	getColorOptions: () => {
 		return document.getElementsByClassName('color-option');
 	},
+	getDefaultFilterMessage: () => {
+		return document.getElementsByClassName('unsupported-dataset-message')[0];
+	},
 	getFeatureForTransparency: () => {
 		return document.getElementsByClassName('transparency-by-feature')[0]
 									 .value
@@ -20,11 +23,35 @@ export const plotOptionsReader = {
 	getFeatureToShape: () => {
 		return document.getElementsByClassName('shape-by-feature')[0].value;
 	},
+	getFilterByValueButton: () => {
+		return document.getElementsByClassName('filter-button')[0];
+	},
+	getFilterByValueButtonContainer: () => {
+		return document.getElementsByClassName('filter-button-container')[0];
+	},
+	getFilterByValueSelectedFeature: () => {
+		return document.getElementsByClassName('scrubber-dropdown')[0].value;
+	},
+	getFilterByValueFeature: () => {
+		return document.getElementsByClassName('filter-by-value')[0].value;
+	},
+	getFilterByValueOptionsContainer: () => {
+		return document.getElementsByClassName('filter-by-value-options')[0];
+	},
+	getFilterByValueSlider: () => {
+		return document.getElementsByClassName('sliders')[0].noUiSlider;
+	},
+	getLiveUpdateToggled: () => {
+		return document.getElementsByClassName('live-update-toggled')[0].checked;
+	},
 	getOpacityValueSearchMatch: () => {
 		return document.getElementsByClassName('opacity-value-search-match')[0].value;
 	},
 	getOpacityValueSearchNoMatch: () => {
 		return document.getElementsByClassName('opacity-value-search-no-match')[0].value;
+	},
+	getResetButton: () => {
+		return document.getElementsByClassName('reset-button')[0];
 	},
 	getSearchButton: () => {
 		return document.getElementsByClassName('search-button')[0];
@@ -59,6 +86,6 @@ export const plotOptionsReader = {
 		return document.getElementsByClassName('transparency-exact-match')[0].checked;
 	},
 	zoomCheckboxEnabled: () => {
-		return document.getElementsByClassName('enable-zoom-checkbox')[0].checked;
+		return document.getElementsByClassName('enable-zoom')[0].checked;
 	},
 };

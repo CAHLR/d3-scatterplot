@@ -54,9 +54,10 @@ export function AxisArtist(data, needZoom, coordinatesx, coordinatesy) {
   let setZoomInput = () => {
     let inputValue = '';
     if (plotOptionsReader.zoomCheckboxEnabled() && this.needZoom === true && this.coordinatesx.length >= 2) {
-      inputValue = `X:[${parseInt(this.xMin)}, ${parseInt(this.xMax)}] Y:[${parseInt(this.yMin)}, ${parseInt(this.yMax)}]`;
+      inputValue = 'The current boundaries of the plot have been set to ';
+      inputValue += `X:[${parseInt(this.xMin)}, ${parseInt(this.xMax)}] Y:[${parseInt(this.yMin)}, ${parseInt(this.yMax)}]`;
     }
-    document.getElementById("zoomxy").value = inputValue;
+    document.getElementsByClassName("zoomxy")[0].innerText = inputValue;
   }
 
   this.draw = (svg) => {

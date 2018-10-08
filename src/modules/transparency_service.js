@@ -1,6 +1,5 @@
 import { plotOptionsReader } from './plot_options_reader.js';
 
-
 function isMatch(datum){
   let featureForTransparency = plotOptionsReader.getFeatureForTransparency();
   let transparentSearchText = plotOptionsReader.getTransparentSearchText();
