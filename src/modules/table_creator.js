@@ -1,6 +1,3 @@
-import { CsvExporter } from './csv_exporter.js';
-import { plotOptionsReader } from './plot_options_reader.js';
-
 // ****************************
 // Create Table functionality
 // ****************************
@@ -105,12 +102,6 @@ export function tabulate (data_tab, columns) {
     output = output + "<br>";
   }
   // side table
-  let sideTableContainer = plotOptionsReader.getSideTableContainer();
-  sideTableContainer.innerHTML = output;
-  sideTableContainer.prepend(
-    CsvExporter.createExportButton(),
-    document.createElement('br'),
-    document.createElement('br')
-  );
+  document.getElementsByClassName('side-table')[0].innerHTML = output;
   return table;
 }
