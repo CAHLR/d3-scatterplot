@@ -1,10 +1,14 @@
-
+import { queryParams } from './utilities.js';
+import {checkBoxClassNames, dropDownClassNames} from './constants.js';
 // This object is meant to act as the intermediary between the view-logic and
 // reading values from the DOM. This allows us to introduce more human readable
 // logic in the code and further separates responsibilities.
 export const plotOptionsReader = {
 	getClickOnFeatureValue: () => {
 		return document.getElementsByClassName('click-on-feature')[0].value;
+	},
+	getClickOnFeatureDropDown: () => {
+		return document.getElementsByClassName('click-on-feature')[0];
 	},
 	getColorOptions: () => {
 		return document.getElementsByClassName('color-option');
@@ -17,11 +21,20 @@ export const plotOptionsReader = {
 									 .value
 									 .toString();
 	},
+	getFeatureForTransparencyDropdown: () => {
+		return document.getElementsByClassName('transparency-by-feature')[0];
+	},
 	getFeatureToColor: () => {
 		return document.getElementsByClassName('color-by-feature')[0].value;
 	},
+	getFeatureToColorDropdown: () => {
+		return document.getElementsByClassName('color-by-feature')[0];
+	},
 	getFeatureToShape: () => {
 		return document.getElementsByClassName('shape-by-feature')[0].value;
+	},
+	getFeatureToShapeDropdown: () => {
+		return document.getElementsByClassName('shape-by-feature')[0];
 	},
 	getFilterByValueButton: () => {
 		return document.getElementsByClassName('filter-button')[0];
@@ -59,6 +72,9 @@ export const plotOptionsReader = {
 	getSearchCategory: () => {
 		return document.getElementsByClassName('search-by-feature')[0].value;
 	},
+	getSearchCategoryDropdown: () => {
+		return document.getElementsByClassName('search-by-feature')[0];
+	},
 	getSearchText: () => {
 		return document.getElementsByClassName('search-text')[0].value;
 	},
@@ -73,17 +89,32 @@ export const plotOptionsReader = {
 	getZoomButton: () => {
 		return document.getElementsByClassName('zoom-button')[0];
 	},
+	getLogSpectrumCheckbox: () => {
+		return document.getElementsByClassName('log-spectrum-checkbox')[0];
+	},
 	logSpectrumEnabled: () => {
 		return document.getElementsByClassName('log-spectrum-checkbox')[0].checked;
+	},
+	getSpectrumCheckbox: () => {
+		return document.getElementsByClassName('spectrum-checkbox')[0];
 	},
 	spectrumEnabled: () => {
 		return document.getElementsByClassName('spectrum-checkbox')[0].checked;
 	},
-	searchExactMatchEnabled: () =>{
+	getSearchExactCheckbox: () => {
+		return document.getElementsByClassName('search-exact-match')[0];
+	},
+	searchExactMatchEnabled: () => {
 		return document.getElementsByClassName('search-exact-match')[0].checked;
 	},
-	transparencyExactMatchEnabled: () =>{
+	getTransparencyExactCheckbox: () => {
+		return document.getElementsByClassName('transparency-exact-match')[0];
+	},
+	transparencyExactMatchEnabled: () => {
 		return document.getElementsByClassName('transparency-exact-match')[0].checked;
+	},
+	getZoomCheckbox: () => {
+		return document.getElementsByClassName('enable-zoom')[0];
 	},
 	zoomCheckboxEnabled: () => {
 		return document.getElementsByClassName('enable-zoom')[0].checked;
