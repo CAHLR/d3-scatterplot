@@ -13,6 +13,59 @@ export const queryParams = (() => {
   };
 })();
 
+export function preSelectCheckboxValues() {
+  const queryParamToCheckboxMap = {
+    'log': plotOptionsReader.getLogSpectrumCheckbox,
+    'spectrum': plotOptionsReader.getSpectrumCheckbox,
+    'search_exact': plotOptionsReader.getSearchExactCheckbox,
+    'transparency_exact': plotOptionsReader.getTransparencyExactCheckbox,
+    'zoom': plotOptionsReader.getZoomCheckbox,
+  };
+
+	for (let queryParam of queryParams.keys()) {
+		if (queryParamToCheckboxMap[queryParam]) {
+			queryParamToCheckboxMap[queryParam]().checked = queryParams.get(queryParam);
+		}
+	}
+}
+
+export function preSelectDropdownValues(categories, categorySearchData) {
+	const queryParamToDropdownMap = {
+		'color': {
+			'dropdown': plotOptionsReader.getFeatureToColorDropdown,
+			'categoryType': categories
+		},
+		'search': {
+      'dropdown': plotOptionsReader.getSearchCategoryDropdown,
+      'categoryType': categorySearchData
+    },
+	  'transparency': {
+      'dropdown': plotOptionsReader.getFeatureForTransparencyDropdown,
+      'categoryType': categorySearchData
+    },
+	  'click': {
+      'dropdown': plotOptionsReader.getClickOnFeatureDropDown,
+      'categoryType': categorySearchData
+    },
+	  'shape': {
+      'dropdown': plotOptionsReader.getFeatureToShapeDropdown,
+      'categoryType': categories
+    }
+	};
+
+	for (let queryParam of queryParams.keys()) {
+		if (queryParamToDropdownMap[queryParam]) {
+			let paramValue = queryParams.get(queryParam);
+			let categoryValues = queryParamToDropdownMap[queryParam]['categoryType'];
+			if (categoryValues.includes(paramValue)) {
+				queryParamToDropdownMap[queryParam]['dropdown']().value = paramValue;
+			} else { //invalid dropdown value, set back to Select
+				queryParamToDropdownMap[queryParam]['dropdown']().value = categoryValues[0];
+			}
+		}
+	}
+}
+
 export function showElement(element) {
   let newClassName = element.className.replace(/hidden/gi,'');
   element.className = newClassName;
@@ -161,4 +214,3 @@ export let yScale = d3.scaleLinear().range([height, 0]);
 // Type Signature: data Object -> display Object (? Might be value)
 export function xMap(data) { return xScale(xValue(data)) };
 export function yMap(data) { return yScale(yValue(data)) };
-

@@ -26,6 +26,20 @@ To use semantic model:
 2. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv&semantic_model=true
 Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.
 
+Valid URL query parameters are:
+1. Enabling checkboxes:
+- 'log'
+- 'spectrum'
+- 'search_exact'
+- 'transparency_exact'
+- 'zoom'
+2. Preselecting DropDowns:
+- 'color'
+- 'search'
+- 'transparency'
+- 'click'
+- 'shape'
+
 ### Dev notes
 This project uses webpack to bundle various modules together into a single `bundle.js` file that is embedded on the `index.html` page.
 

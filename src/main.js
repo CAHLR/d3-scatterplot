@@ -27,7 +27,7 @@ import { SvgInitializer } from './modules/svg_initializer.js';
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip, initialTooltipState, tooltipHTMLContent } from './modules/tooltips.js';
 import { TransparencyService } from './modules/transparency_service.js';
-import { getParameterByName, queryParams, searchDic } from './modules/utilities.js';
+import { preSelectCheckboxValues, preSelectDropdownValues, getParameterByName, queryParams, searchDic } from './modules/utilities.js';
 import { ZoomService } from './modules/zoom_service.js';
 
 // *******************************************
@@ -94,9 +94,6 @@ if (queryParams.get("semantic_model") === "true") {
 var categories = [];
 let defaultValue = 'Select';
 categories.push(defaultValue);
-// Not sure this is really what we want -- if you enter the wrong parameter value,
-// it may make things screwy...we can probably make it a bit more fault tolerant
-if (queryParams.get("color")) categories.push(queryParams.get("color"));
 
 // categorySearch stores the name of column according to which searching is to be done
 var categorySearchData = [];
@@ -104,11 +101,6 @@ var categorySearchData = [];
 // check whether the searching column is provided in the url or not
 let categorySearch = queryParams.get("search");
 if (categorySearch) categorySearchData.push(categorySearch);
-
-// setup fill color
-// colorColumn stores the name of column according to which coloring is to be done
-// check whether the coloring column is provided in the url or not
-let colorColumn = queryParams.get("color") || "Select";
 
 var columns = [];
 let mainData;
@@ -137,6 +129,9 @@ function loadMainData(data) {
   let dropdownBuilder = new DropdownBuilder();
   dropdownBuilder.build(categorySearchData, categories);
   dropdownBuilder.setDropdownEventHandlers(redrawPlotWithoutZoom);
+
+  preSelectCheckboxValues();
+  preSelectDropdownValues(categories, categorySearchData);
 
   // Initial plot draw happens here:
   let needZoom = false;
