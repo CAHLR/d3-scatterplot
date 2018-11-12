@@ -27,7 +27,7 @@ import { SvgInitializer } from './modules/svg_initializer.js';
 import { classify, benchmark, tabulate } from './modules/table_creator.js';
 import { tooltip, initialTooltipState, tooltipHTMLContent } from './modules/tooltips.js';
 import { TransparencyService } from './modules/transparency_service.js';
-import { preSelectCheckboxValues, preSelectDropdownValues, getParameterByName, queryParams, searchDic } from './modules/utilities.js';
+import { preSelectCheckboxValues, preSelectDropdownValues, queryParams, searchDic } from './modules/utilities.js';
 import { ZoomService } from './modules/zoom_service.js';
 
 // *******************************************

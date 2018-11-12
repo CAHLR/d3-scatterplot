@@ -22,48 +22,48 @@ export function preSelectCheckboxValues() {
     'zoom': plotOptionsReader.getZoomCheckbox,
   };
 
-	for (let queryParam of queryParams.keys()) {
-		if (queryParamToCheckboxMap[queryParam]) {
-			queryParamToCheckboxMap[queryParam]().checked = queryParams.get(queryParam);
-		}
-	}
+  for (let queryParam of queryParams.keys()) {
+    if (queryParamToCheckboxMap[queryParam]) {
+      queryParamToCheckboxMap[queryParam]().checked = queryParams.get(queryParam);
+    }
+  }
 }
 
 export function preSelectDropdownValues(categories, categorySearchData) {
-	const queryParamToDropdownMap = {
-		'color': {
-			'dropdown': plotOptionsReader.getFeatureToColorDropdown,
-			'categoryType': categories
-		},
-		'search': {
+  const queryParamToDropdownMap = {
+    'color': {
+      'dropdown': plotOptionsReader.getFeatureToColorDropdown,
+      'categoryType': categories
+    },
+    'search': {
       'dropdown': plotOptionsReader.getSearchCategoryDropdown,
       'categoryType': categorySearchData
     },
-	  'transparency': {
+    'transparency': {
       'dropdown': plotOptionsReader.getFeatureForTransparencyDropdown,
       'categoryType': categorySearchData
     },
-	  'click': {
+    'click': {
       'dropdown': plotOptionsReader.getClickOnFeatureDropDown,
       'categoryType': categorySearchData
     },
-	  'shape': {
+    'shape': {
       'dropdown': plotOptionsReader.getFeatureToShapeDropdown,
       'categoryType': categories
     }
-	};
+  };
 
-	for (let queryParam of queryParams.keys()) {
-		if (queryParamToDropdownMap[queryParam]) {
-			let paramValue = queryParams.get(queryParam);
-			let categoryValues = queryParamToDropdownMap[queryParam]['categoryType'];
-			if (categoryValues.includes(paramValue)) {
-				queryParamToDropdownMap[queryParam]['dropdown']().value = paramValue;
-			} else { //invalid dropdown value, set back to Select
-				queryParamToDropdownMap[queryParam]['dropdown']().value = categoryValues[0];
-			}
-		}
-	}
+  for (let queryParam of queryParams.keys()) {
+    if (queryParamToDropdownMap[queryParam]) {
+      let paramValue = queryParams.get(queryParam);
+      let categoryValues = queryParamToDropdownMap[queryParam]['categoryType'];
+      if (categoryValues.includes(paramValue)) {
+        queryParamToDropdownMap[queryParam]['dropdown']().value = paramValue;
+      } else { //invalid dropdown value, set back to Select
+        queryParamToDropdownMap[queryParam]['dropdown']().value = categoryValues[0];
+      }
+    }
+  }
 }
 
 export function showElement(element) {
@@ -182,20 +182,6 @@ export function dotSearchFilter (dot, searchCategory, valSearch) {
 
   return noMatch ? 1 : 2;
 };
-
-// Checks the url query for name=value and extracts the value
-// *************************************************************
-// TODO: This can likely be accomplished using newer browser APIS, e.g.:
-// let queryParams = (new URL(location)).searchParams;
-export function getParameterByName(name, url) {
-  if (!url) url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-  results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
 
 // The following two functions are getter methods:
 // value accessor - returns the value to encode for a given data object.
