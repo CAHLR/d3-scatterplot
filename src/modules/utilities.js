@@ -13,24 +13,14 @@ export const queryParams = (() => {
   };
 })();
 
-// for each queryParam in the queryParam keys()
-// is queryParam in my checkboxClassNames?
-	// if is in queryParamToCheckboxMap, then set queryParam value to checkbox value
-
-// preSelectDropdownValues(categories, categorySearchData)
-// is queryParam in my queryParamToDropdownMap?
-	// is queryParam value in dropdown category?
-		// if so, then set the dropdown category as the queryParam value
-		// if not, then 'Select'
-
 export function preSelectCheckboxValues() {
-	const queryParamToCheckboxMap = {
-		'log': plotOptionsReader.getLogSpectrumCheckbox,
-		'spectrum': plotOptionsReader.getSpectrumCheckbox,
-	  'search_exact': plotOptionsReader.getSearchExactCheckbox,
-	  'transparency_exact': plotOptionsReader.getTransparencyExactCheckbox,
-	  'zoom': plotOptionsReader.getZoomCheckbox,
-	};
+  const queryParamToCheckboxMap = {
+    'log': plotOptionsReader.getLogSpectrumCheckbox,
+    'spectrum': plotOptionsReader.getSpectrumCheckbox,
+    'search_exact': plotOptionsReader.getSearchExactCheckbox,
+    'transparency_exact': plotOptionsReader.getTransparencyExactCheckbox,
+    'zoom': plotOptionsReader.getZoomCheckbox,
+  };
 
 	for (let queryParam of queryParams.keys()) {
 		if (queryParamToCheckboxMap[queryParam]) {

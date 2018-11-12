@@ -1,5 +1,3 @@
-import { queryParams } from './utilities.js';
-import {checkBoxClassNames, dropDownClassNames} from './constants.js';
 // This object is meant to act as the intermediary between the view-logic and
 // reading values from the DOM. This allows us to introduce more human readable
 // logic in the code and further separates responsibilities.
