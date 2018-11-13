@@ -34,7 +34,7 @@ To enable, add `&[OPTION_NAME]=[FEATURE_NAME]` after the `dataset=[YOUR_DATASET]
 
 Any or all options may be added, though some require another option name to be present in order to function. For example, to preselect the `spectrum` option, you must also preselect the `color` option for a continuous variable (e.g. http://localhost:8000/index.html?dataset=example.tsv&color=feature%202&spectrum=feature%202).
 
-Please reference the table below to see a list of option names and valid combinations. For combinations
+Please reference the table below to see a list of option names and recommended/required combinations.
 
 
 | Option Name | Functionality | Required/Recommended Combination | Example |
