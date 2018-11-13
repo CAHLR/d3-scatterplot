@@ -22,10 +22,14 @@ Command line example to get the viz running:
 4. open your web browser to http://localhost:8000/index.html?dataset=example.tsv
 
 (Semantic model is currently not functional)
-~~To use semantic model:
-1. run representation_presenter.py and semantic_model.py (instructions in respective repos)
-2. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv&semantic_model=true
-Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.~~
+
+~~To use semantic model:~~
+
+~~1. run representation_presenter.py and semantic_model.py (instructions in respective repos)~~
+
+~~2. open your web browser to http://localhost:8000/plot.html?dataset=example.tsv&semantic_model=true~~
+
+~~Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.~~
 
 ### Preselecting visualization options
 
