@@ -31,6 +31,30 @@ Command line example to get the viz running:
 
 ~~Note: semantic_model.py automatically generates .txt files for you, as files needed for semantic model get quite large. Thus, you can visit http://localhost:8000/plot.html?dataset=example.txt&semantic_model=true for a faster experience.~~
 
+
+
+### d3-scatterplot inline
+Just like matplotlib inline, you may want to embed d3-scatterplot into your Jupyter Notebook or Google Colab. And here they are:
+1. Jupyter Notebook
+    ```python
+    from IPython.display import Javascript
+    from IPython.display import IFrame
+    
+    # clone d3-scatterplot to your local directory
+    !git clone https://github.com/CAHLR/d3-scatterplot.git
+    
+    # run the http server on your local machine
+    get_ipython().system_raw('cd d3-scatterplot && python3 -m http.server 8000 &') 
+    
+    # display example.tsv with d3-scatterplot in your jupyter notebook
+    IFrame('http://127.0.0.1:8000/index.html?dataset=example.tsv', width=1000, height=1000)
+    ```
+    
+2. Google Colab
+You may check [this link](https://colab.research.google.com/drive/1RkmJxFOBAfsiJ0JDRQYZvDg3hPLxWnjU?usp=sharing) for the Google Colab demo.
+
+
+
 ### Preselecting visualization options
 
 Query parameters can be used to preselect any of the options for a given feature.
@@ -55,7 +79,10 @@ Please reference the table below to see a list of option names and recommended/r
 | `transparency_exact` | Preselect transparency search features on an exact value. | required: `transparency` | http://localhost:8000/index.html?dataset=example.tsv&transparency=feature%202&transparency_exact=feature%202 |
 | `zoom` | If this option is set, the plot enters zoom mode upon its initial load (for more details, see [the regression plan](https://github.com/CAHLR/d3-scatterplot/wiki/Regression-Test-Plan)) | N/A | http://localhost:8000/index.html?dataset=example.tsv&zoom=true |
 
+
+
 ### Dev notes
+
 This project uses webpack to bundle various modules together into a single `bundle.js` file that is embedded on the `index.html` page.
 
 To start the webpack bundler service, run `npm start` (make sure you've `npm install`ed). This command will watch the for changes in repo and update the `bundle.js` file to match saved changes.
