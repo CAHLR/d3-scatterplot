@@ -11,7 +11,7 @@
     "crossfilter2": "^1.4.6",
     "d3": "^5.5.0",
     "d3-lasso": "0.0.5",
-    "mathjs": "^5.0.0",
+    "mathjs": "^7.5.1",
     "nouislider": "^12.0.0",
     "webpack": "^4.0.0"
   },
